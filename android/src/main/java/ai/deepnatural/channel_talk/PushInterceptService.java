@@ -1,4 +1,4 @@
-package com.deepnatural.ai.channel_talk;
+package ai.deepnatural.channel_talk;
 
 import com.google.firebase.messaging.*;
 import com.zoyi.channel.plugin.android.ChannelIO;

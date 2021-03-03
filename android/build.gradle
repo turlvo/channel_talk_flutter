@@ -1,4 +1,4 @@
-group 'com.deepnatural.ai.channel_talk'
+group 'ai.deepnatural.channel_talk'
 version '1.0'
 
 buildscript {

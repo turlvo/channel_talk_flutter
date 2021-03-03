@@ -1,4 +1,4 @@
-package com.deepnatural.ai.channel_talk_example;
+package ai.deepnatural.channel_talk_example;
 
 import io.flutter.embedding.android.FlutterActivity;
 

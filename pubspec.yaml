@@ -1,6 +1,7 @@
 name: channel_talk
 description: A plugin that translates the Channel Talk SDK into a plugin for Flutter(Unofficial)
 version: 1.0.0
+homepage: https://github.com/turlvo/channel_talk_flutter
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -18,7 +19,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.deepnatural.ai.channel_talk
+        package: ai.deepnatural.channel_talk
         pluginClass: ChannelTalkPlugin
       ios:
         pluginClass: ChannelTalkPlugin

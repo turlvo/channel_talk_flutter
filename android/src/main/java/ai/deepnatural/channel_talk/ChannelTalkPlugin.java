@@ -1,4 +1,4 @@
-package com.deepnatural.ai.channel_talk;
+package ai.deepnatural.channel_talk;
 
 import android.app.Activity;
 import android.app.Application;
