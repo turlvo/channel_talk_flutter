@@ -401,9 +401,9 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   content = '''
 {
-  "name": "yeonho1",
-  "mobileNumber": "010-3777-9868",
-  "email": "yeonho1@deepnatural.ai",
+  "name": "",
+  "mobileNumber": "",
+  "email": "",
   "avatarUrl": "https://unsplash.com/photos/oL3-V8xhqlI",
   "customAttributes": {
     "key1": "val1"
