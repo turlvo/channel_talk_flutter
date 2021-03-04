@@ -43,25 +43,29 @@ Update info.plist.
 ```
 <key>NSCameraUsageDescription</key>
 <string>Accessing to camera in order to provide better user experience</string>
+
 <key>NSMicrophoneUsageDescription</key>
 <string>Accessing to microphone to record voice for video</string>
+
 <key>NSPhotoLibraryAddUsageDescription</key>
 <string>Accessing to photo library in order to save photos</string>
+
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Accessing to photo library in order to provide better user experience</string>
 ```
 
-Add pod installation to 'Podfile'.
+Add pod installation to 'ios/Podfile'.
 (Because there is no latest 'ChannelIOSDK' pod in Cocopod, can not add dependecy to plugin podspec properly.)
 ```
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-  # Add below 'pod 'ChannelIOSDK'
+  # Add below line
   pod 'ChannelIOSDK', podspec: 'https://mobile-static.channel.io/ios/latest/xcframework.podspec'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
+```
 
 
 ### Android
@@ -70,8 +74,8 @@ end
 This plugin works in combination with the [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) plugin to receive Push Notifications. To set this up:
 
 * First, implement [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) and check if it works: https://pub.dev/packages/firebase_messaging#android-integration
-* Then, add the Firebase server key to Intercom, as described here: https://developers.channel.io/docs/android-push-notification
-* Add the following to your  `AndroidManifest.xml` file, so incoming messages are handled by Intercom:
+* Then, add the Firebase server key to Channel Talk, as described here: https://developers.channel.io/docs/android-push-notification
+* Add the following to your  `AndroidManifest.xml` file, so incoming messages are handled by Channel Talk:
 
 ```
     <service
@@ -83,13 +87,6 @@ This plugin works in combination with the [`firebase_messaging`](https://pub.dev
         </intent-filter>
     </service>
 ```
-_just above the closing `</application>` tag._
 
-* Ask FireBaseMessaging for the FCM token that we need to send to Intercom, and give it to Intercom (so Intercam can send push messages to the correct device):
+just above the closing `</application>` tag.
 
-```dart
-final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-token = await _firebaseMessaging.getToken();
-
-Intercom.sendTokenToIntercom(token);
-```
