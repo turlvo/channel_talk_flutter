@@ -6,10 +6,10 @@ public func application(_ application: UIApplication, didRegisterForRemoteNotifi
     ChannelIO.initialize(application)
 }
 
-public class SwiftChannelTalkPlugin: NSObject, FlutterPlugin {
+public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "channel_talk", binaryMessenger: registrar.messenger())
-    let instance = SwiftChannelTalkPlugin()
+    let instance = SwiftChannelTalkFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance) 
   }

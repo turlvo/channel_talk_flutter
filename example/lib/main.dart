@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:channel_talk/channel_talk.dart';
+import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() async {

@@ -1,10 +1,10 @@
-# channel_talk
+# channel_talk_flutter
 
 Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)
 
 ## Usage
 ```
-import 'package:channel_talk/channel_talk.dart';
+import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
 void main() async {
     await ChannelTalk.boot(

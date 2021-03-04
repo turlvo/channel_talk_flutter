@@ -36,8 +36,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 
-/** ChannelTalkPlugin */
-public class ChannelTalkPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
+/** ChannelTalkFlutterPlugin */
+public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
