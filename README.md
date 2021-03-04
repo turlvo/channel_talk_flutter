@@ -3,7 +3,7 @@
 Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)
 
 ## Usage
-```
+```dart
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
 void main() async {
@@ -40,7 +40,7 @@ See Channel Talk Android and iOS package documentation for more information.
 ### iOS
 
 Update info.plist.
-```
+```xml
 <key>NSCameraUsageDescription</key>
 <string>Accessing to camera in order to provide better user experience</string>
 
