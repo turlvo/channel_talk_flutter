@@ -1,3 +1,9 @@
+## 1.1.0
+- Update ChannelIOSDK
+- Added methods
+"setPage"
+"resetPage"
+
 ## 1.0.0
 
 This is a initial release of channel talk plugin(Unofficial).

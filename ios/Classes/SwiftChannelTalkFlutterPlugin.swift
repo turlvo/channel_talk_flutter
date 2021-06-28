@@ -52,6 +52,10 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         self.isBooted(call, result)
       case "setDebugMode":
         self.setDebugMode(call, result)
+      case "setPage":
+        self.setPage(call, result)
+      case "resetPage":
+        self.resetPage(call, result)
       default:
         result(FlutterMethodNotImplemented)
     }
@@ -306,6 +310,22 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     }
     
     ChannelIO.setDebugMode(with: flag)
+    result(true)
+  }
+
+  private func setPage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    guard let argMaps = call.arguments as? Dictionary<String, Any>,
+      let page = argMaps["page"] as? String else {
+      result(FlutterError(code: call.method, message: "Missing argument", details: nil))
+      return
+    }
+    
+    ChannelIO.setPage(page)
+    result(true)
+  }
+
+  private func resetPage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    ChannelIO.resetPage()
     result(true)
   }
 }

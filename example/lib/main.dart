@@ -618,6 +618,48 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: Text('setDebugMode'),
               ),
+              RaisedButton(
+                onPressed: () async {
+                  content = '''
+{
+  "page": "Custom Value"
+}
+                  ''';
+
+                  showInputDialog(
+                    'page payload',
+                    () async {
+                      Map args = json.decode(content);
+
+                      try {
+                        final result =
+                            await ChannelTalk.setPage(page: args['page']);
+
+                        showMessageToast('Result: $result');
+                      } on PlatformException catch (error) {
+                        showMessageToast('PlatformException: ${error.message}');
+                      } catch (err) {
+                        showMessageToast(err.message);
+                      }
+                    },
+                  );
+                },
+                child: Text('setPage'),
+              ),
+              RaisedButton(
+                onPressed: () async {
+                  try {
+                    final result = await ChannelTalk.resetPage();
+
+                    showMessageToast('Result: $result');
+                  } on PlatformException catch (error) {
+                    showMessageToast('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showMessageToast(err.message);
+                  }
+                },
+                child: Text('resetPage'),
+              ),
             ],
           ),
         ),

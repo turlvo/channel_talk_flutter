@@ -178,4 +178,14 @@ class ChannelTalk {
       'flag': flag,
     });
   }
+
+  static Future<bool> setPage({@required page}) {
+    return _channel.invokeMethod('setPage', {
+      'page': page,
+    });
+  }
+
+  static Future<bool> resetPage() {
+    return _channel.invokeMethod('resetPage');
+  }
 }

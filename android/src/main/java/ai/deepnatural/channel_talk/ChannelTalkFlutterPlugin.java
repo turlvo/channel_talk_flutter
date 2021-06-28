@@ -100,6 +100,11 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       isBooted(call, result);
     } else if (call.method.equals("setDebugMode")) {
       setDebugMode(call, result);
+    } else if (call.method.equals("setPage")) {
+      setPage(call, result);
+    } else if (call.method.equals("resetPage")) {
+      resetPage(call, result);
+
     } else {
       result.notImplemented();
     }
@@ -375,6 +380,21 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       return;
     }
     ChannelIO.setDebugMode(flag);
+    result.success(true);
+  }
+
+  public void setPage(@NonNull MethodCall call, @NonNull final Result result) {
+    String page = call.argument("page");
+    if (page == null) {
+      result.error("UNAVAILABLE", "Missing argument(page)", null);
+      return;
+    }
+    ChannelIO.setPage(page);
+    result.success(true);
+  }
+
+  public void resetPage(@NonNull MethodCall call, @NonNull final Result result) {
+    ChannelIO.resetPage();
     result.success(true);
   }
 
