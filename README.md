@@ -16,7 +16,7 @@ void main() async {
         mobileNumber: 'mobileNumber',
         trackDefaultEvent: false,
         hidePopup: false,
-        language: 'english,
+        language: 'english',
     );
     runApp(App());
 }
