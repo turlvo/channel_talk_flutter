@@ -1,3 +1,6 @@
+## 2.0.0
+- Null safety support
+
 ## 1.1.0
 - Update ChannelIOSDK
 - Added methods

@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                               style: BorderStyle.solid,
                             ),
                           ),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
@@ -157,7 +157,7 @@ class _MyAppState extends State<MyApp> {
                               style: BorderStyle.solid,
                             ),
                           ),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                               if (onClick != null) {
@@ -202,7 +202,7 @@ class _MyAppState extends State<MyApp> {
           child: ListView(
             children: <Widget>[
               SizedBox(height: 20),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   content = '''
 {
@@ -238,14 +238,14 @@ class _MyAppState extends State<MyApp> {
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.message);
+                        showMessageToast(err.toString());
                       }
                     },
                   );
                 },
                 child: Text('boot'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.sleep();
@@ -254,12 +254,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('sleep'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.shutdown();
@@ -268,12 +268,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('shutdown'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.showChannelButton();
@@ -282,12 +282,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('showChannelButton'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.hideChannelButton();
@@ -296,12 +296,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('hideChannelButton'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.showMessenger();
@@ -310,12 +310,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('showMessenger'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.hideMessenger();
@@ -324,12 +324,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('hideMessenger'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     content = '''
@@ -353,19 +353,19 @@ class _MyAppState extends State<MyApp> {
                           showMessageToast(
                               'PlatformException: ${error.message}');
                         } catch (err) {
-                          showMessageToast(err.message);
+                          showMessageToast(err.toString());
                         }
                       },
                     );
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('openChat'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   content = '''
 {
@@ -390,14 +390,14 @@ class _MyAppState extends State<MyApp> {
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.message);
+                        showMessageToast(err.toString());
                       }
                     },
                   );
                 },
                 child: Text('track'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   content = '''
 {
@@ -431,14 +431,14 @@ class _MyAppState extends State<MyApp> {
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.message);
+                        showMessageToast(err.toString());
                       }
                     },
                   );
                 },
                 child: Text('updateUser'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   content = '';
 
@@ -453,14 +453,14 @@ class _MyAppState extends State<MyApp> {
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.message);
+                        showMessageToast(err.toString());
                       }
                     },
                   );
                 },
                 child: Text('initPushToken'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: null,
 //                 () async {
 //                   content = '''
@@ -479,14 +479,14 @@ class _MyAppState extends State<MyApp> {
 //                       } on PlatformException catch (error) {
 //                         showMessageToast('PlatformException: ${error.message}');
 //                       } catch (err) {
-//                         showMessageToast(err.message);
+//                         showMessageToast(err.toString());
 //                       }
 //                     },
 //                   );
 //                 },
                 child: Text('isChannelPushNotification'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: null,
 //              () async {
 //                   content = '''
@@ -505,14 +505,14 @@ class _MyAppState extends State<MyApp> {
 //                       } on PlatformException catch (error) {
 //                         showMessageToast('PlatformException: ${error.message}');
 //                       } catch (err) {
-//                         showMessageToast(err.message);
+//                         showMessageToast(err.toString());
 //                       }
 //                     },
 //                   );
 //                 },
                 child: Text('receivePushNotification'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: null,
 //              () async {
 //                   content = '''
@@ -531,14 +531,14 @@ class _MyAppState extends State<MyApp> {
 //                       } on PlatformException catch (error) {
 //                         showMessageToast('PlatformException: ${error.message}');
 //                       } catch (err) {
-//                         showMessageToast(err.message);
+//                         showMessageToast(err.toString());
 //                       }
 //                     },
 //                   );
 //                 },
                 child: Text('storePushNotification'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result =
@@ -548,18 +548,18 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('hasStoredPushNotification'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
-                    final result =
+                    final bool? result =
                         await ChannelTalk.openStoredPushNotification();
 
-                    if (result) {
+                    if (result!) {
                       showMessageToast('openStoredPushNotification success');
                     } else {
                       showMessageToast('openStoredPushNotification fail');
@@ -567,17 +567,17 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('openStoredPushNotification'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
-                    final result = await ChannelTalk.isBooted();
+                    final bool? result = await ChannelTalk.isBooted();
 
-                    if (result) {
+                    if (result!) {
                       showMessageToast('isBooted success');
                     } else {
                       showMessageToast('isBooted fail');
@@ -585,12 +585,12 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('isBooted'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   content = '''
 {
@@ -611,14 +611,14 @@ class _MyAppState extends State<MyApp> {
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.message);
+                        showMessageToast(err.toString());
                       }
                     },
                   );
                 },
                 child: Text('setDebugMode'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   content = '''
 {
@@ -639,14 +639,14 @@ class _MyAppState extends State<MyApp> {
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.message);
+                        showMessageToast(err.toString());
                       }
                     },
                   );
                 },
                 child: Text('setPage'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   try {
                     final result = await ChannelTalk.resetPage();
@@ -655,7 +655,7 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException catch (error) {
                     showMessageToast('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.message);
+                    showMessageToast(err.toString());
                   }
                 },
                 child: Text('resetPage'),
