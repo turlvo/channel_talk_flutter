@@ -154,11 +154,6 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       result.error("UNAVAILABLE", "Missing argument(pluginKey)", null);
       return;
     }
-    String memberHash = call.argument("memberHash");
-    if (memberHash == null || memberHash.isEmpty()) {
-      result.error("UNAVAILABLE", "Missing argument(memberHash)", null);
-      return;
-    }
 
     Profile profile = Profile.create();
     if (call.argument("email") != null) {
@@ -178,8 +173,10 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     );
 
     BootConfig bootConfig = BootConfig.create(pluginKey)
-            .setProfile(profile)
-            .setMemberHash(memberHash);
+            .setProfile(profile);
+    if (call.argument("memberHash") != null) {
+      bootConfig.setMemberHash(call.argument("memberHash"));
+    }
     if (call.argument("memberId") != null) {
       bootConfig.setMemberId(call.argument("memberId"));
     }

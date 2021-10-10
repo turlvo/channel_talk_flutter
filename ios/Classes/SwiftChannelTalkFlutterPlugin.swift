@@ -63,8 +63,7 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
 
   private func boot(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
     guard let argMaps = call.arguments as? Dictionary<String, Any>, 
-      let pluginKey = argMaps["pluginKey"] as? String,
-      let memberHash = argMaps["memberHash"] as? String else {
+      let pluginKey = argMaps["pluginKey"] as? String else {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
@@ -86,6 +85,7 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       yMargin: 23
     )
 
+    let memberHash = argMaps["memberHash"] as? String
     let memberId = argMaps["memberId"] as? String
     let trackDefaultEvent = argMaps["trackDefaultEvent"] as? Bool
     let hidePopup = argMaps["hidePopup"] as? Bool
