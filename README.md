@@ -61,7 +61,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
   # Add below line
-  pod 'ChannelIOSDK', podspec: 'https://mobile-static.channel.io/ios/9.0.1/xcframework.podspec'
+  pod 'ChannelIOSDK', podspec: 'https://mobile-static.channel.io/ios/latest/xcframework.podspec'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end

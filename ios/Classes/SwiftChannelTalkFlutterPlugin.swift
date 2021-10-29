@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-import ChannelIO
+import ChannelIOFront
 
 public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     ChannelIO.initialize(application)
