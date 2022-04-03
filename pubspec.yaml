@@ -1,6 +1,6 @@
 name: channel_talk_flutter
 description: A plugin that translates the Channel Talk SDK into a plugin for Flutter(Unofficial)
-version: 2.0.0
+version: 2.1.1
 homepage: https://github.com/turlvo/channel_talk_flutter
 
 environment:

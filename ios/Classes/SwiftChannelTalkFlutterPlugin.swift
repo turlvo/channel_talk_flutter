@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-import ChannelIO
+import ChannelIOFront
 
 public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     ChannelIO.initialize(application)
@@ -234,7 +234,7 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       .build()
 
     ChannelIO.updateUser(param: userData) { (error, user) in
-      if let _ = user, error != nil {
+      if let _ = user, user != nil {
         result(true)
       } else if let error = error {
         NSLog(error.localizedDescription)
