@@ -1,3 +1,7 @@
+## 2.2.0
+- Update Android ChannelIOSDK to 10.0.1
+- Changed toast package
+
 ## 2.1.1
 - fix updateUser SDK error
 - fix to broadcast recieved push message not for Channel Talk
