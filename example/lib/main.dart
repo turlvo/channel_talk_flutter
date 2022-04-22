@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toast/toast.dart';
 
 void main() async {
   runApp(MaterialApp(home: MyApp()));
@@ -29,16 +29,14 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ToastContext().init(context);
+  }
+
   void showMessageToast(message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 2,
-      backgroundColor: Colors.grey,
-      textColor: Colors.white,
-      fontSize: 20.0,
-    );
+    Toast.show(message, duration: Toast.lengthShort, gravity: Toast.bottom);
   }
 
   void showInputDialog(title, onClick) {

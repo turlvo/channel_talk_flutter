@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fluttertoast: ^8.0.8
+  toast: ^0.3.0
 
   channel_talk_flutter:
     # When depending on this package from a real application you should use:
