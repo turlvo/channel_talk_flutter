@@ -26,13 +26,19 @@ android {
 
     defaultConfig {
         minSdkVersion 24
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = false
+            }
+        }
     }
     lintOptions {
         disable 'InvalidPackage'
     }
 
     dependencies {
-        implementation 'io.channel:plugin-android:8.4.0'
+        implementation 'io.channel:plugin-android:10.0.1'
         implementation "com.google.firebase:firebase-messaging:20.1.0"
     }
 
