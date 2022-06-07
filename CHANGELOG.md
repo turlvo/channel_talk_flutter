@@ -1,3 +1,7 @@
+## 2.3.1
+- Update Android ChannelIOSDK to 10.0.3
+- Sync minor version with V1
+
 ## 2.2.0
 - Update Android ChannelIOSDK to 10.0.1
 - Changed toast package
