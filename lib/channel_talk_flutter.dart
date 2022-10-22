@@ -12,7 +12,7 @@ class ChannelTalk {
 
   static Future<bool?> boot({
     required String pluginKey,
-    required String memberHash,
+    String? memberHash,
     String? memberId,
     String? email,
     String? name,
@@ -23,9 +23,11 @@ class ChannelTalk {
   }) {
     Map<String, dynamic> config = {
       'pluginKey': pluginKey,
-      'memberHash': memberHash,
     };
 
+    if (memberHash != null) {
+      config['memberHash'] = memberHash;
+    }
     if (memberId != null) {
       config['memberId'] = memberId;
     }
