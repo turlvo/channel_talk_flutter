@@ -27,11 +27,6 @@ android {
     defaultConfig {
         minSdkVersion 24
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                includeCompileClasspath = false
-            }
-        }
     }
     lintOptions {
         disable 'InvalidPackage'
