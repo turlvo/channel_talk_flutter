@@ -1,3 +1,7 @@
+## 2.4.0
+- Update Android ChannelIOSDK to 10.0.5
+- Removed memberHash from required fields.
+
 ## 2.3.1+1
 - Fix android build gradle error
 
