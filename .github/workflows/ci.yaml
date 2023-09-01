@@ -2,7 +2,7 @@ name: Run analyze and test
 on:
   pull_request:
     types:
-      # - ready_for_review
+      - ready_for_review
       - synchronize
 jobs:
   analyze_and_test:
