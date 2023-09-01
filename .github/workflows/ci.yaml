@@ -1,0 +1,24 @@
+name: Run analyze and test
+on:
+  pull_request:
+    types:
+      # - ready_for_review
+      - synchronize
+jobs:
+  analyze_and_test:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: kuhnroyal/flutter-fvm-config-action@v1
+        id: fvm-config-action
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
+          channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
+      - run: |
+        flutter doctor -v
+        flutter pub get
+        flutter analyze
+        flutter test
