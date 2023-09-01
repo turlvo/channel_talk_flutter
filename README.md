@@ -1,4 +1,4 @@
-# channel_talk
+# channel_talk_flutter_plus
 
 Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)
 

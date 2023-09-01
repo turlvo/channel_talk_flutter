@@ -1,6 +1,6 @@
+import 'package:channel_talk_flutter_plus/channel_talk_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('channel_talk');
