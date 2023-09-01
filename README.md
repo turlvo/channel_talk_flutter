@@ -1,8 +1,11 @@
-# channel_talk_flutter
+# channel_talk
 
 Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)
 
+forked from [channel_talk_flutter](https://github.com/turlvo/channel_talk_flutter)
+
 ## Usage
+
 ```dart
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
@@ -40,6 +43,7 @@ See Channel Talk Android and iOS package documentation for more information.
 ### iOS
 
 Update info.plist.
+
 ```xml
 <key>NSCameraUsageDescription</key>
 <string>Accessing to camera in order to provide better user experience</string>
@@ -56,6 +60,7 @@ Update info.plist.
 
 Add pod installation to 'ios/Podfile'.
 (Because there is no latest 'ChannelIOSDK' pod in Cocopod, can not add dependecy to plugin podspec properly.)
+
 ```
 target 'Runner' do
   use_frameworks!
@@ -67,15 +72,15 @@ target 'Runner' do
 end
 ```
 
-
 ### Android
 
 #### Push notifications in combination with FCM
+
 This plugin works in combination with the [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) plugin to receive Push Notifications. To set this up:
 
-* First, implement [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) and check if it works: https://pub.dev/packages/firebase_messaging#android-integration
-* Then, add the Firebase server key to Channel Talk, as described here: https://developers.channel.io/docs/android-push-notification
-* Add the following to your  `AndroidManifest.xml` file, so incoming messages are handled by Channel Talk:
+- First, implement [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) and check if it works: https://pub.dev/packages/firebase_messaging#android-integration
+- Then, add the Firebase server key to Channel Talk, as described here: https://developers.channel.io/docs/android-push-notification
+- Add the following to your `AndroidManifest.xml` file, so incoming messages are handled by Channel Talk:
 
 ```
     <service
@@ -89,4 +94,3 @@ This plugin works in combination with the [`firebase_messaging`](https://pub.dev
 ```
 
 just above the closing `</application>` tag.
-
