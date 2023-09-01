@@ -17,8 +17,7 @@ jobs:
         with:
           flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
-      - run: |
-        flutter doctor -v
-        flutter pub get
-        flutter analyze
-        flutter test
+      - run: flutter doctor -v
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
