@@ -1,20 +1,22 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:channel_talk_flutter_plus/channel_talk_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 import 'package:toast/toast.dart';
 
 void main() async {
-  runApp(MaterialApp(home: MyApp()));
+  runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   String content = '';
   TextEditingController contentInputController = TextEditingController();
 
@@ -46,13 +48,13 @@ class _MyAppState extends State<MyApp> {
       builder: (BuildContext ctx) {
         return Dialog(
           elevation: 0.0,
-          insetPadding: EdgeInsets.symmetric(
+          insetPadding: const EdgeInsets.symmetric(
             horizontal: 24.0,
             vertical: 24.0,
           ),
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               top: 40,
               right: 32,
               bottom: 32,
@@ -62,10 +64,10 @@ class _MyAppState extends State<MyApp> {
               color: Colors.white,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(32),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
-                  offset: const Offset(0.0, 12.0),
+                  offset: Offset(0.0, 12.0),
                   blurRadius: 24.0,
                 ),
               ],
@@ -78,13 +80,13 @@ class _MyAppState extends State<MyApp> {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0XFF1A1A1A),
                       fontSize: 17,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.withOpacity(0.5)),
@@ -93,7 +95,7 @@ class _MyAppState extends State<MyApp> {
                     child: TextField(
                       controller: contentInputController,
                       maxLines: null,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 16,
@@ -112,7 +114,7 @@ class _MyAppState extends State<MyApp> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -122,7 +124,7 @@ class _MyAppState extends State<MyApp> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Color.fromRGBO(214, 227, 255, 1.0),
+                              color: const Color.fromRGBO(214, 227, 255, 1.0),
                               width: 2.0,
                               style: BorderStyle.solid,
                             ),
@@ -131,7 +133,7 @@ class _MyAppState extends State<MyApp> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Cancel',
                               maxLines: 1,
                               style: TextStyle(
@@ -143,14 +145,14 @@ class _MyAppState extends State<MyApp> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 11),
+                      const SizedBox(width: 11),
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(92, 145, 255, 1.0),
+                            color: const Color.fromRGBO(92, 145, 255, 1.0),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Color.fromRGBO(92, 145, 255, 1.0),
+                              color: const Color.fromRGBO(92, 145, 255, 1.0),
                               width: 2.0,
                               style: BorderStyle.solid,
                             ),
@@ -163,7 +165,7 @@ class _MyAppState extends State<MyApp> {
                                 content = '';
                               }
                             },
-                            child: Text(
+                            child: const Text(
                               'OK',
                               maxLines: 1,
                               style: TextStyle(
@@ -194,12 +196,12 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 50,
           ),
           child: ListView(
             children: <Widget>[
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   content = '''
@@ -241,7 +243,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('boot'),
+                child: const Text('boot'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -255,7 +257,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('sleep'),
+                child: const Text('sleep'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -269,7 +271,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('shutdown'),
+                child: const Text('shutdown'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -283,7 +285,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('showChannelButton'),
+                child: const Text('showChannelButton'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -297,7 +299,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('hideChannelButton'),
+                child: const Text('hideChannelButton'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -311,7 +313,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('showMessenger'),
+                child: const Text('showMessenger'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -325,7 +327,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('hideMessenger'),
+                child: const Text('hideMessenger'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -361,7 +363,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('openChat'),
+                child: const Text('openChat'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -393,7 +395,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('track'),
+                child: const Text('track'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -434,7 +436,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('updateUser'),
+                child: const Text('updateUser'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -456,9 +458,9 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('initPushToken'),
+                child: const Text('initPushToken'),
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
 //                 () async {
 //                   content = '''
@@ -484,7 +486,7 @@ class _MyAppState extends State<MyApp> {
 //                 },
                 child: Text('isChannelPushNotification'),
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
 //              () async {
 //                   content = '''
@@ -510,7 +512,7 @@ class _MyAppState extends State<MyApp> {
 //                 },
                 child: Text('receivePushNotification'),
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
 //              () async {
 //                   content = '''
@@ -549,7 +551,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('hasStoredPushNotification'),
+                child: const Text('hasStoredPushNotification'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -568,7 +570,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('openStoredPushNotification'),
+                child: const Text('openStoredPushNotification'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -586,7 +588,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('isBooted'),
+                child: const Text('isBooted'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -614,7 +616,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('setDebugMode'),
+                child: const Text('setDebugMode'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -642,7 +644,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('setPage'),
+                child: const Text('setPage'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -656,7 +658,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('resetPage'),
+                child: const Text('resetPage'),
               ),
             ],
           ),

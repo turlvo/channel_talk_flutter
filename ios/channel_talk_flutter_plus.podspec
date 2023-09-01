@@ -3,7 +3,7 @@
 # Run `pod lib lint channel_talk.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'channel_talk_flutter'
+  s.name             = 'channel_talk_flutter_plus'
   s.version          = '2.4.0'
   s.summary          = 'A Channel Talk flutter plugin project.(Unofficial)'
   s.description      = <<-DESC
