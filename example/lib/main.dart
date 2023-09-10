@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:channel_talk_flutter_plus/channel_talk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:toast/toast.dart';
 
 void main() async {
   runApp(const MaterialApp(home: MyApp()));
@@ -34,12 +33,10 @@ class MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ToastContext().init(context);
   }
 
-  void showMessageToast(message) {
-    Toast.show(message, duration: Toast.lengthShort, gravity: Toast.bottom);
-  }
+  void showSnackBar(String message) => ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text(message)));
 
   void showInputDialog(title, onClick) {
     contentInputController.text = content;
@@ -234,11 +231,11 @@ class MyAppState extends State<MyApp> {
                           language: args['language'],
                         );
 
-                        showMessageToast('Result: $result');
+                        showSnackBar('Result: $result');
                       } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
+                        showSnackBar('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.toString());
+                        showSnackBar(err.toString());
                       }
                     },
                   );
@@ -250,11 +247,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.sleep();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('sleep'),
@@ -264,11 +261,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.shutdown();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('shutdown'),
@@ -278,11 +275,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.showChannelButton();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('showChannelButton'),
@@ -292,11 +289,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.hideChannelButton();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('hideChannelButton'),
@@ -306,11 +303,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.showMessenger();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('showMessenger'),
@@ -320,11 +317,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.hideMessenger();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('hideMessenger'),
@@ -348,19 +345,18 @@ class MyAppState extends State<MyApp> {
                             message: args['message'],
                           );
 
-                          showMessageToast('Result: $result');
+                          showSnackBar('Result: $result');
                         } on PlatformException catch (error) {
-                          showMessageToast(
-                              'PlatformException: ${error.message}');
+                          showSnackBar('PlatformException: ${error.message}');
                         } catch (err) {
-                          showMessageToast(err.toString());
+                          showSnackBar(err.toString());
                         }
                       },
                     );
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('openChat'),
@@ -386,11 +382,11 @@ class MyAppState extends State<MyApp> {
                           properties: args['properties'],
                         );
 
-                        showMessageToast('Result: $result');
+                        showSnackBar('Result: $result');
                       } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
+                        showSnackBar('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.toString());
+                        showSnackBar(err.toString());
                       }
                     },
                   );
@@ -427,11 +423,11 @@ class MyAppState extends State<MyApp> {
                           tags: List<String>.from(args['tags']),
                         );
 
-                        showMessageToast('Result: $result');
+                        showSnackBar('Result: $result');
                       } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
+                        showSnackBar('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.toString());
+                        showSnackBar(err.toString());
                       }
                     },
                   );
@@ -449,11 +445,11 @@ class MyAppState extends State<MyApp> {
                         final result = await ChannelTalk.initPushToken(
                             deviceToken: content);
 
-                        showMessageToast('Result: $result');
+                        showSnackBar('Result: $result');
                       } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
+                        showSnackBar('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.toString());
+                        showSnackBar(err.toString());
                       }
                     },
                   );
@@ -544,11 +540,11 @@ class MyAppState extends State<MyApp> {
                     final result =
                         await ChannelTalk.hasStoredPushNotification();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('hasStoredPushNotification'),
@@ -560,14 +556,14 @@ class MyAppState extends State<MyApp> {
                         await ChannelTalk.openStoredPushNotification();
 
                     if (result!) {
-                      showMessageToast('openStoredPushNotification success');
+                      showSnackBar('openStoredPushNotification success');
                     } else {
-                      showMessageToast('openStoredPushNotification fail');
+                      showSnackBar('openStoredPushNotification fail');
                     }
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('openStoredPushNotification'),
@@ -578,14 +574,14 @@ class MyAppState extends State<MyApp> {
                     final bool? result = await ChannelTalk.isBooted();
 
                     if (result!) {
-                      showMessageToast('isBooted success');
+                      showSnackBar('isBooted success');
                     } else {
-                      showMessageToast('isBooted fail');
+                      showSnackBar('isBooted fail');
                     }
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('isBooted'),
@@ -607,11 +603,11 @@ class MyAppState extends State<MyApp> {
                         final result =
                             await ChannelTalk.setDebugMode(flag: args['flag']);
 
-                        showMessageToast('Result: $result');
+                        showSnackBar('Result: $result');
                       } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
+                        showSnackBar('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.toString());
+                        showSnackBar(err.toString());
                       }
                     },
                   );
@@ -635,11 +631,11 @@ class MyAppState extends State<MyApp> {
                         final result =
                             await ChannelTalk.setPage(page: args['page']);
 
-                        showMessageToast('Result: $result');
+                        showSnackBar('Result: $result');
                       } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
+                        showSnackBar('PlatformException: ${error.message}');
                       } catch (err) {
-                        showMessageToast(err.toString());
+                        showSnackBar(err.toString());
                       }
                     },
                   );
@@ -651,11 +647,11 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result = await ChannelTalk.resetPage();
 
-                    showMessageToast('Result: $result');
+                    showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
-                    showMessageToast('PlatformException: ${error.message}');
+                    showSnackBar('PlatformException: ${error.message}');
                   } catch (err) {
-                    showMessageToast(err.toString());
+                    showSnackBar(err.toString());
                   }
                 },
                 child: const Text('resetPage'),
