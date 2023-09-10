@@ -36,7 +36,10 @@ class MyAppState extends State<MyApp> {
   void showSnackBar(String message) => ScaffoldMessenger.of(context)
       .showSnackBar(SnackBar(content: Text(message)));
 
-  void showInputDialog(title, onClick) {
+  void showInputDialog({
+    required String title,
+    required VoidCallback onOkPressed,
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -154,10 +157,8 @@ class MyAppState extends State<MyApp> {
                           child: TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                              if (onClick != null) {
-                                onClick();
-                                content = '';
-                              }
+                              onOkPressed();
+                              content = '';
                             },
                             child: const Text(
                               'OK',
@@ -185,14 +186,10 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Channel Talk Plugin Test'),
-      ),
+      appBar: AppBar(title: const Text('Example')),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 50,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListView(
             children: <Widget>[
               const SizedBox(height: 20),
@@ -212,8 +209,8 @@ class MyAppState extends State<MyApp> {
 }
                             ''';
                   showInputDialog(
-                    'boot payload',
-                    () async {
+                    title: 'boot payload',
+                    onOkPressed: () async {
                       try {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.boot(
@@ -333,8 +330,8 @@ class MyAppState extends State<MyApp> {
 }
                             ''';
                     showInputDialog(
-                      'openChat payload',
-                      () async {
+                      title: 'openChat payload',
+                      onOkPressed: () async {
                         try {
                           Map args = json.decode(content);
                           final result = await ChannelTalk.openChat(
@@ -370,8 +367,8 @@ class MyAppState extends State<MyApp> {
 }
                             ''';
                   showInputDialog(
-                    'track payload',
-                    () async {
+                    title: 'track payload',
+                    onOkPressed: () async {
                       try {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.track(
@@ -406,8 +403,8 @@ class MyAppState extends State<MyApp> {
 }
                             ''';
                   showInputDialog(
-                    'updateUser payload',
-                    () async {
+                    title: 'updateUser payload',
+                    onOkPressed: () async {
                       try {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.updateUser(
@@ -434,10 +431,9 @@ class MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   content = '';
-
                   showInputDialog(
-                    'initPushToken payload',
-                    () async {
+                    title: 'initPushToken payload',
+                    onOkPressed: () async {
                       try {
                         final result = await ChannelTalk.initPushToken(
                             deviceToken: content);
@@ -459,7 +455,7 @@ class MyAppState extends State<MyApp> {
 //                   content = '''
 // { "content": ""}
 //                   ''';
-//                   showInputDialog(
+//                   showInputDialog(title:
 //                     'isChannelPushNotification payload',
 //                     () async {
 //                       Map args = json.decode(content);
@@ -485,7 +481,7 @@ class MyAppState extends State<MyApp> {
 //                   content = '''
 // { "content": ""}
 //                   ''';
-//                   showInputDialog(
+//                   showInputDialog(title:
 //                     'receivePushNotification payload',
 //                     () async {
 //                       Map args = json.decode(content);
@@ -511,7 +507,7 @@ class MyAppState extends State<MyApp> {
 //                   content = '''
 // { "content": ""}
 //                   ''';
-//                   showInputDialog(
+//                   showInputDialog(title:
 //                     'receivePushNotification payload',
 //                     () async {
 //                       Map args = json.decode(content);
@@ -592,8 +588,8 @@ class MyAppState extends State<MyApp> {
                   ''';
 
                   showInputDialog(
-                    'initPushToken payload',
-                    () async {
+                    title: 'initPushToken payload',
+                    onOkPressed: () async {
                       Map args = json.decode(content);
 
                       try {
@@ -620,8 +616,8 @@ class MyAppState extends State<MyApp> {
                   ''';
 
                   showInputDialog(
-                    'page payload',
-                    () async {
+                    title: 'page payload',
+                    onOkPressed: () async {
                       Map args = json.decode(content);
 
                       try {
