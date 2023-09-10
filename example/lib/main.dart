@@ -36,150 +36,45 @@ class MyAppState extends State<MyApp> {
   void showSnackBar(String message) => ScaffoldMessenger.of(context)
       .showSnackBar(SnackBar(content: Text(message)));
 
-  void showInputDialog({
-    required String title,
-    required VoidCallback onOkPressed,
-  }) {
+  void showInputDialog({required String title, required VoidCallback onOk}) {
     showDialog(
       context: context,
-      builder: (BuildContext ctx) {
-        return Dialog(
-          elevation: 0.0,
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: 24.0,
-            vertical: 24.0,
-          ),
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.only(
-              top: 40,
-              right: 32,
-              bottom: 32,
-              left: 32,
+      builder: (_) => AlertDialog(
+        title: Text(title, textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextFormField(
+              initialValue: content,
+              maxLines: null,
+              decoration: const InputDecoration(border: OutlineInputBorder()),
+              textInputAction: TextInputAction.newline,
+              autocorrect: false,
+              enableSuggestions: false,
+              onChanged: (text) => content = text,
             ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0.0, 12.0),
-                  blurRadius: 24.0,
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(width: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onOk();
+                    content = '';
+                  },
+                  child: const Text('OK'),
                 ),
               ],
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0XFF1A1A1A),
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextFormField(
-                      initialValue: content,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(
-                          fontSize: 15,
-                          color: Color(0XFF9E9E9E),
-                        ),
-                      ),
-                      textInputAction: TextInputAction.newline,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      onChanged: (text) {
-                        content = text;
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: const Color.fromRGBO(214, 227, 255, 1.0),
-                              width: 2.0,
-                              style: BorderStyle.solid,
-                            ),
-                          ),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Cancel',
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: Color.fromRGBO(136, 157, 201, 1.0),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 11),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(92, 145, 255, 1.0),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: const Color.fromRGBO(92, 145, 255, 1.0),
-                              width: 2.0,
-                              style: BorderStyle.solid,
-                            ),
-                          ),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              onOkPressed();
-                              content = '';
-                            },
-                            child: const Text(
-                              'OK',
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
@@ -210,7 +105,7 @@ class MyAppState extends State<MyApp> {
                             ''';
                   showInputDialog(
                     title: 'boot payload',
-                    onOkPressed: () async {
+                    onOk: () async {
                       try {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.boot(
@@ -331,7 +226,7 @@ class MyAppState extends State<MyApp> {
                             ''';
                     showInputDialog(
                       title: 'openChat payload',
-                      onOkPressed: () async {
+                      onOk: () async {
                         try {
                           Map args = json.decode(content);
                           final result = await ChannelTalk.openChat(
@@ -368,7 +263,7 @@ class MyAppState extends State<MyApp> {
                             ''';
                   showInputDialog(
                     title: 'track payload',
-                    onOkPressed: () async {
+                    onOk: () async {
                       try {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.track(
@@ -404,7 +299,7 @@ class MyAppState extends State<MyApp> {
                             ''';
                   showInputDialog(
                     title: 'updateUser payload',
-                    onOkPressed: () async {
+                    onOk: () async {
                       try {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.updateUser(
@@ -433,7 +328,7 @@ class MyAppState extends State<MyApp> {
                   content = '';
                   showInputDialog(
                     title: 'initPushToken payload',
-                    onOkPressed: () async {
+                    onOk: () async {
                       try {
                         final result = await ChannelTalk.initPushToken(
                             deviceToken: content);
@@ -589,7 +484,7 @@ class MyAppState extends State<MyApp> {
 
                   showInputDialog(
                     title: 'initPushToken payload',
-                    onOkPressed: () async {
+                    onOk: () async {
                       Map args = json.decode(content);
 
                       try {
@@ -617,7 +512,7 @@ class MyAppState extends State<MyApp> {
 
                   showInputDialog(
                     title: 'page payload',
-                    onOkPressed: () async {
+                    onOk: () async {
                       Map args = json.decode(content);
 
                       try {
