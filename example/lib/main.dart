@@ -4,7 +4,7 @@ import 'package:channel_talk_flutter_plus/channel_talk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main() async {
+void main() {
   runApp(const MaterialApp(home: MyApp()));
 }
 
@@ -116,7 +116,6 @@ class MyAppState extends State<MyApp> {
                       hidePopup: args['hidePopup'],
                       language: args['language'],
                     );
-
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
                     showSnackBar('PlatformException: ${error.message}');
@@ -132,7 +131,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.sleep();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -146,7 +144,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.shutdown();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -160,7 +157,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.showChannelButton();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -174,7 +170,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.hideChannelButton();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -188,7 +183,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.showMessenger();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -202,7 +196,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.hideMessenger();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -308,7 +301,6 @@ class MyAppState extends State<MyApp> {
                       language: args['language'],
                       tags: List<String>.from(args['tags']),
                     );
-
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
                     showSnackBar('PlatformException: ${error.message}');
@@ -329,7 +321,6 @@ class MyAppState extends State<MyApp> {
                   try {
                     final result =
                         await ChannelTalk.initPushToken(deviceToken: content);
-
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
                     showSnackBar('PlatformException: ${error.message}');
@@ -423,7 +414,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final result = await ChannelTalk.hasStoredPushNotification();
-
                 showSnackBar('Result: $result');
               } on PlatformException catch (error) {
                 showSnackBar('PlatformException: ${error.message}');
@@ -438,7 +428,6 @@ class MyAppState extends State<MyApp> {
               try {
                 final bool? result =
                     await ChannelTalk.openStoredPushNotification();
-
                 if (result!) {
                   showSnackBar('openStoredPushNotification success');
                 } else {
@@ -456,7 +445,6 @@ class MyAppState extends State<MyApp> {
             onPressed: () async {
               try {
                 final bool? result = await ChannelTalk.isBooted();
-
                 if (result!) {
                   showSnackBar('isBooted success');
                 } else {
@@ -477,16 +465,13 @@ class MyAppState extends State<MyApp> {
   "flag": true
 }
               ''';
-
               showInputDialog(
                 title: 'initPushToken payload',
                 onOk: () async {
                   Map args = json.decode(content);
-
                   try {
                     final result =
                         await ChannelTalk.setDebugMode(flag: args['flag']);
-
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
                     showSnackBar('PlatformException: ${error.message}');
@@ -510,11 +495,9 @@ class MyAppState extends State<MyApp> {
                 title: 'page payload',
                 onOk: () async {
                   Map args = json.decode(content);
-
                   try {
                     final result =
                         await ChannelTalk.setPage(page: args['page']);
-
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
                     showSnackBar('PlatformException: ${error.message}');
