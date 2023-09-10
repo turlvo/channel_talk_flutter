@@ -82,15 +82,12 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Example')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ListView(
-            children: <Widget>[
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  content = '''
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () async {
+              content = '''
 {
   "pluginKey": "",
   "email": "",
@@ -102,39 +99,23 @@ class MyAppState extends State<MyApp> {
   "hidePopup": false,
   "language": "english"
 }
-                            ''';
-                  showInputDialog(
-                    title: 'boot payload',
-                    onOk: () async {
-                      try {
-                        Map args = json.decode(content);
-                        final result = await ChannelTalk.boot(
-                          pluginKey: args['pluginKey'],
-                          memberId: args['memberId'],
-                          email: args['email'],
-                          name: args['name'],
-                          memberHash: args['memberHash'],
-                          mobileNumber: args['mobileNumber'],
-                          trackDefaultEvent: args['trackDefaultEvent'],
-                          hidePopup: args['hidePopup'],
-                          language: args['language'],
-                        );
-
-                        showSnackBar('Result: $result');
-                      } on PlatformException catch (error) {
-                        showSnackBar('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showSnackBar(err.toString());
-                      }
-                    },
-                  );
-                },
-                child: const Text('boot'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
+                        ''';
+              showInputDialog(
+                title: 'boot payload',
+                onOk: () async {
                   try {
-                    final result = await ChannelTalk.sleep();
+                    Map args = json.decode(content);
+                    final result = await ChannelTalk.boot(
+                      pluginKey: args['pluginKey'],
+                      memberId: args['memberId'],
+                      email: args['email'],
+                      name: args['name'],
+                      memberHash: args['memberHash'],
+                      mobileNumber: args['mobileNumber'],
+                      trackDefaultEvent: args['trackDefaultEvent'],
+                      hidePopup: args['hidePopup'],
+                      language: args['language'],
+                    );
 
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
@@ -143,116 +124,132 @@ class MyAppState extends State<MyApp> {
                     showSnackBar(err.toString());
                   }
                 },
-                child: const Text('sleep'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final result = await ChannelTalk.shutdown();
+              );
+            },
+            child: const Text('boot'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.sleep();
 
-                    showSnackBar('Result: $result');
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('shutdown'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final result = await ChannelTalk.showChannelButton();
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('sleep'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.shutdown();
 
-                    showSnackBar('Result: $result');
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('showChannelButton'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final result = await ChannelTalk.hideChannelButton();
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('shutdown'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.showChannelButton();
 
-                    showSnackBar('Result: $result');
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('hideChannelButton'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final result = await ChannelTalk.showMessenger();
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('showChannelButton'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.hideChannelButton();
 
-                    showSnackBar('Result: $result');
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('showMessenger'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final result = await ChannelTalk.hideMessenger();
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('hideChannelButton'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.showMessenger();
 
-                    showSnackBar('Result: $result');
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('hideMessenger'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    content = '''
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('showMessenger'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.hideMessenger();
+
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('hideMessenger'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                content = '''
 {
   "chatId": "",
   "message": ""
 }
-                            ''';
-                    showInputDialog(
-                      title: 'openChat payload',
-                      onOk: () async {
-                        try {
-                          Map args = json.decode(content);
-                          final result = await ChannelTalk.openChat(
-                            chatId: args['chatId'],
-                            message: args['message'],
-                          );
+                        ''';
+                showInputDialog(
+                  title: 'openChat payload',
+                  onOk: () async {
+                    try {
+                      Map args = json.decode(content);
+                      final result = await ChannelTalk.openChat(
+                        chatId: args['chatId'],
+                        message: args['message'],
+                      );
 
-                          showSnackBar('Result: $result');
-                        } on PlatformException catch (error) {
-                          showSnackBar('PlatformException: ${error.message}');
-                        } catch (err) {
-                          showSnackBar(err.toString());
-                        }
-                      },
-                    );
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('openChat'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  content = '''
+                      showSnackBar('Result: $result');
+                    } on PlatformException catch (error) {
+                      showSnackBar('PlatformException: ${error.message}');
+                    } catch (err) {
+                      showSnackBar(err.toString());
+                    }
+                  },
+                );
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('openChat'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              content = '''
 {
   "eventName": "",
   "properties": {
@@ -260,31 +257,31 @@ class MyAppState extends State<MyApp> {
     "key2": "val2"
   }
 }
-                            ''';
-                  showInputDialog(
-                    title: 'track payload',
-                    onOk: () async {
-                      try {
-                        Map args = json.decode(content);
-                        final result = await ChannelTalk.track(
-                          eventName: args['eventName'],
-                          properties: args['properties'],
-                        );
+                        ''';
+              showInputDialog(
+                title: 'track payload',
+                onOk: () async {
+                  try {
+                    Map args = json.decode(content);
+                    final result = await ChannelTalk.track(
+                      eventName: args['eventName'],
+                      properties: args['properties'],
+                    );
 
-                        showSnackBar('Result: $result');
-                      } on PlatformException catch (error) {
-                        showSnackBar('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showSnackBar(err.toString());
-                      }
-                    },
-                  );
+                    showSnackBar('Result: $result');
+                  } on PlatformException catch (error) {
+                    showSnackBar('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showSnackBar(err.toString());
+                  }
                 },
-                child: const Text('track'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  content = '''
+              );
+            },
+            child: const Text('track'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              content = '''
 {
   "name": "",
   "mobileNumber": "",
@@ -296,56 +293,56 @@ class MyAppState extends State<MyApp> {
   "language": "english",
   "tags": []
 }
-                            ''';
-                  showInputDialog(
-                    title: 'updateUser payload',
-                    onOk: () async {
-                      try {
-                        Map args = json.decode(content);
-                        final result = await ChannelTalk.updateUser(
-                          name: args['name'],
-                          mobileNumber: args['mobileNumber'],
-                          email: args['email'],
-                          avatarUrl: args['avatarUrl'],
-                          customAttributes: args['customAttributes'],
-                          language: args['language'],
-                          tags: List<String>.from(args['tags']),
-                        );
+                        ''';
+              showInputDialog(
+                title: 'updateUser payload',
+                onOk: () async {
+                  try {
+                    Map args = json.decode(content);
+                    final result = await ChannelTalk.updateUser(
+                      name: args['name'],
+                      mobileNumber: args['mobileNumber'],
+                      email: args['email'],
+                      avatarUrl: args['avatarUrl'],
+                      customAttributes: args['customAttributes'],
+                      language: args['language'],
+                      tags: List<String>.from(args['tags']),
+                    );
 
-                        showSnackBar('Result: $result');
-                      } on PlatformException catch (error) {
-                        showSnackBar('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showSnackBar(err.toString());
-                      }
-                    },
-                  );
+                    showSnackBar('Result: $result');
+                  } on PlatformException catch (error) {
+                    showSnackBar('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showSnackBar(err.toString());
+                  }
                 },
-                child: const Text('updateUser'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  content = '';
-                  showInputDialog(
-                    title: 'initPushToken payload',
-                    onOk: () async {
-                      try {
-                        final result = await ChannelTalk.initPushToken(
-                            deviceToken: content);
+              );
+            },
+            child: const Text('updateUser'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              content = '';
+              showInputDialog(
+                title: 'initPushToken payload',
+                onOk: () async {
+                  try {
+                    final result =
+                        await ChannelTalk.initPushToken(deviceToken: content);
 
-                        showSnackBar('Result: $result');
-                      } on PlatformException catch (error) {
-                        showSnackBar('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showSnackBar(err.toString());
-                      }
-                    },
-                  );
+                    showSnackBar('Result: $result');
+                  } on PlatformException catch (error) {
+                    showSnackBar('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showSnackBar(err.toString());
+                  }
                 },
-                child: const Text('initPushToken'),
-              ),
-              const ElevatedButton(
-                onPressed: null,
+              );
+            },
+            child: const Text('initPushToken'),
+          ),
+          const ElevatedButton(
+            onPressed: null,
 //                 () async {
 //                   content = '''
 // { "content": ""}
@@ -368,10 +365,10 @@ class MyAppState extends State<MyApp> {
 //                     },
 //                   );
 //                 },
-                child: Text('isChannelPushNotification'),
-              ),
-              const ElevatedButton(
-                onPressed: null,
+            child: Text('isChannelPushNotification'),
+          ),
+          const ElevatedButton(
+            onPressed: null,
 //              () async {
 //                   content = '''
 // { "content": ""}
@@ -394,10 +391,10 @@ class MyAppState extends State<MyApp> {
 //                     },
 //                   );
 //                 },
-                child: Text('receivePushNotification'),
-              ),
-              const ElevatedButton(
-                onPressed: null,
+            child: Text('receivePushNotification'),
+          ),
+          const ElevatedButton(
+            onPressed: null,
 //              () async {
 //                   content = '''
 // { "content": ""}
@@ -420,120 +417,75 @@ class MyAppState extends State<MyApp> {
 //                     },
 //                   );
 //                 },
-                child: Text('storePushNotification'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final result =
-                        await ChannelTalk.hasStoredPushNotification();
+            child: Text('storePushNotification'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.hasStoredPushNotification();
 
-                    showSnackBar('Result: $result');
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('hasStoredPushNotification'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final bool? result =
-                        await ChannelTalk.openStoredPushNotification();
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('hasStoredPushNotification'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final bool? result =
+                    await ChannelTalk.openStoredPushNotification();
 
-                    if (result!) {
-                      showSnackBar('openStoredPushNotification success');
-                    } else {
-                      showSnackBar('openStoredPushNotification fail');
-                    }
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('openStoredPushNotification'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final bool? result = await ChannelTalk.isBooted();
+                if (result!) {
+                  showSnackBar('openStoredPushNotification success');
+                } else {
+                  showSnackBar('openStoredPushNotification fail');
+                }
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('openStoredPushNotification'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final bool? result = await ChannelTalk.isBooted();
 
-                    if (result!) {
-                      showSnackBar('isBooted success');
-                    } else {
-                      showSnackBar('isBooted fail');
-                    }
-                  } on PlatformException catch (error) {
-                    showSnackBar('PlatformException: ${error.message}');
-                  } catch (err) {
-                    showSnackBar(err.toString());
-                  }
-                },
-                child: const Text('isBooted'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  content = '''
+                if (result!) {
+                  showSnackBar('isBooted success');
+                } else {
+                  showSnackBar('isBooted fail');
+                }
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('isBooted'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              content = '''
 {
   "flag": true
 }
-                  ''';
+              ''';
 
-                  showInputDialog(
-                    title: 'initPushToken payload',
-                    onOk: () async {
-                      Map args = json.decode(content);
+              showInputDialog(
+                title: 'initPushToken payload',
+                onOk: () async {
+                  Map args = json.decode(content);
 
-                      try {
-                        final result =
-                            await ChannelTalk.setDebugMode(flag: args['flag']);
-
-                        showSnackBar('Result: $result');
-                      } on PlatformException catch (error) {
-                        showSnackBar('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showSnackBar(err.toString());
-                      }
-                    },
-                  );
-                },
-                child: const Text('setDebugMode'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  content = '''
-{
-  "page": "Custom Value"
-}
-                  ''';
-
-                  showInputDialog(
-                    title: 'page payload',
-                    onOk: () async {
-                      Map args = json.decode(content);
-
-                      try {
-                        final result =
-                            await ChannelTalk.setPage(page: args['page']);
-
-                        showSnackBar('Result: $result');
-                      } on PlatformException catch (error) {
-                        showSnackBar('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showSnackBar(err.toString());
-                      }
-                    },
-                  );
-                },
-                child: const Text('setPage'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
                   try {
-                    final result = await ChannelTalk.resetPage();
+                    final result =
+                        await ChannelTalk.setDebugMode(flag: args['flag']);
 
                     showSnackBar('Result: $result');
                   } on PlatformException catch (error) {
@@ -542,11 +494,53 @@ class MyAppState extends State<MyApp> {
                     showSnackBar(err.toString());
                   }
                 },
-                child: const Text('resetPage'),
-              ),
-            ],
+              );
+            },
+            child: const Text('setDebugMode'),
           ),
-        ),
+          ElevatedButton(
+            onPressed: () async {
+              content = '''
+{
+  "page": "Custom Value"
+}
+              ''';
+
+              showInputDialog(
+                title: 'page payload',
+                onOk: () async {
+                  Map args = json.decode(content);
+
+                  try {
+                    final result =
+                        await ChannelTalk.setPage(page: args['page']);
+
+                    showSnackBar('Result: $result');
+                  } on PlatformException catch (error) {
+                    showSnackBar('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showSnackBar(err.toString());
+                  }
+                },
+              );
+            },
+            child: const Text('setPage'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final result = await ChannelTalk.resetPage();
+
+                showSnackBar('Result: $result');
+              } on PlatformException catch (error) {
+                showSnackBar('PlatformException: ${error.message}');
+              } catch (err) {
+                showSnackBar(err.toString());
+              }
+            },
+            child: const Text('resetPage'),
+          ),
+        ],
       ),
     );
   }
