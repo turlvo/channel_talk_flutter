@@ -17,7 +17,6 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   String content = '';
-  TextEditingController contentInputController = TextEditingController();
 
   @override
   void initState() {
@@ -26,7 +25,6 @@ class MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    contentInputController.dispose();
     super.dispose();
   }
 
@@ -39,7 +37,6 @@ class MyAppState extends State<MyApp> {
       .showSnackBar(SnackBar(content: Text(message)));
 
   void showInputDialog(title, onClick) {
-    contentInputController.text = content;
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -89,8 +86,8 @@ class MyAppState extends State<MyApp> {
                       border: Border.all(color: Colors.grey.withOpacity(0.5)),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: TextField(
-                      controller: contentInputController,
+                    child: TextFormField(
+                      initialValue: content,
                       maxLines: null,
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
