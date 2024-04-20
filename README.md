@@ -67,6 +67,23 @@ target 'Runner' do
 end
 ```
 
+Add initializing code to `[project]/ios/Runner/AppDelegate.swift`
+```
+import ChannelIOFront
+...
+
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        ...
+        ChannelIO.initialize(application)
+        ...
+    }
+...
+
+```
+
 
 ### Android
 
