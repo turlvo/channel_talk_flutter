@@ -1,3 +1,8 @@
+## 2.5.0
+- Update Android ChannelIOSDK to 11.5.0
+- Update README for latest ChannelIOSDK usage
+- Update example source
+
 ## 2.4.0
 - Update Android ChannelIOSDK to 10.0.5
 - Removed memberHash from required fields.
