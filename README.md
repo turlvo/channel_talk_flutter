@@ -49,13 +49,13 @@ Update info.plist.
 
 <key>NSPhotoLibraryAddUsageDescription</key>
 <string>Accessing to photo library in order to save photos</string>
-
+ 
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Accessing to photo library in order to provide better user experience</string>
 ```
 
-Add pod installation to 'ios/Podfile'.
-(Because there is no latest 'ChannelIOSDK' pod in Cocopod, can not add dependecy to plugin podspec properly.)
+Add pod installation to `ios/Podfile`.
+(Because there is no latest `ChannelIOSDK` pod in Cocopod, can not add dependecy to plugin podspec properly.)
 ```
 target 'Runner' do
   use_frameworks!
@@ -67,7 +67,7 @@ target 'Runner' do
 end
 ```
 
-Add initializing code to `[project]/ios/Runner/AppDelegate.swift`
+Add ChannelTalk initializing code to `[project]/ios/Runner/AppDelegate.swift`
 ```
 import ChannelIOFront
 ...
