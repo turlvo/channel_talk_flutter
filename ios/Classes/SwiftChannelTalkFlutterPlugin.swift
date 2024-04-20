@@ -2,10 +2,6 @@ import Flutter
 import UIKit
 import ChannelIOFront
 
-public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    ChannelIO.initialize(application)
-}
-
 public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "channel_talk", binaryMessenger: registrar.messenger())
@@ -62,7 +58,7 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   private func boot(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-    guard let argMaps = call.arguments as? Dictionary<String, Any>, 
+    guard let argMaps = call.arguments as? Dictionary<String, Any>,
       let pluginKey = argMaps["pluginKey"] as? String else {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
