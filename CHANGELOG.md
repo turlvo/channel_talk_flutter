@@ -1,3 +1,6 @@
+## 2.5.1
+- Changed android `minSdkVersion` to 21
+
 ## 2.5.0
 - Update Android ChannelIOSDK to 11.5.0
 - Update README for latest ChannelIOSDK usage
