@@ -1,3 +1,7 @@
+## 2.5.2
+- Update Android ChannelIOSDK to 11.6.0
+- Upgrade gradle version for release build error
+
 ## 2.5.1
 - Changed android `minSdkVersion` to 21
 
