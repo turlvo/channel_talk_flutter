@@ -1,4 +1,4 @@
-## 2.6.1
+## 2.6.2
 - Fixed iOS ChannelIOSdk version to 11.6.0
 - Added iOS Privacy Manifest
 - Added Android namespace
