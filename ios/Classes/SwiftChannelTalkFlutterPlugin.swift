@@ -3,11 +3,15 @@ import UIKit
 import ChannelIOFront
 
 public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
+  var channelTalkEventHandler : SwiftChannelTalkFlutterHandler?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "channel_talk", binaryMessenger: registrar.messenger())
     let instance = SwiftChannelTalkFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance) 
+
+    instance.channelTalkEventHandler = SwiftChannelTalkFlutterHandler(channel: channel)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -114,6 +118,7 @@ public class SwiftChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     ChannelIO.boot(with: bootConfig) { (completion, user) in
       if completion == .success, let _ = user {
         // Success
+          ChannelIO.delegate = self.channelTalkEventHandler
         result(true)
       } else {
         // Fail
