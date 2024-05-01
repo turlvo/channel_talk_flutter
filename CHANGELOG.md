@@ -1,3 +1,8 @@
+## 2.6.1
+- Fixed iOS ChannelIOSdk version to 11.6.0
+- Added iOS Privacy Manifest
+- Added Android namespace
+
 ## 2.6.0
 - Added ChannelPluginListener
 
