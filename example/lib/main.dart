@@ -72,10 +72,14 @@ class _MyAppState extends State<MyApp> {
           print('ON_POPUP_DATA_RECEIVED\nevent: $arguments}');
           // showMessageToast('ON_POPUP_DATA_RECEIVED\nevent: $arguments');
           break;
+        case ChannelTalkEvent.ON_PUSH_NOTIFICATION_CLICKED:
+          print('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments}');
+          showMessageToast('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments');
+          break;
         default:
           break;
       }
-    } );
+    });
   }
 
   void unregisterListener() {

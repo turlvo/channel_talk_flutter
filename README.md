@@ -18,6 +18,37 @@ void main() async {
         hidePopup: false,
         language: 'english',
     );
+
+    ChannelTalk.setListener((event, arguments) {
+      switch(event){
+        case ChannelTalkEvent.ON_SHOW_MESSENGER:
+          print('ON_SHOW_MESSENGER');
+          break;
+        case ChannelTalkEvent.ON_HIDE_MESSENGER:
+          print('ON_HIDE_MESSENGER');
+          break;
+        case ChannelTalkEvent.ON_CHAT_CREATED:
+          print('ON_CHAT_CREATED:\nchatId: $arguments');
+          break;
+        case ChannelTalkEvent.ON_BADGE_CHANGED:
+          print('ON_BADGE_CHANGED:\n$arguments');
+          break;
+        case ChannelTalkEvent.ON_FOLLOW_UP_CHANGED:
+          print('ON_FOLLOW_UP_CHANGED\ndata: $arguments');
+          break;
+        case ChannelTalkEvent.ON_URL_CLICKED:
+          print('ON_URL_CLICKED\nurl: $arguments');
+          break;
+        case ChannelTalkEvent.ON_POPUP_DATA_RECEIVED:
+          print('ON_POPUP_DATA_RECEIVED\nevent: $arguments}');
+          break;
+        case ChannelTalkEvent.ON_PUSH_NOTIFICATION_CLICKED:
+          print('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments}');
+        default:
+          break;
+      }
+    });
+
     runApp(App());
 }
 
