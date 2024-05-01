@@ -45,6 +45,7 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   private MethodChannel channel;
   private static Context context;
   private  Activity activity;
+  private ChannelTalkFlutterHandler channelTalkEventHandler;
 
   public static void registerWith(Application application) {
   }
@@ -55,6 +56,7 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     channel.setMethodCallHandler(this);
 
     context = flutterPluginBinding.getApplicationContext();
+    channelTalkEventHandler = new ChannelTalkFlutterHandler(channel);
 
     try {
       ChannelIO.initialize((Application) context);
@@ -194,6 +196,7 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       @Override
       public void onComplete(BootStatus bootStatus, @Nullable User user) {
         if (bootStatus == BootStatus.SUCCESS && user != null) {
+          ChannelIO.setListener(channelTalkEventHandler);
           result.success(true);
         } else {
           result.error("ERROR", "Execution failed(boot)", null);
