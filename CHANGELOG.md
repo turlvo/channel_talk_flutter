@@ -1,3 +1,6 @@
+## 2.6.0
+- Added ChannelPluginListener
+
 ## 2.5.2
 - Update Android ChannelIOSDK to 11.6.0
 - Upgrade gradle version for release build error

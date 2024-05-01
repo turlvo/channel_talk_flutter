@@ -7,7 +7,6 @@ import io.flutter.plugin.common.MethodChannel;
 
 import java.util.HashMap;
 import java.util.Map;
-import android.util.Log;
 
 class ChannelTalkFlutterHandler implements ChannelPluginListener {
     private MethodChannel channel;
@@ -39,7 +38,6 @@ class ChannelTalkFlutterHandler implements ChannelPluginListener {
         Map<String, Object> args = new HashMap<>();
         args.put("unread", unread);
         args.put("alert", alert);
-        Log.d("KuKu", "onBadgeChanged");
 
         channel.invokeMethod("onBadgeChanged", args);
     }
