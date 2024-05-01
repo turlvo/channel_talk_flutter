@@ -22,6 +22,8 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace "ai.deepnatural.channel_talk"
+
     compileSdkVersion 31
 
     defaultConfig {
