@@ -2,12 +2,65 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+typedef ChannelTalkDelegate = Function(ChannelTalkEvent event, dynamic arguments);
+
+enum ChannelTalkEvent {
+  ON_SHOW_MESSENGER,
+  ON_HIDE_MESSENGER,
+  ON_CHAT_CREATED,
+  ON_BADGE_CHANGED,
+  ON_FOLLOW_UP_CHANGED,
+  ON_URL_CLICKED,
+  ON_POPUP_DATA_RECEIVED,
+  ON_PUSH_NOTIFICATION_CLICKED, // For only Android
+}
+
+
 class ChannelTalk {
   static const MethodChannel _channel = MethodChannel('channel_talk');
+  static ChannelTalkDelegate? _channelTalkDelegate;
 
   static Future<String?> get platformVersion async {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
+  }
+
+  static void setListener(ChannelTalkDelegate delegate) {
+    _channelTalkDelegate = delegate;
+    _channel.setMethodCallHandler(_handleMethod);
+  }
+
+  // Removes the callback listener if it exists
+  static void removeListener() {
+    _channel.setMethodCallHandler(null);
+  }
+
+  static Future<dynamic> _handleMethod(MethodCall call) async {
+    final ChannelTalkDelegate? callback = _channelTalkDelegate;
+    if (callback == null) {
+      return;
+    }
+
+    switch (call.method) {
+      case 'onShowMessenger':
+        return callback(ChannelTalkEvent.ON_SHOW_MESSENGER, {});
+      case 'onHideMessenger':
+        return callback(ChannelTalkEvent.ON_HIDE_MESSENGER, {});
+      case 'onChatCreated':
+        return callback(ChannelTalkEvent.ON_CHAT_CREATED, call.arguments);
+      case 'onBadgeChanged':
+        return callback(ChannelTalkEvent.ON_BADGE_CHANGED, call.arguments);
+      case 'onFollowUpChanged':
+        return callback(ChannelTalkEvent.ON_FOLLOW_UP_CHANGED, call.arguments);
+      case 'onUrlClicked':
+        return callback(ChannelTalkEvent.ON_URL_CLICKED, call.arguments);
+      case 'onPopupDataReceived':
+        return callback(ChannelTalkEvent.ON_POPUP_DATA_RECEIVED, call.arguments);
+      case 'onPushNotificationClicked':
+        return callback(ChannelTalkEvent.ON_PUSH_NOTIFICATION_CLICKED, call.arguments);
+      default:
+        throw Exception('Not supported event');
+    }
   }
 
   static Future<bool?> boot({
