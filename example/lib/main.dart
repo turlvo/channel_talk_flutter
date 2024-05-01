@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -36,7 +38,48 @@ class _MyAppState extends State<MyApp> {
   }
 
   void showMessageToast(message) {
-    Toast.show(message, duration: Toast.lengthShort, gravity: Toast.bottom);
+    Toast.show(message, gravity: Toast.bottom);
+  }
+
+  void registerListener() {
+    ChannelTalk.setListener((event, arguments) {
+      switch(event){
+        case ChannelTalkEvent.ON_SHOW_MESSENGER:
+          print('ON_SHOW_MESSENGER');
+          showMessageToast('ON_SHOW_MESSENGER');
+          break;
+        case ChannelTalkEvent.ON_HIDE_MESSENGER:
+          print('ON_HIDE_MESSENGER');
+          showMessageToast('ON_HIDE_MESSENGER');
+          break;
+        case ChannelTalkEvent.ON_CHAT_CREATED:
+          print('ON_CHAT_CREATED:\nchatId: $arguments');
+          showMessageToast('ON_CHAT_CREATED:\nchatId: $arguments');
+          break;
+        case ChannelTalkEvent.ON_BADGE_CHANGED:
+          print('ON_BADGE_CHANGED:\n$arguments');
+          showMessageToast('ON_BADGE_CHANGED:\n$arguments');
+          break;
+        case ChannelTalkEvent.ON_FOLLOW_UP_CHANGED:
+          print('ON_FOLLOW_UP_CHANGED\ndata: $arguments');
+          showMessageToast('ON_FOLLOW_UP_CHANGED\ndata: $arguments');
+          break;
+        case ChannelTalkEvent.ON_URL_CLICKED:
+          print('ON_URL_CLICKED\nurl: $arguments');
+          showMessageToast('ON_URL_CLICKED\nurl: $arguments');
+          break;
+        case ChannelTalkEvent.ON_POPUP_DATA_RECEIVED:
+          print('ON_POPUP_DATA_RECEIVED\nevent: $arguments}');
+          // showMessageToast('ON_POPUP_DATA_RECEIVED\nevent: $arguments');
+          break;
+        default:
+          break;
+      }
+    } );
+  }
+
+  void unregisterListener() {
+    ChannelTalk.removeListener();
   }
 
   void showInputDialog(title, onClick) {
@@ -242,6 +285,34 @@ class _MyAppState extends State<MyApp> {
                   );
                 },
                 child: Text('boot'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    registerListener();
+
+                    showMessageToast('registerListener is called');
+                  } on PlatformException catch (error) {
+                    showMessageToast('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showMessageToast(err.toString());
+                  }
+                },
+                child: const Text('register listener'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    unregisterListener();
+
+                    showMessageToast('unregisterListener is called');
+                  } on PlatformException catch (error) {
+                    showMessageToast('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showMessageToast(err.toString());
+                  }
+                },
+                child: const Text('unregister listener'),
               ),
               ElevatedButton(
                 onPressed: () async {
