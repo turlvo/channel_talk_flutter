@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 
 typedef ChannelTalkDelegate = Function(ChannelTalkEvent event, dynamic arguments);
@@ -241,5 +244,12 @@ class ChannelTalk {
 
   static Future<bool?> resetPage() {
     return _channel.invokeMethod('resetPage');
+  }
+
+  static String getMemberHash({
+    required String member,
+    required String secretKey,
+}) {
+    return Hmac(sha256, Uint8List.fromList(hex.decode(secretKey))).convert(utf8.encode(member)).toString();
   }
 }
