@@ -1,19 +1,23 @@
 // ignore_for_file: avoid_print
 
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:channel_talk_flutter/channel_talk_flutter_platform_interface.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 import 'package:toast/toast.dart';
 
-void main() async {
-  runApp(MaterialApp(home: MyApp()));
+void main() {
+  runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -43,38 +47,30 @@ class _MyAppState extends State<MyApp> {
 
   void registerListener() {
     ChannelTalk.setListener((event, arguments) {
-      switch(event){
-        case ChannelTalkEvent.ON_SHOW_MESSENGER:
+      switch (event) {
+        case ChannelTalkEvent.onShowMessenger:
           print('ON_SHOW_MESSENGER');
-          showMessageToast('ON_SHOW_MESSENGER');
           break;
-        case ChannelTalkEvent.ON_HIDE_MESSENGER:
+        case ChannelTalkEvent.onHideMessenger:
           print('ON_HIDE_MESSENGER');
-          showMessageToast('ON_HIDE_MESSENGER');
           break;
-        case ChannelTalkEvent.ON_CHAT_CREATED:
+        case ChannelTalkEvent.onChatCreated:
           print('ON_CHAT_CREATED:\nchatId: $arguments');
-          showMessageToast('ON_CHAT_CREATED:\nchatId: $arguments');
           break;
-        case ChannelTalkEvent.ON_BADGE_CHANGED:
+        case ChannelTalkEvent.onBadgeChanged:
           print('ON_BADGE_CHANGED:\n$arguments');
-          showMessageToast('ON_BADGE_CHANGED:\n$arguments');
           break;
-        case ChannelTalkEvent.ON_FOLLOW_UP_CHANGED:
+        case ChannelTalkEvent.onFollowUpChanged:
           print('ON_FOLLOW_UP_CHANGED\ndata: $arguments');
-          showMessageToast('ON_FOLLOW_UP_CHANGED\ndata: $arguments');
           break;
-        case ChannelTalkEvent.ON_URL_CLICKED:
+        case ChannelTalkEvent.onUrlClicked:
           print('ON_URL_CLICKED\nurl: $arguments');
-          showMessageToast('ON_URL_CLICKED\nurl: $arguments');
           break;
-        case ChannelTalkEvent.ON_POPUP_DATA_RECEIVED:
-          print('ON_POPUP_DATA_RECEIVED\nevent: $arguments}');
-          // showMessageToast('ON_POPUP_DATA_RECEIVED\nevent: $arguments');
+        case ChannelTalkEvent.onPopupDataReceived:
+          print('ON_POPUP_DATA_RECEIVED\nevent: $arguments');
           break;
-        case ChannelTalkEvent.ON_PUSH_NOTIFICATION_CLICKED:
-          print('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments}');
-          showMessageToast('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments');
+        case ChannelTalkEvent.onPushNotificationClicked:
+          print('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments');
           break;
         default:
           break;
@@ -93,13 +89,13 @@ class _MyAppState extends State<MyApp> {
       builder: (BuildContext ctx) {
         return Dialog(
           elevation: 0.0,
-          insetPadding: EdgeInsets.symmetric(
+          insetPadding: const EdgeInsets.symmetric(
             horizontal: 24.0,
             vertical: 24.0,
           ),
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               top: 40,
               right: 32,
               bottom: 32,
@@ -109,10 +105,10 @@ class _MyAppState extends State<MyApp> {
               color: Colors.white,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(32),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
-                  offset: const Offset(0.0, 12.0),
+                  offset: Offset(0.0, 12.0),
                   blurRadius: 24.0,
                 ),
               ],
@@ -125,13 +121,13 @@ class _MyAppState extends State<MyApp> {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0XFF1A1A1A),
                       fontSize: 17,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.withOpacity(0.5)),
@@ -140,7 +136,7 @@ class _MyAppState extends State<MyApp> {
                     child: TextField(
                       controller: contentInputController,
                       maxLines: null,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 16,
@@ -159,7 +155,7 @@ class _MyAppState extends State<MyApp> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -169,7 +165,7 @@ class _MyAppState extends State<MyApp> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Color.fromRGBO(214, 227, 255, 1.0),
+                              color: const Color.fromRGBO(214, 227, 255, 1.0),
                               width: 2.0,
                               style: BorderStyle.solid,
                             ),
@@ -178,7 +174,7 @@ class _MyAppState extends State<MyApp> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Cancel',
                               maxLines: 1,
                               style: TextStyle(
@@ -190,14 +186,14 @@ class _MyAppState extends State<MyApp> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 11),
+                      const SizedBox(width: 11),
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(92, 145, 255, 1.0),
+                            color: const Color.fromRGBO(92, 145, 255, 1.0),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Color.fromRGBO(92, 145, 255, 1.0),
+                              color: const Color.fromRGBO(92, 145, 255, 1.0),
                               width: 2.0,
                               style: BorderStyle.solid,
                             ),
@@ -210,7 +206,7 @@ class _MyAppState extends State<MyApp> {
                                 content = '';
                               }
                             },
-                            child: Text(
+                            child: const Text(
                               'OK',
                               maxLines: 1,
                               style: TextStyle(
@@ -241,25 +237,27 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 50,
           ),
           child: ListView(
             children: <Widget>[
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   content = '''
 {
-  "pluginKey": "",
-  "email": "",
-  "memberId": "",
-  "name": "",
-  "memberHash": "",
-  "mobileNumber": "",
-  "trackDefaultEvent": false,
-  "hidePopup": false,
-  "language": "english"
+        "pluginKey": "pluginKey",
+        "memberId": "memberId",
+        "memberHash": "memberHash",
+        "email": "email",
+        "name": "name",
+        "mobileNumber": "mobileNumber",
+        "avatarUrl": "avatarUrl",
+        "unsubscribeEmail": false,
+        "unsubscribeTexting": false,
+        "trackDefaultEvent": false,
+        "hidePopup": false
 }
                             ''';
                   showInputDialog(
@@ -270,25 +268,82 @@ class _MyAppState extends State<MyApp> {
                         final result = await ChannelTalk.boot(
                           pluginKey: args['pluginKey'],
                           memberId: args['memberId'],
+                          memberHash: args['memberHash'],
                           email: args['email'],
                           name: args['name'],
-                          memberHash: args['memberHash'],
                           mobileNumber: args['mobileNumber'],
+                          avatarUrl: args['avatarUrl'],
+                          unsubscribeEmail: args['unsubscribeEmail'],
+                          unsubscribeTexting: args['unsubscribeTexting'],
                           trackDefaultEvent: args['trackDefaultEvent'],
                           hidePopup: args['hidePopup'],
-                          language: args['language'],
+                          language: Language.korean,
+                          appearance: Appearance.dark,
                         );
 
                         showMessageToast('Result: $result');
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
+                        print(error);
                       } catch (err) {
+                        print(err);
                         showMessageToast(err.toString());
                       }
                     },
                   );
                 },
-                child: Text('boot'),
+                child: const Text('boot'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  content = '''
+{
+        "pluginKey": "pluginKey",
+        "memberId": "memberId",
+        "memberHash": "memberHash",
+        "customLauncherSelector": "customLauncherSelector",
+        "zIndex": 10000000,
+        "trackDefaultEvent": false,
+        "trackUtmSource": false,
+        "unsubscribeEmail": false,
+        "unsubscribeTexting": false,
+        "hidePopup": false,
+}
+                            ''';
+                  showInputDialog(
+                    'boot payload',
+                    () async {
+                      try {
+                        Map args = json.decode(content);
+
+                        final result = await ChannelTalk.bootForWeb(
+                          pluginKey: args['pluginKey'],
+                          memberId: args['memberId'],
+                          memberHash: args['memberHash'],
+                          customLauncherSelector:
+                              args['customLauncherSelector'],
+                          zIndex: args['zIndex'],
+                          trackDefaultEvent: args['trackDefaultEvent'],
+                          trackUtmSource: args['trackUtmSource'],
+                          unsubscribeEmail: args['unsubscribeEmail'],
+                          unsubscribeTexting: args['unsubscribeTexting'],
+                          hidePopup: args['hidePopup'],
+                          appearance: Appearance.light,
+                          language: Language.japanese,
+                        );
+
+                        showMessageToast('Result: $result');
+                      } on PlatformException catch (error) {
+                        showMessageToast('PlatformException: ${error.message}');
+                        print(error);
+                      } catch (err) {
+                        print(err);
+                        showMessageToast(err.toString());
+                      }
+                    },
+                  );
+                },
+                child: const Text('bootForWeb'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -330,7 +385,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('sleep'),
+                child: const Text('sleep'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -344,7 +399,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('shutdown'),
+                child: const Text('shutdown'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -358,7 +413,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('showChannelButton'),
+                child: const Text('showChannelButton'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -372,7 +427,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('hideChannelButton'),
+                child: const Text('hideChannelButton'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -386,7 +441,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('showMessenger'),
+                child: const Text('showMessenger'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -400,7 +455,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('hideMessenger'),
+                child: const Text('hideMessenger'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -436,7 +491,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('openChat'),
+                child: const Text('openChat'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -468,7 +523,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('track'),
+                child: const Text('track'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -509,7 +564,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('updateUser'),
+                child: const Text('updateUser'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -531,9 +586,9 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('initPushToken'),
+                child: const Text('initPushToken'),
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
 //                 () async {
 //                   content = '''
@@ -559,7 +614,7 @@ class _MyAppState extends State<MyApp> {
 //                 },
                 child: Text('isChannelPushNotification'),
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
 //              () async {
 //                   content = '''
@@ -585,7 +640,7 @@ class _MyAppState extends State<MyApp> {
 //                 },
                 child: Text('receivePushNotification'),
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
 //              () async {
 //                   content = '''
@@ -624,7 +679,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('hasStoredPushNotification'),
+                child: const Text('hasStoredPushNotification'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -643,7 +698,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('openStoredPushNotification'),
+                child: const Text('openStoredPushNotification'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -661,7 +716,7 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('isBooted'),
+                child: const Text('isBooted'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -689,7 +744,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('setDebugMode'),
+                child: const Text('setDebugMode'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -717,7 +772,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: Text('setPage'),
+                child: const Text('setPage'),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -731,7 +786,63 @@ class _MyAppState extends State<MyApp> {
                     showMessageToast(err.toString());
                   }
                 },
-                child: Text('resetPage'),
+                child: const Text('resetPage'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  content = '''
+{
+"tags" : ["a", "b"]
+}
+                  ''';
+
+                  showInputDialog(
+                    'addTags payload',
+                    () async {
+                      var args = json.decode(content);
+
+                      try {
+                        final result =
+                            await ChannelTalk.addTags(tags: args['tags']);
+
+                        showMessageToast('Result: $result');
+                      } on PlatformException catch (error) {
+                        showMessageToast('PlatformException: ${error.message}');
+                      } catch (err) {
+                        showMessageToast(err.toString());
+                      }
+                    },
+                  );
+                },
+                child: const Text('addTags'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  content = '''
+{
+"tags" : ["a", "b"]
+}
+                  ''';
+
+                  showInputDialog(
+                    'removeTags payload',
+                    () async {
+                      var args = json.decode(content);
+
+                      try {
+                        final result =
+                            await ChannelTalk.removeTags(tags: args['tags']);
+
+                        showMessageToast('Result: $result');
+                      } on PlatformException catch (error) {
+                        showMessageToast('PlatformException: ${error.message}');
+                      } catch (err) {
+                        showMessageToast(err.toString());
+                      }
+                    },
+                  );
+                },
+                child: const Text('removeTags'),
               ),
             ],
           ),

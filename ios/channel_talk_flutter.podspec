@@ -1,13 +1,13 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint channel_talk.podspec' to validate before publishing.
+# Run `pod lib lint channel_talk_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
   s.name             = 'channel_talk_flutter'
-  s.version          = '2.6.2'
+  s.version          = '3.0.0'
   s.summary          = 'A Channel Talk flutter plugin project.(Unofficial)'
   s.description      = <<-DESC
-  A Channel Talk flutter plugin project.
+A new Flutter plugin project.
                        DESC
   s.homepage         = 'http://kuku.pe.kr'
   s.license          = { :file => '../LICENSE' }

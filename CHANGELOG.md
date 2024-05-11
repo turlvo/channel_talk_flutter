@@ -1,3 +1,7 @@
+## 3.0.0
+- BREAKING CHANGE: Changed to Federated plugins
+- Support Web(bootForWeb)
+
 ## 2.6.2
 - Fixed iOS ChannelIOSdk version to 11.6.0
 - Added iOS Privacy Manifest
@@ -35,7 +39,7 @@
 
 ## 2.1.1
 - fix updateUser SDK error
-- fix to broadcast recieved push message not for Channel Talk
+- fix to broadcast received push message not for Channel Talk
 
 ## 2.1.0
 - fix error for ChannelIO 9.1.2 version

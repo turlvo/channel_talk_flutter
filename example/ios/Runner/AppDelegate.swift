@@ -2,7 +2,6 @@ import UIKit
 import Flutter
 import ChannelIOFront
 
-
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
@@ -10,7 +9,7 @@ import ChannelIOFront
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-      
+
     ChannelIO.initialize(application)
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

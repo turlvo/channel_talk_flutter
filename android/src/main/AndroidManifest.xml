@@ -1,3 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="ai.deepnatural.channel_talk">
+  package="com.kuku.channel_talk_flutter">
 </manifest>

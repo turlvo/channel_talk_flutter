@@ -8,41 +8,45 @@ import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
 void main() async {
     await ChannelTalk.boot(
-        pluginKey: 'pluginKey',
+        pluginKey: 'pluginKey', // Required
         memberId: 'memberId',
+        memberHash: 'memberHash',
         email: 'email',
         name: 'name',
-        memberHash: 'memberHash',
         mobileNumber: 'mobileNumber',
+        avatarUrl: 'avatarUrl',
+        unsubscribeEmail: false,
+        unsubscribeTexting: false,
         trackDefaultEvent: false,
         hidePopup: false,
-        language: 'english',
+        language: Language.korean,
+        appearance: Appearance.dark,
     );
 
     ChannelTalk.setListener((event, arguments) {
       switch(event){
-        case ChannelTalkEvent.ON_SHOW_MESSENGER:
+        case ChannelTalkEvent.onShowMessenger:
           print('ON_SHOW_MESSENGER');
           break;
-        case ChannelTalkEvent.ON_HIDE_MESSENGER:
+        case ChannelTalkEvent.onHideMessenger:
           print('ON_HIDE_MESSENGER');
           break;
-        case ChannelTalkEvent.ON_CHAT_CREATED:
+        case ChannelTalkEvent.onChatCreated:
           print('ON_CHAT_CREATED:\nchatId: $arguments');
           break;
-        case ChannelTalkEvent.ON_BADGE_CHANGED:
+        case ChannelTalkEvent.onBadgeChanged:
           print('ON_BADGE_CHANGED:\n$arguments');
           break;
-        case ChannelTalkEvent.ON_FOLLOW_UP_CHANGED:
+        case ChannelTalkEvent.onFollowUpChanged:
           print('ON_FOLLOW_UP_CHANGED\ndata: $arguments');
           break;
-        case ChannelTalkEvent.ON_URL_CLICKED:
+        case ChannelTalkEvent.onUrlClicked:
           print('ON_URL_CLICKED\nurl: $arguments');
           break;
-        case ChannelTalkEvent.ON_POPUP_DATA_RECEIVED:
+        case ChannelTalkEvent.onPopupDataReceived:
           print('ON_POPUP_DATA_RECEIVED\nevent: $arguments}');
           break;
-        case ChannelTalkEvent.ON_PUSH_NOTIFICATION_CLICKED:
+        case ChannelTalkEvent.onPushNotificationClicked:
           print('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments}');
         default:
           break;
@@ -138,3 +142,35 @@ This plugin works in combination with the [`firebase_messaging`](https://pub.dev
 
 just above the closing `</application>` tag.
 
+
+### Web
+
+Insert the following script within the <body> tag of your HTML file(web/index.html):
+```Html
+<script>
+  (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
+</script>
+```
+
+In case of Web platform, use `bootForWeb` API
+```dart
+import 'package:channel_talk_flutter/channel_talk_flutter.dart';
+
+void main() async {
+    await ChannelTalk.bootForWeb(
+        pluginKey: 'pluginKey', // Required
+        memberId: 'memberId',
+        memberHash: 'memberHash',
+        customLauncherSelector: 'customLauncherSelector',
+        zIndex: 10000000,
+        trackDefaultEvent: false,
+        trackUtmSource: false,
+        unsubscribeEmail: false,
+        unsubscribeTexting: false,
+        hidePopup: false,
+        appearance: Appearance.light,
+        language: Language.japanese,
+    );
+...
+}
+```

@@ -1,4 +1,4 @@
-group 'ai.deepnatural.channel_talk'
+group 'com.kuku.channel_talk_flutter'
 version '1.0'
 
 buildscript {
@@ -22,12 +22,12 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace "ai.deepnatural.channel_talk"
+    namespace "com.kuku.channel_talk_flutter"
 
     compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 19
 
     }
     lintOptions {

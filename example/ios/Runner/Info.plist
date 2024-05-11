@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Example</string>
+	<string>Channel Talk Flutter</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>example</string>
+	<string>channel_talk_flutter_example</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,13 +45,5 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Accessing to camera in order to provide better user experience</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Accessing to microphone to record voice for video</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Accessing to photo library in order to save photos</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Accessing to photo library in order to provide better user experience</string>
 </dict>
 </plist>

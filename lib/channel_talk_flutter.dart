@@ -1,141 +1,137 @@
-import 'dart:async';
+import 'channel_talk_flutter_platform_interface.dart';
 
-import 'package:flutter/services.dart';
+enum Appearance {
+  system('system'),
+  light('light'),
+  dark('dark');
 
-typedef ChannelTalkDelegate = Function(ChannelTalkEvent event, dynamic arguments);
+  const Appearance(this.value);
 
-enum ChannelTalkEvent {
-  ON_SHOW_MESSENGER,
-  ON_HIDE_MESSENGER,
-  ON_CHAT_CREATED,
-  ON_BADGE_CHANGED,
-  ON_FOLLOW_UP_CHANGED,
-  ON_URL_CLICKED,
-  ON_POPUP_DATA_RECEIVED,
-  ON_PUSH_NOTIFICATION_CLICKED, // For only Android
+  final String value;
 }
 
+enum Language {
+  english('en'),
+  korean('ko'),
+  japanese('ja'),
+  device('device');
+
+  const Language(this.value);
+
+  final String value;
+}
 
 class ChannelTalk {
-  static const MethodChannel _channel = MethodChannel('channel_talk');
-  static ChannelTalkDelegate? _channelTalkDelegate;
-
-  static Future<String?> get platformVersion async {
-    final String? version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-
   static void setListener(ChannelTalkDelegate delegate) {
-    _channelTalkDelegate = delegate;
-    _channel.setMethodCallHandler(_handleMethod);
+    return ChannelTalkFlutterPlatform.instance.setListener(delegate);
   }
 
   // Removes the callback listener if it exists
   static void removeListener() {
-    _channel.setMethodCallHandler(null);
-  }
-
-  static Future<dynamic> _handleMethod(MethodCall call) async {
-    final ChannelTalkDelegate? callback = _channelTalkDelegate;
-    if (callback == null) {
-      return;
-    }
-
-    switch (call.method) {
-      case 'onShowMessenger':
-        return callback(ChannelTalkEvent.ON_SHOW_MESSENGER, {});
-      case 'onHideMessenger':
-        return callback(ChannelTalkEvent.ON_HIDE_MESSENGER, {});
-      case 'onChatCreated':
-        return callback(ChannelTalkEvent.ON_CHAT_CREATED, call.arguments);
-      case 'onBadgeChanged':
-        return callback(ChannelTalkEvent.ON_BADGE_CHANGED, call.arguments);
-      case 'onFollowUpChanged':
-        return callback(ChannelTalkEvent.ON_FOLLOW_UP_CHANGED, call.arguments);
-      case 'onUrlClicked':
-        return callback(ChannelTalkEvent.ON_URL_CLICKED, call.arguments);
-      case 'onPopupDataReceived':
-        return callback(ChannelTalkEvent.ON_POPUP_DATA_RECEIVED, call.arguments);
-      case 'onPushNotificationClicked':
-        return callback(ChannelTalkEvent.ON_PUSH_NOTIFICATION_CLICKED, call.arguments);
-      default:
-        throw Exception('Not supported event');
-    }
+    return ChannelTalkFlutterPlatform.instance.removeListener();
   }
 
   static Future<bool?> boot({
     required String pluginKey,
-    String? memberHash,
     String? memberId,
+    String? memberHash,
     String? email,
     String? name,
     String? mobileNumber,
+    String? avatarUrl,
+    Language? language,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
     bool? trackDefaultEvent,
     bool? hidePopup,
-    String? language,
+    Appearance? appearance,
   }) {
     Map<String, dynamic> config = {
       'pluginKey': pluginKey,
+      if (memberId != null) 'memberId': memberId,
+      if (memberHash != null) 'memberHash': memberHash,
+      if (email != null) 'email': email,
+      if (name != null) 'name': name,
+      if (mobileNumber != null) 'mobileNumber': mobileNumber,
+      if (avatarUrl != null) 'avatarUrl': avatarUrl,
+      if (language != null) 'language': language.value,
+      if (unsubscribeEmail != null) 'unsubscribeEmail': unsubscribeEmail,
+      if (unsubscribeTexting != null) 'unsubscribeTexting': unsubscribeTexting,
+      if (trackDefaultEvent != null) 'trackDefaultEvent': trackDefaultEvent,
+      if (hidePopup != null) 'hidePopup': hidePopup,
+      if (appearance != null) 'appearance': appearance.value,
     };
 
-    if (memberHash != null) {
-      config['memberHash'] = memberHash;
-    }
-    if (memberId != null) {
-      config['memberId'] = memberId;
-    }
-    if (email != null) {
-      config['email'] = email;
-    }
-    if (name != null) {
-      config['name'] = name;
-    }
-    if (mobileNumber != null) {
-      config['mobileNumber'] = mobileNumber;
-    }
-    if (trackDefaultEvent != null) {
-      config['trackDefaultEvent'] = trackDefaultEvent;
-    }
-    if (hidePopup != null) {
-      config['hidePopup'] = hidePopup;
-    }
-    if (language != null) {
-      config['language'] = language;
-    }
+    return ChannelTalkFlutterPlatform.instance.boot(config);
+  }
 
-    return _channel.invokeMethod('boot', config);
+  static Future<bool?> bootForWeb({
+    required String pluginKey,
+    String? memberId,
+    String? customLauncherSelector,
+    bool? hideChannelButtonOnBoot,
+    int? zIndex,
+    Language? language,
+    bool? trackDefaultEvent,
+    bool? trackUtmSource,
+    Object? profile,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
+    String? memberHash,
+    bool? hidePopup,
+    Appearance? appearance,
+  }) {
+    Map<String, dynamic> config = {
+      'pluginKey': pluginKey,
+      if (memberId != null) 'memberId': memberId,
+      if (customLauncherSelector != null)
+        'customLauncherSelector': customLauncherSelector,
+      if (hideChannelButtonOnBoot != null)
+        'hideChannelButtonOnBoot': hideChannelButtonOnBoot,
+      if (zIndex != null) 'zIndex': zIndex,
+      if (language != null) 'language': language.value,
+      if (trackDefaultEvent != null) 'trackDefaultEvent': trackDefaultEvent,
+      if (trackUtmSource != null) 'trackUtmSource': trackUtmSource,
+      if (profile != null) 'profile': profile,
+      if (unsubscribeEmail != null) 'unsubscribeEmail': unsubscribeEmail,
+      if (unsubscribeTexting != null) 'unsubscribeTexting': unsubscribeTexting,
+      if (memberHash != null) 'memberHash': memberHash,
+      if (hidePopup != null) 'hidePopup': hidePopup,
+      if (appearance != null) 'appearance': appearance.value,
+    };
+
+    return ChannelTalkFlutterPlatform.instance.boot(config);
   }
 
   static Future<bool?> sleep() {
-    return _channel.invokeMethod('sleep');
+    return ChannelTalkFlutterPlatform.instance.sleep();
   }
 
   static Future<bool?> shutdown() {
-    return _channel.invokeMethod('shutdown');
+    return ChannelTalkFlutterPlatform.instance.shutdown();
   }
 
   static Future<bool?> showChannelButton() {
-    return _channel.invokeMethod('showChannelButton');
+    return ChannelTalkFlutterPlatform.instance.showChannelButton();
   }
 
   static Future<bool?> hideChannelButton() {
-    return _channel.invokeMethod('hideChannelButton');
+    return ChannelTalkFlutterPlatform.instance.hideChannelButton();
   }
 
   static Future<bool?> showMessenger() {
-    return _channel.invokeMethod('showMessenger');
+    return ChannelTalkFlutterPlatform.instance.showMessenger();
   }
 
   static Future<bool?> hideMessenger() {
-    return _channel.invokeMethod('hideMessenger');
+    return ChannelTalkFlutterPlatform.instance.hideMessenger();
   }
 
   static Future<bool?> openChat({
     String? chatId,
     String? message,
   }) {
-    return _channel.invokeMethod(
-      'openChat',
+    return ChannelTalkFlutterPlatform.instance.openChat(
       {
         'chatId': chatId,
         'message': message,
@@ -155,10 +151,7 @@ class ChannelTalk {
       data['properties'] = properties;
     }
 
-    return _channel.invokeMethod(
-      'track',
-      data,
-    );
+    return ChannelTalkFlutterPlatform.instance.track(data);
   }
 
   static Future<bool?> updateUser({
@@ -170,7 +163,7 @@ class ChannelTalk {
     String? language,
     List<String>? tags,
   }) {
-    return _channel.invokeMethod('updateUser', {
+    return ChannelTalkFlutterPlatform.instance.updateUser({
       'name': name,
       'mobileNumber': mobileNumber,
       'email': email,
@@ -184,62 +177,66 @@ class ChannelTalk {
   static Future<bool?> initPushToken({
     required String deviceToken,
   }) {
-    return _channel.invokeMethod('initPushToken', {
-      'deviceToken': deviceToken,
-    });
+    return ChannelTalkFlutterPlatform.instance.initPushToken(deviceToken);
   }
 
   static Future<bool?> isChannelPushNotification({
     required Map<String, dynamic> content,
   }) {
-    return _channel.invokeMethod('isChannelPushNotification', {
-      'content': content,
-    });
+    return ChannelTalkFlutterPlatform.instance
+        .isChannelPushNotification(content);
   }
 
   static Future<bool?> receivePushNotification({
     required Map<String, dynamic> content,
   }) {
-    return _channel.invokeMethod('receivePushNotification', {
-      'content': content,
-    });
+    return ChannelTalkFlutterPlatform.instance.receivePushNotification(content);
   }
 
   static Future<bool?> storePushNotification({
     required Map<String, dynamic> content,
   }) {
-    return _channel.invokeMethod('storePushNotification', {
-      'content': content,
-    });
+    return ChannelTalkFlutterPlatform.instance.storePushNotification(content);
   }
 
   static Future<bool?> hasStoredPushNotification() {
-    return _channel.invokeMethod('hasStoredPushNotification');
+    return ChannelTalkFlutterPlatform.instance.hasStoredPushNotification();
   }
 
   static Future<bool?> openStoredPushNotification() {
-    return _channel.invokeMethod('openStoredPushNotification');
+    return ChannelTalkFlutterPlatform.instance.openStoredPushNotification();
   }
 
   static Future<bool?> isBooted() {
-    return _channel.invokeMethod('isBooted');
+    return ChannelTalkFlutterPlatform.instance.isBooted();
   }
 
   static Future<bool?> setDebugMode({
     required bool flag,
   }) {
-    return _channel.invokeMethod('setDebugMode', {
-      'flag': flag,
-    });
+    return ChannelTalkFlutterPlatform.instance.setDebugMode(flag);
   }
 
   static Future<bool?> setPage({required page}) {
-    return _channel.invokeMethod('setPage', {
-      'page': page,
-    });
+    return ChannelTalkFlutterPlatform.instance.setPage(page);
   }
 
   static Future<bool?> resetPage() {
-    return _channel.invokeMethod('resetPage');
+    return ChannelTalkFlutterPlatform.instance.resetPage();
+  }
+
+  static Future<bool?> addTags({
+    required List tags,
+  }) {
+    if (tags.length > 10) {
+      return Future.value(false);
+    }
+    return ChannelTalkFlutterPlatform.instance.addTags(tags);
+  }
+
+  static Future<bool?> removeTags({
+    required List tags,
+  }) {
+    return ChannelTalkFlutterPlatform.instance.removeTags(tags);
   }
 }

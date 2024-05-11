@@ -1,27 +1,35 @@
 name: channel_talk_flutter
 description: A plugin that translates the Channel Talk SDK into a plugin for Flutter(Unofficial)
-version: 2.6.2
+version: 3.0.0
 homepage: https://github.com/turlvo/channel_talk_flutter
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
+  sdk: ">=2.17.0 <4.0.0"
   flutter: ">=1.20.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  js: ^0.7.1
+  plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^2.0.0
 
 flutter:
   plugin:
     platforms:
       android:
-        package: ai.deepnatural.channel_talk
+        package: com.kuku.channel_talk_flutter
         pluginClass: ChannelTalkFlutterPlugin
       ios:
         pluginClass: ChannelTalkFlutterPlugin
-
-  
+      macos:
+        pluginClass: ChannelTalkFlutterPlugin
+      web:
+        pluginClass: ChannelTalkFlutterWeb
+        fileName: channel_talk_flutter_web.dart
