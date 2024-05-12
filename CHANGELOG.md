@@ -1,6 +1,7 @@
 ## 3.0.0
-- BREAKING CHANGE: Changed to Federated plugins
+- Changed to Federated plugins
 - Support Web(bootForWeb)
+- Changed `updateUser` API's parameters
 
 ## 2.6.2
 - Fixed iOS ChannelIOSdk version to 11.6.0

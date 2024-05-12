@@ -11,7 +11,7 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'channel_talk_flutter_platform_interface.dart';
 
 import 'package:channel_talk_flutter/web/channel_io_service.dart'
-    as channel_talk;
+    as channel_talk_service;
 
 /// A web implementation of the ChannelTalkFlutterPlatform of the ChannelTalkFlutter plugin.
 class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
@@ -24,7 +24,7 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
 
   @override
   Future<bool?> boot(config) {
-    channel_talk.boot(
+    channel_talk_service.boot(
       'boot',
       BootOption(
         pluginKey: config['pluginKey'],
@@ -55,76 +55,89 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
 
   @override
   Future<bool?> shutdown() {
-    channel_talk.shutdown('shutdown');
+    channel_talk_service.shutdown('shutdown');
     return Future.value(true);
   }
 
   @override
   Future<bool?> showChannelButton() {
-    channel_talk.showChannelButton('showChannelButton');
+    channel_talk_service.showChannelButton('showChannelButton');
 
     return Future.value(true);
   }
 
   @override
   Future<bool?> hideChannelButton() {
-    channel_talk.hideChannelButton('hideChannelButton');
+    channel_talk_service.hideChannelButton('hideChannelButton');
     return Future.value(true);
   }
 
   @override
   Future<bool?> showMessenger() {
-    channel_talk.showMessenger('showMessenger');
+    channel_talk_service.showMessenger('showMessenger');
     return Future.value(true);
   }
 
   @override
   Future<bool?> hideMessenger() {
-    channel_talk.hideMessenger('hideMessenger');
+    channel_talk_service.hideMessenger('hideMessenger');
     return Future.value(true);
   }
 
   @override
   Future<bool?> openChat(Map<String, dynamic> data) {
+    channel_talk_service.openChat('openChat', data);
     return Future.value(true);
   }
 
   @override
   Future<bool?> track(Map<String, dynamic> data) {
+    channel_talk_service.openChat('track', data);
     return Future.value(true);
   }
 
   @override
   Future<bool?> updateUser(Map<String, dynamic> data) {
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool?> hasStoredPushNotification() {
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool?> openStoredPushNotification() {
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool?> setDebugMode(
-    bool flag,
-  ) {
+    final UserObject user = UserObject(
+      profile: data['email'] != null ||
+              data['mobileNumber'] != null ||
+              data['avatarUrl'] != null ||
+              data['name'] != null
+          ? Profile(
+              email: data['email'],
+              mobileNumber: data['mobileNumber'],
+              name: data['name'],
+              avatarUrl: data['avatarUrl'],
+            )
+          : null,
+      profileOnce: data['profileOnce'],
+      unsubscribeEmail: data['unsubscribeEmail'],
+      unsubscribeTexting: data['unsubscribeTexting'],
+      tags: data['tags'],
+      language: data['language'],
+    );
+    channel_talk_service.updateUser(
+      'updateUser',
+      user,
+      allowInterop(
+        (error, user) {
+          if (error != null) {
+          } else {}
+        },
+      ),
+    );
     return Future.value(true);
   }
 
   @override
   Future<bool?> setPage(page) {
-    channel_talk.setPage('setPage', page);
+    channel_talk_service.setPage('setPage', page);
     return Future.value(true);
   }
 
   @override
   Future<bool?> resetPage() {
-    channel_talk.resetPage('resetPage');
+    channel_talk_service.resetPage('resetPage');
     return Future.value(true);
   }
 
@@ -132,7 +145,7 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   Future<bool?> addTags(
     List tags,
   ) {
-    channel_talk.addTags(
+    channel_talk_service.addTags(
       'addTags',
       tags,
       allowInterop(
@@ -147,7 +160,7 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
 
   @override
   Future<bool?> removeTags(List tags) {
-    channel_talk.removeTags(
+    channel_talk_service.removeTags(
       'removeTags',
       tags,
       allowInterop(

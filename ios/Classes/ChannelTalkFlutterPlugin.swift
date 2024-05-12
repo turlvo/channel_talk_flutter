@@ -256,11 +256,15 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         
     }
     let tags = argMaps["tags"] as? [String]
+    let unsubscribeEmail = argMaps["unsubscribeEmail"] as? Bool ?? false
+    let unsubscribeTexting = argMaps["unsubscribeTexting"] as? Bool ?? false
 
     let userData = UpdateUserParamBuilder()
       .with(language: enumLanguage)
       .with(tags: tags)
       .with(profile: profile)
+      .with(unsubscribeEmail: unsubscribeEmail)
+      .with(unsubscribeTexting: unsubscribeTexting)
       .build()
 
     ChannelIO.updateUser(param: userData) { (error, user) in

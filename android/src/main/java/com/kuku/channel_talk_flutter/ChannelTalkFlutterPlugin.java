@@ -329,6 +329,11 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
         .setLanguage(enumLanguage)
         .setProfileMap(profileMap)
         .setTags(tags)
+        .setUnsubscribeEmail(call.argument(
+            "unsubscribeEmail"))
+        .setUnsubscribeTexting(call.argument(
+            "unsubscribeTexting"))
+
         .build();
 
     ChannelIO.updateUser(userData, (e, user) -> {

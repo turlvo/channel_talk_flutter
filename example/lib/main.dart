@@ -284,9 +284,7 @@ class _MyAppState extends State<MyApp> {
                         showMessageToast('Result: $result');
                       } on PlatformException catch (error) {
                         showMessageToast('PlatformException: ${error.message}');
-                        print(error);
                       } catch (err) {
-                        print(err);
                         showMessageToast(err.toString());
                       }
                     },
@@ -529,15 +527,14 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   content = '''
 {
-  "name": "",
-  "mobileNumber": "",
-  "email": "",
-  "avatarUrl": "https://unsplash.com/photos/oL3-V8xhqlI",
-  "customAttributes": {
-    "key1": "val1"
-  },
-  "language": "english",
-  "tags": []
+
+    "name": "name",
+    "email": "name@test.com",
+    "mobileNumber": "01012341235",
+    "avatarUrl": "https://unsplash.com/photos/oL3-V8xhqlI",
+    "unsubscribeEmail": false,
+    "unsubscribeTexting": false,
+    "tags": ["a", "b", "c"]
 }
                             ''';
                   showInputDialog(
@@ -547,12 +544,13 @@ class _MyAppState extends State<MyApp> {
                         Map args = json.decode(content);
                         final result = await ChannelTalk.updateUser(
                           name: args['name'],
-                          mobileNumber: args['mobileNumber'],
                           email: args['email'],
+                          mobileNumber: args['mobileNumber'],
                           avatarUrl: args['avatarUrl'],
-                          customAttributes: args['customAttributes'],
-                          language: args['language'],
+                          unsubscribeEmail: args['unsubscribeEmail'],
+                          unsubscribeTexting: args['unsubscribeTexting'],
                           tags: List<String>.from(args['tags']),
+                          language: Language.english,
                         );
 
                         showMessageToast('Result: $result');

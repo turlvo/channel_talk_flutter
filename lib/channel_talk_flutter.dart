@@ -156,22 +156,27 @@ class ChannelTalk {
 
   static Future<bool?> updateUser({
     String? name,
-    String? mobileNumber,
     String? email,
+    String? mobileNumber,
     String? avatarUrl,
-    Map<String, dynamic>? customAttributes,
-    String? language,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
     List<String>? tags,
+    Language? language,
   }) {
-    return ChannelTalkFlutterPlatform.instance.updateUser({
-      'name': name,
-      'mobileNumber': mobileNumber,
-      'email': email,
-      'avatarUrl': avatarUrl,
-      'customAttributes': customAttributes,
-      'language': language,
-      'tags': tags,
-    });
+    return ChannelTalkFlutterPlatform.instance.updateUser(
+      {
+        if (name != null) 'name': name,
+        if (email != null) 'email': email,
+        if (mobileNumber != null) 'mobileNumber': mobileNumber,
+        if (avatarUrl != null) 'avatarUrl': avatarUrl,
+        if (unsubscribeEmail != null) 'unsubscribeEmail': unsubscribeEmail,
+        if (unsubscribeTexting != null)
+          'unsubscribeTexting': unsubscribeTexting,
+        if (tags != null) 'tags': tags,
+        if (language != null) 'language': language.value,
+      },
+    );
   }
 
   static Future<bool?> initPushToken({

@@ -39,6 +39,42 @@ class BootOption {
   });
 }
 
+@JS()
+@anonymous
+class UserObject {
+  external Profile? get profile;
+  external Object? get profileOnce;
+  external bool? get unsubscribeEmail;
+  external bool? get unsubscribeTexting;
+  external List? get tags;
+  external String? get language;
+
+  external factory UserObject({
+    Profile? profile,
+    Object? profileOnce,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
+    List? tags,
+    String? language,
+  });
+}
+
+@JS()
+@anonymous
+class Profile {
+  external String? get email;
+  external String? get mobileNumber;
+  external String? get name;
+  external String? get avatarUrl;
+
+  external factory Profile({
+    String? email,
+    String? mobileNumber,
+    String? name,
+    String? avatarUrl,
+  });
+}
+
 @JS('ChannelIO')
 @anonymous
 external Future<void> boot(
@@ -71,7 +107,7 @@ external Future<void> track(String command, Map<String, dynamic> data);
 @JS('ChannelIO')
 external Future<void> updateUser(
   String command,
-  Map<String, dynamic> data,
+  UserObject userObject,
   Function callback,
 );
 
