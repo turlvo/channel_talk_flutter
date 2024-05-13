@@ -14,7 +14,7 @@ class BootOption {
   external String? get language;
   external bool? get trackDefaultEvent;
   external bool? get trackUtmSource;
-  external Object? get profile;
+  external Profile? get profile;
   external bool? get unsubscribeEmail;
   external bool? get unsubscribeTexting;
   external String? get memberHash;
@@ -30,7 +30,7 @@ class BootOption {
     String? language,
     bool? trackDefaultEvent,
     bool? trackUtmSource,
-    Object? profile,
+    Profile? profile,
     bool? unsubscribeEmail,
     bool? unsubscribeTexting,
     String? memberHash,

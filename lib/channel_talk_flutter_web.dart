@@ -35,7 +35,17 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
         language: config['language'],
         trackDefaultEvent: config['trackDefaultEvent'],
         trackUtmSource: config['trackUtmSource'],
-        profile: config['profile'],
+        profile: config['email'] != null ||
+                config['mobileNumber'] != null ||
+                config['avatarUrl'] != null ||
+                config['name'] != null
+            ? Profile(
+                email: config['email'],
+                mobileNumber: config['mobileNumber'],
+                name: config['name'],
+                avatarUrl: config['avatarUrl'],
+              )
+            : null,
         unsubscribeEmail: config['unsubscribeEmail'],
         unsubscribeTexting: config['unsubscribeTexting'],
         memberHash: config['memberHash'],

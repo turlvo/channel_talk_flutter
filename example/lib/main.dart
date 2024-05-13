@@ -252,7 +252,7 @@ class _MyAppState extends State<MyApp> {
         "memberHash": "memberHash",
         "email": "email",
         "name": "name",
-        "mobileNumber": "mobileNumber",
+        "mobileNumber": "0101231234",
         "avatarUrl": "avatarUrl",
         "unsubscribeEmail": false,
         "unsubscribeTexting": false,
@@ -299,13 +299,15 @@ class _MyAppState extends State<MyApp> {
         "pluginKey": "pluginKey",
         "memberId": "memberId",
         "memberHash": "memberHash",
-        "customLauncherSelector": "customLauncherSelector",
+        "name" : "name",
+        "email" : "email",
+        "mobileNumber": "0101231234",
         "zIndex": 10000000,
         "trackDefaultEvent": false,
         "trackUtmSource": false,
         "unsubscribeEmail": false,
         "unsubscribeTexting": false,
-        "hidePopup": false,
+        "hidePopup": false
 }
                             ''';
                   showInputDialog(
@@ -318,6 +320,10 @@ class _MyAppState extends State<MyApp> {
                           pluginKey: args['pluginKey'],
                           memberId: args['memberId'],
                           memberHash: args['memberHash'],
+                          email: args['email'],
+                          name: args['name'],
+                          mobileNumber: args['mobileNumber'],
+                          avatarUrl: args['avatarUrl'],
                           customLauncherSelector:
                               args['customLauncherSelector'],
                           zIndex: args['zIndex'],

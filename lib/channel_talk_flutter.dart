@@ -68,13 +68,16 @@ class ChannelTalk {
   static Future<bool?> bootForWeb({
     required String pluginKey,
     String? memberId,
+    String? email,
+    String? name,
+    String? mobileNumber,
+    String? avatarUrl,
     String? customLauncherSelector,
     bool? hideChannelButtonOnBoot,
     int? zIndex,
     Language? language,
     bool? trackDefaultEvent,
     bool? trackUtmSource,
-    Object? profile,
     bool? unsubscribeEmail,
     bool? unsubscribeTexting,
     String? memberHash,
@@ -84,6 +87,10 @@ class ChannelTalk {
     Map<String, dynamic> config = {
       'pluginKey': pluginKey,
       if (memberId != null) 'memberId': memberId,
+      if (email != null) 'email': email,
+      if (name != null) 'name': name,
+      if (mobileNumber != null) 'mobileNumber': mobileNumber,
+      if (avatarUrl != null) 'avatarUrl': avatarUrl,
       if (customLauncherSelector != null)
         'customLauncherSelector': customLauncherSelector,
       if (hideChannelButtonOnBoot != null)
@@ -92,7 +99,6 @@ class ChannelTalk {
       if (language != null) 'language': language.value,
       if (trackDefaultEvent != null) 'trackDefaultEvent': trackDefaultEvent,
       if (trackUtmSource != null) 'trackUtmSource': trackUtmSource,
-      if (profile != null) 'profile': profile,
       if (unsubscribeEmail != null) 'unsubscribeEmail': unsubscribeEmail,
       if (unsubscribeTexting != null) 'unsubscribeTexting': unsubscribeTexting,
       if (memberHash != null) 'memberHash': memberHash,
