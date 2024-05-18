@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:channel_talk_flutter/channel_talk_flutter_method_channel.dart';
+// import 'package:channel_talk_flutter/channel_talk_flutter_method_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelChannelTalkFlutter platform = MethodChannelChannelTalkFlutter();
+  // MethodChannelChannelTalkFlutter platform = MethodChannelChannelTalkFlutter();
   const MethodChannel channel = MethodChannel('channel_talk_flutter');
 
   setUp(() {
