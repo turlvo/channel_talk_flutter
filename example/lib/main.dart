@@ -42,7 +42,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   void showMessageToast(message) {
-    Toast.show(message, gravity: Toast.bottom);
+    print(message);
+    Toast.show(message, gravity: Toast.bottom, duration: 3);
   }
 
   void registerListener() {
@@ -847,6 +848,54 @@ class _MyAppState extends State<MyApp> {
                   );
                 },
                 child: const Text('removeTags'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final bool? result = await ChannelTalk.setAppearance(
+                        appearance: Appearance.light);
+
+                    if (result!) {
+                      showMessageToast('setAppearance success');
+                    } else {
+                      showMessageToast('setAppearance fail');
+                    }
+                  } on PlatformException catch (error) {
+                    showMessageToast('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showMessageToast(err.toString());
+                  }
+                },
+                child: const Text('setAppearance'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  content = '''
+{
+  "supportBotId": "",
+  "message": ""
+}
+                            ''';
+                  showInputDialog(
+                    'openSupportBot payload',
+                    () async {
+                      try {
+                        Map args = json.decode(content);
+                        final result = await ChannelTalk.openSupportBot(
+                          supportBotId: args['supportBotId'],
+                          message: args['message'],
+                        );
+
+                        showMessageToast('Result: $result');
+                      } on PlatformException catch (error) {
+                        showMessageToast('PlatformException: ${error.message}');
+                      } catch (err) {
+                        showMessageToast(err.toString());
+                      }
+                    },
+                  );
+                },
+                child: const Text('openSupportBot'),
               ),
             ],
           ),

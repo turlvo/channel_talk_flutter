@@ -3,9 +3,9 @@
 // package as the core of your plugin.
 // ignore: avoid_web_libraries_in_flutter
 
-import 'dart:js';
+import 'dart:js_interop';
 
-import 'package:channel_talk_flutter/web/channel_io_service.dart';
+import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'channel_talk_flutter_platform_interface.dart';
@@ -23,41 +23,58 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> boot(config) {
+  Future<bool?> boot(Map<String, dynamic> config) {
+    final Map<String, dynamic> bootOption = {
+      'pluginKey': config['pluginKey'],
+      'memberId': config['memberId'],
+      'customLauncherSelector': config['customLauncherSelector'],
+      'hideChannelButtonOnBoot': config['hideChannelButtonOnBoot'],
+      'zIndex': config['zIndex'],
+      'language': config['language'],
+      'trackDefaultEvent': config['trackDefaultEvent'],
+      'trackUtmSource': config['trackUtmSource'],
+      'profile': {
+        if (config['email'] != null) 'email': config['email'],
+        if (config['mobileNumber'] != null)
+          'mobileNumber': config['mobileNumber'],
+        if (config['name'] != null) 'name': config['name'],
+        if (config['avatarUrl'] != null) 'avatarUrl': config['avatarUrl'],
+      },
+      'unsubscribeEmail': config['unsubscribeEmail'],
+      'unsubscribeTexting': config['unsubscribeTexting'],
+      'memberHash': config['memberHash'],
+      'hidePopup': config['hidePopup'],
+      'appearance': config['appearance'],
+    };
     channel_talk_service.boot(
       'boot',
-      BootOption(
-        pluginKey: config['pluginKey'],
-        memberId: config['memberId'],
-        customLauncherSelector: config['customLauncherSelector'],
-        hideChannelButtonOnBoot: config['hideChannelButtonOnBoot'],
-        zIndex: config['zIndex'],
-        language: config['language'],
-        trackDefaultEvent: config['trackDefaultEvent'],
-        trackUtmSource: config['trackUtmSource'],
-        profile: config['email'] != null ||
-                config['mobileNumber'] != null ||
-                config['avatarUrl'] != null ||
-                config['name'] != null
-            ? Profile(
-                email: config['email'],
-                mobileNumber: config['mobileNumber'],
-                name: config['name'],
-                avatarUrl: config['avatarUrl'],
-              )
-            : null,
-        unsubscribeEmail: config['unsubscribeEmail'],
-        unsubscribeTexting: config['unsubscribeTexting'],
-        memberHash: config['memberHash'],
-        hidePopup: config['hidePopup'],
-        appearance: config['appearance'],
-      ),
-      allowInterop(
-        (error, user) {
-          if (error != null) {
-          } else {}
-        },
-      ),
+      bootOption.jsify(),
+      // BootOption(
+      //   pluginKey: config['pluginKey'],
+      //   memberId: config['memberId'],
+      //   customLauncherSelector: config['customLauncherSelector'],
+      //   hideChannelButtonOnBoot: config['hideChannelButtonOnBoot'],
+      //   zIndex: config['zIndex'],
+      //   language: config['language'],
+      //   trackDefaultEvent: config['trackDefaultEvent'],
+      //   trackUtmSource: config['trackUtmSource'],
+      //   profile: config['email'] != null ||
+      //           config['mobileNumber'] != null ||
+      //           config['avatarUrl'] != null ||
+      //           config['name'] != null
+      //       ? Profile(
+      //           email: config['email'],
+      //           mobileNumber: config['mobileNumber'],
+      //           name: config['name'],
+      //           avatarUrl: config['avatarUrl'],
+      //         )
+      //       : null,
+      //   unsubscribeEmail: config['unsubscribeEmail'],
+      //   unsubscribeTexting: config['unsubscribeTexting'],
+      //   memberHash: config['memberHash'],
+      //   hidePopup: config['hidePopup'],
+      //   appearance: config['appearance'],
+      // ),
     );
 
     return Future.value(true);
@@ -95,46 +112,49 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> openChat(Map<String, dynamic> data) {
-    channel_talk_service.openChat('openChat', data);
+  Future<bool?> openChat({
+    String? chatId,
+    String? message,
+  }) {
+    channel_talk_service.openChat(
+      'openChat',
+      chatId,
+      message,
+    );
     return Future.value(true);
   }
 
   @override
-  Future<bool?> track(Map<String, dynamic> data) {
-    channel_talk_service.openChat('track', data);
+  Future<bool?> track({
+    required String eventName,
+    Map<String, dynamic>? properties,
+  }) {
+    channel_talk_service.track(
+      'track',
+      eventName,
+      properties.jsify(),
+    );
     return Future.value(true);
   }
 
   @override
   Future<bool?> updateUser(Map<String, dynamic> data) {
-    final UserObject user = UserObject(
-      profile: data['email'] != null ||
-              data['mobileNumber'] != null ||
-              data['avatarUrl'] != null ||
-              data['name'] != null
-          ? Profile(
-              email: data['email'],
-              mobileNumber: data['mobileNumber'],
-              name: data['name'],
-              avatarUrl: data['avatarUrl'],
-            )
-          : null,
-      profileOnce: data['profileOnce'],
-      unsubscribeEmail: data['unsubscribeEmail'],
-      unsubscribeTexting: data['unsubscribeTexting'],
-      tags: data['tags'],
-      language: data['language'],
-    );
+    final Map user = {
+      'profile': {
+        if (data['email'] != null) 'email': data['email'],
+        if (data['mobileNumber'] != null) 'mobileNumber': data['mobileNumber'],
+        if (data['name'] != null) 'name': data['name'],
+        if (data['avatarUrl'] != null) 'avatarUrl': data['avatarUrl'],
+      },
+      'profileOnce': data['profileOnce'],
+      'unsubscribeEmail': data['unsubscribeEmail'],
+      'unsubscribeTexting': data['unsubscribeTexting'],
+      'tags': data['tags'],
+      'language': data['language'],
+    };
     channel_talk_service.updateUser(
       'updateUser',
-      user,
-      allowInterop(
-        (error, user) {
-          if (error != null) {
-          } else {}
-        },
-      ),
+      user.jsify(),
     );
     return Future.value(true);
   }
@@ -157,13 +177,7 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   ) {
     channel_talk_service.addTags(
       'addTags',
-      tags,
-      allowInterop(
-        (error, user) {
-          if (error != null) {
-          } else {}
-        },
-      ),
+      tags.jsify(),
     );
     return Future.value(true);
   }
@@ -172,14 +186,29 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   Future<bool?> removeTags(List tags) {
     channel_talk_service.removeTags(
       'removeTags',
-      tags,
-      allowInterop(
-        (error, user) {
-          if (error != null) {
-          } else {}
-        },
-      ),
+      tags.jsify(),
     );
+    return Future.value(true);
+  }
+
+  @override
+  Future<bool?> openSupportBot({
+    required String supportBotId,
+    String? message,
+  }) {
+    channel_talk_service.openSupportBot(
+      'openSupportBot',
+      supportBotId,
+      message,
+    );
+    return Future.value(true);
+  }
+
+  @override
+  Future<bool?> setAppearance(
+    Appearance appearance,
+  ) {
+    channel_talk_service.setAppearance('setAppearance', appearance.value);
     return Future.value(true);
   }
 }

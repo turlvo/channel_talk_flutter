@@ -112,6 +112,10 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       addTags(call, result);
     } else if (call.method.equals("removeTags")) {
       removeTags(call, result);
+    } else if (call.method.equals("openSupportBot")) {
+      openSupportBot(call, result);
+    } else if (call.method.equals("setAppearance")) {
+      setAppearance(call, result);
     } else {
       result.notImplemented();
     }
@@ -452,6 +456,27 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
         result.error("ERROR", "Execution failed(removeTags)", null);
       }
     });
+  }
+
+  public void openSupportBot(@NonNull MethodCall call, @NonNull final Result result) {
+    if (!ChannelIO.isBooted()) {
+      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    }
+
+    String openSupportBot = call.argument("openSupportBot");
+    String message = call.argument("message");
+
+    ChannelIO.openSupportBot(this.activity, openSupportBot, message);
+    result.success(true);
+  }
+
+  public void setAppearance(@NonNull MethodCall call, @NonNull final Result result) {
+    if (!ChannelIO.isBooted()) {
+      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    }
+
+    ChannelIO.setAppearance(getAppearance(call.argument("appearance")));
+    result.success(true);
   }
 
   private Language getLanguage(String lang) {

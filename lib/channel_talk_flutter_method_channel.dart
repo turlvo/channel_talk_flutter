@@ -1,3 +1,4 @@
+import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -87,18 +88,30 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> openChat(Map<String, dynamic> data) {
+  Future<bool?> openChat({
+    String? chatId,
+    String? message,
+  }) {
     return methodChannel.invokeMethod(
       'openChat',
-      data,
+      {
+        'chatId': chatId,
+        'message': message,
+      },
     );
   }
 
   @override
-  Future<bool?> track(Map<String, dynamic> data) {
+  Future<bool?> track({
+    required String eventName,
+    Map<String, dynamic>? properties,
+  }) {
     return methodChannel.invokeMethod(
       'track',
-      data,
+      {
+        'eventName': eventName,
+        if (properties != null) 'properties': properties,
+      },
     );
   }
 
@@ -193,6 +206,24 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   Future<bool?> removeTags(List tags) {
     return methodChannel.invokeMethod('removeTags', {
       'tags': tags,
+    });
+  }
+
+  @override
+  Future<bool?> openSupportBot({
+    required supportBotId,
+    String? message,
+  }) {
+    return methodChannel.invokeMethod('openSupportBot', {
+      'supportBotId': supportBotId,
+      'message': message,
+    });
+  }
+
+  @override
+  Future<bool?> setAppearance(Appearance appearance) {
+    return methodChannel.invokeMethod('setAppearance', {
+      'appearance': appearance.value,
     });
   }
 }

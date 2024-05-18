@@ -152,7 +152,7 @@ Insert the following script within the <body> tag of your HTML file(web/index.ht
 </script>
 ```
 
-In case of Web platform, use `bootForWeb` API
+In case of Web platform, would better use `bootForWeb` API but we can also use `boot` API.
 ```dart
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
@@ -161,7 +161,12 @@ void main() async {
         pluginKey: 'pluginKey', // Required
         memberId: 'memberId',
         memberHash: 'memberHash',
+        email: 'email',
+        name: 'name',
+        mobileNumber: '0101231234',
+        avatarUrl: 'avatarUrl',
         customLauncherSelector: 'customLauncherSelector',
+        hideChannelButtonOnBoot: false,
         zIndex: 10000000,
         trackDefaultEvent: false,
         trackUtmSource: false,
@@ -174,3 +179,471 @@ void main() async {
 ...
 }
 ```
+
+
+### Supported API
+
+<table>
+    <thead>
+        <tr>
+            <th>API</th>
+            <th>API Description</th>
+            <th>Parameter</th>
+            <th>Type</th>
+            <th style="width:70%">Parameter Description</th>
+            <th>Support platforms</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- setListener -->
+        <tr>
+            <td>setListener</td>
+            <td>Set the delegate allows the reception of event callbacks from the SDK.
+
+</td>
+            <td>delegate*</td>
+            <td>ChannelTalkDelegate</td>
+            <td>Support onShowMessenger/onHideMessenger/onChatCreated/onBadgeChanged/onFollowUpChanged/onUrlClicked/onPopupDataReceived</td>
+            <td>Mobile</td>
+        </tr>
+        <!-- removeListener -->
+        <tr>
+            <td>removeListener</td>
+            <td>Remove the delegate allows the reception of event callbacks from the SDK.q
+
+</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile</td>
+        </tr>
+        <!-- boot -->
+        <tr>
+            <td rowspan=13>boot</td>
+            <td rowspan=13>Load the information necessary to use the SDK.</td>
+            <td>pluginKey*</td>
+            <td>String</td>
+            <td>Plugin key of Channel.</td>
+            <td rowspan=13>Mobile, Web</td>
+        </tr>
+        <tr>
+            <td>memberId</td>
+            <td>String?</td>
+            <td>An identifier to distinguish each member user.</td>
+        </tr>
+        <tr>
+            <td>memberHash</td>
+            <td>String?</td>
+            <td>A HMAC-SHA256 value of memberId.</td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>String?</td>
+            <td>An email of a user.</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>String?</td>
+            <td>A name of a user.</td>
+        </tr>
+        <tr>
+            <td>mobileNumber</td>
+            <td>String?</td>
+            <td>A mobile number of a user.</td>
+        </tr>
+        <tr>
+            <td>avatarUrl</td>
+            <td>String?</td>
+            <td>An avatar URL of a user.</td>
+        </tr>
+        <tr>
+            <td>language</td>
+            <td>Language?</td>
+            <td>A user’s language.
+It is valid when creating a new user. The language of the user that already exists will not change.</td>
+        </tr>
+        <tr>
+            <td>unsubscribeEmail</td>
+            <td>bool?</td>
+            <td>Sets whether to receive marketing messages via email.</td>
+        </tr>
+        <tr>
+            <td>unsubscribeTexting</td>
+            <td>bool?</td>
+            <td>Sets whether to receive marketing messages via texting (SMS, LMS)</td>
+        </tr>
+        <tr>
+            <td>trackDefaultEvent</td>
+            <td>bool?</td>
+            <td>Sets whether to track the default event, such as PageView.</td>
+        </tr>
+        <tr>
+            <td>hidePopup</td>
+            <td>bool?</td>
+            <td>Sets whether to hide popups such as marketing popup and in-app notifications.</td>
+        </tr>
+        <tr>
+            <td>appearance</td>
+            <td>Appearance?</td>
+            <td>Sets the appearance of SDK.</td>
+        </tr>
+        <!-- bootForWeb -->
+        <tr>
+            <td rowspan=17>bootForWeb</td>
+            <td rowspan=17>Load the information necessary to use the SDK.</td>
+            <td>pluginKey*</td>
+            <td>String</td>
+            <td>Plugin key of Channel.</td>
+            <td rowspan=17>Web</td>
+        </tr>
+        <tr>
+            <td>memberId</td>
+            <td>String?</td>
+            <td>An identifier to distinguish each member user.</td>
+        </tr>
+        <tr>
+            <td>memberHash</td>
+            <td>String?</td>
+            <td>A HMAC-SHA256 value of memberId.</td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>String?</td>
+            <td>An email of a user.</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>String?</td>
+            <td>A name of a user.</td>
+        </tr>
+        <tr>
+            <td>mobileNumber</td>
+            <td>String?</td>
+            <td>A mobile number of a user.</td>
+        </tr>
+        <tr>
+            <td>avatarUrl</td>
+            <td>String?</td>
+            <td>An avatar URL of a user.</td>
+        </tr>
+        <tr>
+            <td>language</td>
+            <td>Language?</td>
+            <td>A user’s language.
+It is valid when creating a new user. The language of the user that already exists will not change.</td>
+        </tr>
+        <tr>
+            <td>unsubscribeEmail</td>
+            <td>bool?</td>
+            <td>Sets whether to receive marketing messages via email.</td>
+        </tr>
+        <tr>
+            <td>unsubscribeTexting</td>
+            <td>bool?</td>
+            <td>Sets whether to receive marketing messages via texting (SMS, LMS)</td>
+        </tr>
+        <tr>
+            <td>trackDefaultEvent</td>
+            <td>bool?</td>
+            <td>Sets whether to track the default event, such as PageView.</td>
+        </tr>
+        <tr>
+            <td>hidePopup</td>
+            <td>bool?</td>
+            <td>Sets whether to hide popups such as marketing popup and in-app notifications.</td>
+        </tr>
+        <tr>
+            <td>appearance</td>
+            <td>Appearance?</td>
+            <td>Sets the appearance of SDK.</td>
+        </tr>
+        <tr>
+            <td>customLauncherSelector</td>
+            <td>String?</td>
+            <td>The CSS Selector to select a custom launcher.
+Use this option to customize the default chat button.</td>
+        </tr>
+        <tr>
+            <td>hideChannelButtonOnBoot</td>
+            <td>bool?</td>
+            <td>Determines whether to hide the default chat button on boot.
+The default value is false.</td>
+        </tr>
+        <tr>
+            <td>zIndex</td>
+            <td>int?</td>
+            <td>Sets the z-index for SDK elements, such as the chat button, messenger, and marketing pop-ups.
+The default value is 10000000.</td>
+        </tr>
+        <tr>
+            <td>trackUtmSource</td>
+            <td>bool?</td>
+            <td>Determines whether to track the UTM source and referrer.
+The default value is true.</td>
+        </tr>
+        <!-- sleep -->
+        <tr>
+            <td>sleep</td>
+            <td>Disables all features except for receiving system push notifications and using the Track.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile</td>
+        </tr>
+        <!-- shutdown -->
+        <tr>
+            <td>shutdown</td>
+            <td>Disconnects the SDK from the channel.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- showChannelButton -->
+        <tr>
+            <td>showChannelButton</td>
+            <td>Displays the Channel button on the global screen.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Displas the Channel button on the global screen.</td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- hideChannelButton -->
+        <tr>
+            <td>hideChannelButton</td>
+            <td>Hides the Channel button on the global screen.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- showMessenger -->
+        <tr>
+            <td>showMessenger</td>
+            <td>Displays the messenger.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- hideMessenger -->
+        <tr>
+            <td>hideMessenger</td>
+            <td>Hides the messenger.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- openChat -->
+        <tr>
+            <td rowspan=2>openChat</td>
+            <td rowspan=2>Opens User chat.</td>
+            <td>chatId</td>
+            <td>String?</td>
+            <td>This is the chat ID. If the chatId is invalid or nil, a new user chat is opened.</td>
+            <td rowspan=2>Mobile, Web</td>
+        </tr>
+        <tr>
+            <td>message</td>
+            <td>String?</td>
+            <td>This is the pre-filled message in the message input field when opening a new chat. It is valid when chatId is nil.</td>
+        </tr>
+        <!-- track -->
+        <tr>
+            <td rowspan=2>track</td>
+            <td rowspan=2>Tracks the user's events.</td>
+            <td>eventName*</td>
+            <td>String</td>
+            <td>This is the name of the event to track, with a maximum length of 30 characters.</td>
+            <td rowspan=2>Mobile, Web</td>
+        </tr>
+        <tr>
+            <td>properties</td>
+            <td>Map?</td>
+            <td>This is additional information about the event.</td>
+        </tr>
+        <!-- updateUser -->
+        <tr>
+            <td rowspan=8>updateUser</td>
+            <td rowspan=8>TraModifies user information.</td>
+            <td>name</td>
+            <td>String?</td>
+            <td>A name of a user.</td>
+            <td rowspan=8>Mobile, Web</td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>String?</td>
+            <td>An email of a user.</td>
+        </tr>
+        <tr>
+            <td>mobileNumber</td>
+            <td>String?</td>
+            <td>A mobile number of a user.</td>
+        </tr>
+        <tr>
+            <td>avatarUrl</td>
+            <td>String?</td>
+            <td>An avatar URL of a user.</td>
+        </tr>
+        <tr>
+            <td>language</td>
+            <td>Language?</td>
+            <td>A user’s language.
+It is valid when creating a new user. The language of the user that already exists will not change.</td>
+        </tr>
+        <tr>
+            <td>unsubscribeEmail</td>
+            <td>bool?</td>
+            <td>Sets whether to receive marketing messages via email.</td>
+        </tr>
+        <tr>
+            <td>unsubscribeTexting</td>
+            <td>bool?</td>
+            <td>Sets whether to receive marketing messages via texting (SMS, LMS)</td>
+        </tr>
+        <tr>
+            <td>tags</td>
+            <td>List[String]?</td>
+            <td>A tag list of the user.</td>
+        </tr>
+        <!-- initPushToken -->
+        <tr>
+            <td >initPushToken</td>
+            <td>Informs ChannelTalk about updates to the device token.</td>
+            <td>deviceToken*</td>
+            <td>String</td>
+            <td>This is additional information about the event.</td>
+            <td>Mobile</td>
+        </tr>
+        <!-- isChannelPushNotification -->
+        <tr>
+            <td>isChannelPushNotification</td>
+            <td>It checks if the push data should be processed by the SDK.</td>
+            <td>content*</td>
+            <td>Map</td>
+            <td>This is the `userInfo object received through push notifications.</td>
+            <td>Mobile</td>
+        </tr>
+        <!-- receivePushNotification -->
+        <tr>
+            <td>receivePushNotification</td>
+            <td>Notifies Channel Talk that the user has received a push notification.</td>
+            <td>content*</td>
+            <td>Map</td>
+            <td>This is the `userInfo object received through push notifications.</td>
+            <td>Mobile</td>
+        </tr>
+        <!-- storePushNotification -->
+        <tr>
+            <td>storePushNotification</td>
+            <td>Stores push information on the device.</td>
+            <td>content*</td>
+            <td>Map</td>
+            <td>This is the `userInfo object received through push notifications.</td>
+            <td>Mobile</td>
+        </tr>
+        <!-- hasStoredPushNotification -->
+        <tr>
+            <td>hasStoredPushNotification</td>
+            <td>Check for any saved push notifications from the Channel.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile</td>
+        </tr>
+        <!-- openStoredPushNotification -->
+        <tr>
+            <td>openStoredPushNotification</td>
+            <td>Opens a user chat using the stored push information on the device through storePushNotification.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile</td>
+        </tr>
+        <!-- isBooted -->
+        <tr>
+            <td>isBooted</td>
+            <td>Verify that the SDK is in a Boot state.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile</td>
+        </tr>
+        <!-- setDebugMode -->
+        <tr>
+            <td>setDebugMode</td>
+            <td>Sets the debug mode.</td>
+            <td>flag*</td>
+            <td>String</td>
+            <td>debug mode</td>
+            <td>Mobile</td>
+        </tr>
+        <!-- setPage -->
+        <tr>
+            <td>setPage</td>
+            <td>Sets the name of the screen when the track is called.</td>
+            <td>page*</td>
+            <td>String</td>
+            <td>This is the screen name when track is called.</td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- resetPage -->
+        <tr>
+            <td>resetPage</td>
+            <td>Resets the name of the screen when track is called.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- addTags -->
+        <tr>
+            <td>addTags</td>
+            <td>Adds tags to the user.</td>
+            <td>tags*</td>
+            <td>List[String]</td>
+            <td>• The maximum number of tags that can be added is 10.<br>
+• Tags are stored in lowercase.<br>
+• Any tags that have already been added will be ignored.<br>
+• nil, empty strings, or lists containing them are not allowed.</td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- removeTags -->
+        <tr>
+            <td>removeTags</td>
+            <td>Removes tags from the user, ignoring any tags that do not exist.
+
+</td>
+            <td>tags*</td>
+            <td>List[String]</td>
+            <td>These are the tags to be removed. Null, empty strings, or lists containing them are not allowed.</td>
+            <td>Mobile, Web</td>
+        </tr>
+        <!-- openSupportBot -->
+        <tr>
+            <td rowspan=2>openSupportBot</td>
+            <td rowspan=2>Opens User chat to run a specific Support bot.</td>
+            <td>supportBotId*</td>
+            <td>String?</td>
+            <td>This is the support bot's ID. If supportBotId is invalid or nil, the chat room is closed.</td>
+            <td rowspan=2>Mobile, Web</td>
+        </tr>
+        <tr>
+            <td>message</td>
+            <td>String?</td>
+            <td>This message will be displayed in the input field after completing the support bot operation.</td>
+        </tr>
+        <!-- setAppearance -->
+        <tr>
+            <td>setAppearance</td>
+            <td>Configures the SDK's theme.</td>
+            <td>appearance*</td>
+            <td>Appearance</td>
+            <td>If specified as .light or .dark, it locks the theme to the respective mode. If specified as .system, it follows the device's system theme.</td>
+            <td>Mobile, Web</td>
+        </tr>
+    </tbody>
+</table>

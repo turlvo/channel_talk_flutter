@@ -61,6 +61,10 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         self.addTags(call, result)
       case "removeTags":
         self.removeTags(call, result)
+      case "openSupportBot":
+        self.openSupportBot(call, result)
+      case "setAppearance":
+        self.setAppearance(call, result)
       
       default:
         result(FlutterMethodNotImplemented)
@@ -115,19 +119,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         
     }
 
-    let appearance = argMaps["appearance"] as? String
-    var enumAppearance: Appearance = Appearance.system
-    switch appearance {
-      case "system":
-        enumAppearance = Appearance.system
-      case "light":
-        enumAppearance = Appearance.light
-      case "dark":
-        enumAppearance = Appearance.dark
-      default:
-        enumAppearance = Appearance.system
-        
-    }
+    var enumAppearance: Appearance = getAppearance(appearance: argMaps["appearance"] as? String)
 
     let bootConfig = BootConfig.init(
       pluginKey: pluginKey,
@@ -393,6 +385,45 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
               result(false)
           }
       }
+  }
+
+  private func openSupportBot(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    guard let argMaps = call.arguments as? Dictionary<String, Any> else {
+        result(FlutterError(code: call.method, message: "Missing argument", details: nil))
+        return
+    }
+
+    let supportBotId = argMaps["supportBotId"] as? String
+    let message = argMaps["message"] as? String
+
+    ChannelIO.openSupportBot(with: supportBotId, message: message)
+    result(true)
+  }
+
+  private func setAppearance(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    guard let argMaps = call.arguments as? Dictionary<String, Any>,
+      let appearance = argMaps["appearance"] as? String else {
+      result(FlutterError(code: call.method, message: "Missing argument", details: nil))
+      return
+    }
+
+    ChannelIO.setAppearance(getAppearance(appearance: appearance))
+    result(true)
+  }
+
+  private func getAppearance(appearance: String?) -> Appearance {
+    var enumAppearance: Appearance = Appearance.system
+    switch appearance {
+      case "system":
+        enumAppearance = Appearance.system
+      case "light":
+        enumAppearance = Appearance.light
+      case "dark":
+        enumAppearance = Appearance.dark
+      default:
+        enumAppearance = Appearance.system
+    }
+    return enumAppearance
   }
 
   private func getBootErrorMessage(status: BootStatus) -> String{

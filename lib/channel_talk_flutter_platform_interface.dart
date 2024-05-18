@@ -1,3 +1,4 @@
+import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'channel_talk_flutter_method_channel.dart';
@@ -75,11 +76,17 @@ abstract class ChannelTalkFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hideMessenger() has not been implemented.');
   }
 
-  Future<bool?> openChat(Map<String, dynamic> data) {
+  Future<bool?> openChat({
+    String? chatId,
+    String? message,
+  }) {
     throw UnimplementedError('openChat() has not been implemented.');
   }
 
-  Future<bool?> track(Map<String, dynamic> data) {
+  Future<bool?> track({
+    required String eventName,
+    Map<String, dynamic>? properties,
+  }) {
     throw UnimplementedError('track() has not been implemented.');
   }
 
@@ -148,5 +155,16 @@ abstract class ChannelTalkFlutterPlatform extends PlatformInterface {
 
   Future<bool?> removeTags(List tags) {
     throw UnimplementedError('removeTags() has not been implemented.');
+  }
+
+  Future<bool?> openSupportBot({
+    required String supportBotId,
+    String? message,
+  }) {
+    throw UnimplementedError('openSupportBot() has not been implemented.');
+  }
+
+  Future<bool?> setAppearance(Appearance appearance) {
+    throw UnimplementedError('setAppearance() has not been implemented.');
   }
 }

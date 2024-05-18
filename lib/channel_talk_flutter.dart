@@ -138,10 +138,8 @@ class ChannelTalk {
     String? message,
   }) {
     return ChannelTalkFlutterPlatform.instance.openChat(
-      {
-        'chatId': chatId,
-        'message': message,
-      },
+      chatId: chatId,
+      message: message,
     );
   }
 
@@ -149,15 +147,10 @@ class ChannelTalk {
     required String eventName,
     Map<String, dynamic>? properties,
   }) {
-    Map<String, dynamic> data = {
-      'eventName': eventName,
-    };
-
-    if (properties != null) {
-      data['properties'] = properties;
-    }
-
-    return ChannelTalkFlutterPlatform.instance.track(data);
+    return ChannelTalkFlutterPlatform.instance.track(
+      eventName: eventName,
+      properties: properties,
+    );
   }
 
   static Future<bool?> updateUser({
@@ -249,5 +242,21 @@ class ChannelTalk {
     required List tags,
   }) {
     return ChannelTalkFlutterPlatform.instance.removeTags(tags);
+  }
+
+  static Future<bool?> openSupportBot({
+    required String supportBotId,
+    String? message,
+  }) {
+    return ChannelTalkFlutterPlatform.instance.openSupportBot(
+      supportBotId: supportBotId,
+      message: message,
+    );
+  }
+
+  static Future<bool?> setAppearance({
+    required Appearance appearance,
+  }) {
+    return ChannelTalkFlutterPlatform.instance.setAppearance(appearance);
   }
 }
