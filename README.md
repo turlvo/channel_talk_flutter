@@ -406,7 +406,6 @@ The default value is true.</td>
             <td></td>
             <td></td>
             <td></td>
-            <td>Displas the Channel button on the global screen.</td>
             <td>Mobile, Web</td>
         </tr>
         <!-- hideChannelButton -->
