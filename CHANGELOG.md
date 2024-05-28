@@ -1,3 +1,8 @@
+## 3.1.0
+- Removed not using package(js)
+- Update iOS ChannelIOSDK to 11.7.3
+- Update Android ChannelIOSDK to 11.6.1
+
 ## 3.0.0
 - Changed to Federated plugins
 - Support Web(bootForWeb)

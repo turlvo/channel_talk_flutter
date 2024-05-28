@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'channel_talk_flutter'
-  s.version          = '3.0.0'
+  s.version          = '3.1.0'
   s.summary          = 'A Channel Talk flutter plugin project.(Unofficial)'
   s.description      = <<-DESC
 A new Flutter plugin project.
@@ -15,7 +15,7 @@ A new Flutter plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'ChannelIOSDK', '11.6.0'
+  s.dependency 'ChannelIOSDK', '11.7.3'
   s.platform = :ios, '12.0'
   s.resource_bundles = {'channel_talk_flutter_privacy' => ['PrivacyInfo.xcprivacy']}
 
