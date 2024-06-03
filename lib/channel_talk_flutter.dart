@@ -153,16 +153,16 @@ class ChannelTalk {
     );
   }
 
-  static Future<bool?> updateUser({
-    String? name,
-    String? email,
-    String? mobileNumber,
-    String? avatarUrl,
-    bool? unsubscribeEmail,
-    bool? unsubscribeTexting,
-    List<String>? tags,
-    Language? language,
-  }) {
+  static Future<bool?> updateUser(
+      {String? name,
+      String? email,
+      String? mobileNumber,
+      String? avatarUrl,
+      bool? unsubscribeEmail,
+      bool? unsubscribeTexting,
+      List<String>? tags,
+      Language? language,
+      Map<String, dynamic>? customAttributes}) {
     return ChannelTalkFlutterPlatform.instance.updateUser(
       {
         if (name != null) 'name': name,
@@ -174,6 +174,7 @@ class ChannelTalk {
           'unsubscribeTexting': unsubscribeTexting,
         if (tags != null) 'tags': tags,
         if (language != null) 'language': language.value,
+        if (customAttributes != null) 'customAttributes': customAttributes,
       },
     );
   }

@@ -312,7 +312,7 @@ class _MyAppState extends State<MyApp> {
 }
                             ''';
                   showInputDialog(
-                    'boot payload',
+                    'boot payload for Web',
                     () async {
                       try {
                         Map args = json.decode(content);
@@ -541,7 +541,8 @@ class _MyAppState extends State<MyApp> {
     "avatarUrl": "https://unsplash.com/photos/oL3-V8xhqlI",
     "unsubscribeEmail": false,
     "unsubscribeTexting": false,
-    "tags": ["a", "b", "c"]
+    "tags": ["a", "b", "c"],
+    "customAttributes": {"custom1": "aaaa","custom2": "bbbb" }
 }
                             ''';
                   showInputDialog(
@@ -556,8 +557,11 @@ class _MyAppState extends State<MyApp> {
                           avatarUrl: args['avatarUrl'],
                           unsubscribeEmail: args['unsubscribeEmail'],
                           unsubscribeTexting: args['unsubscribeTexting'],
-                          tags: List<String>.from(args['tags']),
-                          language: Language.english,
+                          tags: args['tags'] != null
+                              ? List<String>.from(args['tags'])
+                              : null,
+                          language: Language.korean,
+                          customAttributes: args['customAttributes'],
                         );
 
                         showMessageToast('Result: $result');

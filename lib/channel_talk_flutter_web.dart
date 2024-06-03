@@ -145,12 +145,15 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
         if (data['mobileNumber'] != null) 'mobileNumber': data['mobileNumber'],
         if (data['name'] != null) 'name': data['name'],
         if (data['avatarUrl'] != null) 'avatarUrl': data['avatarUrl'],
+        if (data['customAttributes'] != null) ...data['customAttributes'],
       },
-      'profileOnce': data['profileOnce'],
-      'unsubscribeEmail': data['unsubscribeEmail'],
-      'unsubscribeTexting': data['unsubscribeTexting'],
-      'tags': data['tags'],
-      'language': data['language'],
+      if (data['profileOnce'] != null) 'profileOnce': data['profileOnce'],
+      if (data['unsubscribeEmail'] != null)
+        'unsubscribeEmail': data['unsubscribeEmail'],
+      if (data['unsubscribeTexting'] != null)
+        'unsubscribeTexting': data['unsubscribeTexting'],
+      if (data['tags'] != null) 'tags': data['tags'],
+      if (data['language'] != null) 'language': data['language'],
     };
     channel_talk_service.updateUser(
       'updateUser',
