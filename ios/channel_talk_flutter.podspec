@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'channel_talk_flutter'
-  s.version          = '3.1.0'
+  s.version          = '3.1.1'
   s.summary          = 'A Channel Talk flutter plugin project.(Unofficial)'
   s.description      = <<-DESC
 A new Flutter plugin project.

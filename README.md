@@ -465,12 +465,12 @@ The default value is true.</td>
         </tr>
         <!-- updateUser -->
         <tr>
-            <td rowspan=8>updateUser</td>
-            <td rowspan=8>TraModifies user information.</td>
+            <td rowspan=9>updateUser</td>
+            <td rowspan=9>TraModifies user information.</td>
             <td>name</td>
             <td>String?</td>
             <td>A name of a user.</td>
-            <td rowspan=8>Mobile, Web</td>
+            <td rowspan=9>Mobile, Web</td>
         </tr>
         <tr>
             <td>email</td>
@@ -507,6 +507,11 @@ It is valid when creating a new user. The language of the user that already exis
             <td>tags</td>
             <td>List[String]?</td>
             <td>A tag list of the user.</td>
+        </tr>
+        <tr>
+            <td>customAttributes</td>
+            <td>Map < String, dynamic >?</td>
+            <td>A user's CustomAttributes</td>
         </tr>
         <!-- initPushToken -->
         <tr>

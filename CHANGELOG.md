@@ -1,3 +1,6 @@
+## 3.1.1
+- added `customAttributes` on `updateUser` API
+
 ## 3.1.0
 - Removed not using package(js)
 - Update iOS ChannelIOSDK to 11.7.3
