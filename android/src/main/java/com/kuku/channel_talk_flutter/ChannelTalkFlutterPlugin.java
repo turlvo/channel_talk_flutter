@@ -463,7 +463,7 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       result.error("UNAVAILABLE", "Channel Talk is not booted", null);
     }
 
-    String openSupportBot = call.argument("openSupportBot");
+    String openSupportBot = call.argument("supportBotId");
     String message = call.argument("message");
 
     ChannelIO.openSupportBot(this.activity, openSupportBot, message);
