@@ -1,3 +1,6 @@
+## 3.1.2
+- fixed `openSupportBot` wrong parameter processing for Android
+
 ## 3.1.1
 - added `customAttributes` on `updateUser` API
 
