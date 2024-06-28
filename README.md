@@ -131,7 +131,7 @@ This plugin works in combination with the [`firebase_messaging`](https://pub.dev
 
 ```
     <service
-        android:name="ai.deepnatural.channel_talk.PushInterceptService"
+        android:name="com.kuku.channel_talk_flutter.PushInterceptService"
         android:enabled="true"
         android:exported="true">
         <intent-filter>
