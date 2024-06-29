@@ -1,6 +1,24 @@
 # channel_talk_flutter
+Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)<br><br>
+\*******************************************************************************************************
+<br> [ANDROID] <br>
+Please should change the bottom part when change version from v2.x.x to above of v3.0.0.
 
-Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)
+In `AndroidManifest.xml` file, <br>
+AS-IS
+```
+    <service
+        android:name="ai.deepnatural.channel_talk.PushInterceptService"
+        ...
+```
+TO-BE
+```
+    <service
+        android:name="com.kuku.channel_talk_flutter.PushInterceptService"
+        ...
+```
+\*******************************************************************************************************
+
 
 ## Usage
 ```dart
