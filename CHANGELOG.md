@@ -1,3 +1,7 @@
+## 3.1.3
+- BREAKING: Updated README for Android push notification guide
+- Upgrade Android's ChannelIOSdk version from 11.6.1 to 11.6.2
+
 ## 3.1.2
 - fixed `openSupportBot` wrong parameter processing for Android
 
