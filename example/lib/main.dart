@@ -876,18 +876,16 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   content = '''
 {
-  "supportBotId": "",
-  "message": ""
+  "workflowId": ""
 }
                             ''';
                   showInputDialog(
-                    'openSupportBot payload',
+                    'openWorkflow payload',
                     () async {
                       try {
                         Map args = json.decode(content);
-                        final result = await ChannelTalk.openSupportBot(
-                          supportBotId: args['supportBotId'],
-                          message: args['message'],
+                        final result = await ChannelTalk.openWorkflow(
+                          workflowId: args['workflowId'],
                         );
 
                         showMessageToast('Result: $result');
@@ -899,7 +897,21 @@ class _MyAppState extends State<MyApp> {
                     },
                   );
                 },
-                child: const Text('openSupportBot'),
+                child: const Text('openWorkflow'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final result = await ChannelTalk.hidePopup();
+
+                    showMessageToast('Result: $result');
+                  } on PlatformException catch (error) {
+                    showMessageToast('PlatformException: ${error.message}');
+                  } catch (err) {
+                    showMessageToast(err.toString());
+                  }
+                },
+                child: const Text('hidePopup'),
               ),
             ],
           ),
