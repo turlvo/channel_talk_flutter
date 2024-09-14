@@ -130,8 +130,7 @@ external void removeTags(
 );
 
 @JS('ChannelIO')
-external void openSupportBot(String command, String supportBotId,
-    [String? message]);
+external void openWorkflow(String command, [String? workflowId]);
 
 @JS('ChannelIO')
 external void setAppearance(String command, String appearance);

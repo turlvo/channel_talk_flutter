@@ -210,13 +210,11 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> openSupportBot({
-    required supportBotId,
-    String? message,
+  Future<bool?> openWorkflow({
+    String? workflowId,
   }) {
-    return methodChannel.invokeMethod('openSupportBot', {
-      'supportBotId': supportBotId,
-      'message': message,
+    return methodChannel.invokeMethod('openWorkflow', {
+      'workflowId': workflowId,
     });
   }
 
@@ -225,5 +223,10 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
     return methodChannel.invokeMethod('setAppearance', {
       'appearance': appearance.value,
     });
+  }
+
+  @override
+  Future<bool?> hidePopup() {
+    return methodChannel.invokeMethod('hidePopup');
   }
 }
