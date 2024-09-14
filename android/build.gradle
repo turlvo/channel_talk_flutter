@@ -35,7 +35,7 @@ android {
     }
 
     dependencies {
-        implementation 'io.channel:plugin-android:11.6.2'
+        implementation 'io.channel:plugin-android:12.2.0'
         implementation "com.google.firebase:firebase-messaging:20.1.0"
     }
 
