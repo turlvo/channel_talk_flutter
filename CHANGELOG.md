@@ -1,3 +1,9 @@
+## 3.2.0
+- Upgrade iOS's ChannelIOSdk version to 12.1.0
+- Upgrade Android's ChannelIOSdk version to 12.2.0
+- Added `hidePopup` API
+- BREAKING: Removed `openSupportBot` and added `openWorkflow`
+
 ## 3.1.3
 - BREAKING: Updated README for Android push notification guide
 - Upgrade Android's ChannelIOSdk version from 11.6.1 to 11.6.2

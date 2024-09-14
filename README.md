@@ -644,13 +644,13 @@ It is valid when creating a new user. The language of the user that already exis
             <td>These are the tags to be removed. Null, empty strings, or lists containing them are not allowed.</td>
             <td>Mobile, Web</td>
         </tr>
-        <!-- openSupportBot -->
+        <!-- openWorkflow -->
         <tr>
-            <td rowspan=2>openSupportBot</td>
-            <td rowspan=2>Opens User chat to run a specific Support bot.</td>
-            <td>supportBotId*</td>
+            <td rowspan=2>openWorkflow</td>
+            <td rowspan=2>Opens a user chat and starts the specified workflow.</td>
+            <td>workflowId</td>
             <td>String?</td>
-            <td>This is the support bot's ID. If supportBotId is invalid or nil, the chat room is closed.</td>
+            <td>The ID of workflow to start with. An error page will be shown if such workflow does not exist.</td>
             <td rowspan=2>Mobile, Web</td>
         </tr>
         <tr>
@@ -666,6 +666,15 @@ It is valid when creating a new user. The language of the user that already exis
             <td>Appearance</td>
             <td>If specified as .light or .dark, it locks the theme to the respective mode. If specified as .system, it follows the device's system theme.</td>
             <td>Mobile, Web</td>
+        </tr>
+        <!-- hidePopup -->
+        <tr>
+            <td>hidePopup</td>
+            <td>Hides the Channel popup on the global screen.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Mobile</td>
         </tr>
     </tbody>
 </table>
