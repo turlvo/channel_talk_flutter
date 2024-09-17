@@ -1,3 +1,6 @@
+
+
+
 # channel_talk_flutter
 Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)<br><br>
 \*******************************************************************************************************
@@ -20,7 +23,7 @@ TO-BE
 \*******************************************************************************************************
 
 
-## Usage
+## ⚡ Usage
 ```dart
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
 
@@ -199,7 +202,7 @@ void main() async {
 ```
 
 
-### Supported API
+### 🔧 Supported API
 
 <table>
     <thead>
@@ -678,3 +681,18 @@ It is valid when creating a new user. The language of the user that already exis
         </tr>
     </tbody>
 </table>
+
+## 🤗 Contributing
+
+Contributions are welcome! Feel free to [open an issue](https://github.com/turlvo/channel_talk_flutter/issues/new) or submit a [pull request](https://github.com/turlvo/channel_talk_flutter/compare) if you have a way to improve this project.
+
+Make sure your request is meaningful and you have tested the app locally before submitting a pull request.
+
+
+## 🙋‍♂️ Support
+
+💙 If you like this project, give it a ⭐ and share it with friends!
+
+<a href="https://www.buymeacoffee.com/turlvo" target="_blank" title="buymeacoffee">
+  <img src="https://iili.io/JoQ1HUQ.md.png"  alt="buymeacoffee-violet-badge" style="width: 130px;">
+</a>
