@@ -1,3 +1,6 @@
+## 3.2.1
+- Update compileSdkVersion to Resolve Android Build Error after Flutter 3.24 Upgrade
+
 ## 3.2.0
 - Upgrade iOS's ChannelIOSdk version to 12.1.0
 - Upgrade Android's ChannelIOSdk version to 12.2.0
