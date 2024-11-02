@@ -1,3 +1,8 @@
+## 3.3.0
+- Fixed 'App not launching when tapping on Push Notification' in Android
+- Upgrade iOS's ChannelIOSdk version to 12.2.1
+- Upgrade Android's ChannelIOSdk version to 12.3.1
+  
 ## 3.2.1
 - Update compileSdkVersion to Resolve Android Build Error after Flutter 3.24 Upgrade
 
