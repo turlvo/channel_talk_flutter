@@ -1,0 +1,4 @@
+-keep class com.zoyi.**{ *; }
+-keep class io.channel.**{ *; }
+-dontwarn com.zoyi.**
+-dontwarn io.channel.**

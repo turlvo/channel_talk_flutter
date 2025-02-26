@@ -1,3 +1,8 @@
+## 4.0.0
+- Require iOS 15 and above
+- Upgrade iOS's ChannelIOSdk version to 12.6.0
+- Upgrade Android's ChannelIOSdk version to 12.6.0
+
 ## 3.3.0
 - Fixed 'App not launching when tapping on Push Notification' in Android
 - Upgrade iOS's ChannelIOSdk version to 12.2.1

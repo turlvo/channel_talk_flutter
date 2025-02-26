@@ -24,7 +24,7 @@ apply plugin: 'com.android.library'
 android {
     namespace "com.kuku.channel_talk_flutter"
 
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     defaultConfig {
         minSdkVersion 19
@@ -35,7 +35,7 @@ android {
     }
 
     dependencies {
-        implementation 'io.channel:plugin-android:12.3.1'
+        implementation 'io.channel:plugin-android:12.6.0'
         implementation "com.google.firebase:firebase-messaging:20.1.0"
     }
 
