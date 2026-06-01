@@ -416,7 +416,12 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       result.error("UNAVAILABLE", "Missing argument(page)", null);
       return;
     }
-    ChannelIO.setPage(page);
+    Map<String, Object> profile = call.argument("profile");
+    if (profile != null && !profile.isEmpty()) {
+      ChannelIO.setPage(page, profile);
+    } else {
+      ChannelIO.setPage(page);
+    }
     result.success(true);
   }
 
