@@ -611,12 +611,17 @@ It is valid when creating a new user. The language of the user that already exis
         </tr>
         <!-- setPage -->
         <tr>
-            <td>setPage</td>
-            <td>Sets the name of the screen when the track is called.</td>
+            <td rowspan=2>setPage</td>
+            <td rowspan=2>Sets the name of the screen when the track is called.</td>
             <td>page*</td>
             <td>String</td>
             <td>This is the screen name when track is called.</td>
-            <td>Mobile, Web</td>
+            <td rowspan=2>Mobile, Web</td>
+        </tr>
+        <tr>
+            <td>profile</td>
+            <td>Map?</td>
+            <td>Profile values applied to the user chat, applied when the chat is created. If a field is set to null, only that field's value is cleared.</td>
         </tr>
         <!-- resetPage -->
         <tr>
