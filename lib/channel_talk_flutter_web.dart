@@ -163,8 +163,13 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> setPage(page) {
-    channel_talk_service.setPage('setPage', page);
+  Future<bool?> setPage(page, [Map<String, dynamic>? profile]) {
+    final hasProfile = profile != null && profile.isNotEmpty;
+    channel_talk_service.setPage(
+      'setPage',
+      page,
+      hasProfile ? profile.jsify() : null,
+    );
     return Future.value(true);
   }
 
