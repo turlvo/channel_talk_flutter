@@ -350,7 +350,12 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       return
     }
     
-    ChannelIO.setPage(page)
+    let profile = argMaps["profile"] as? [String: Any]
+    if let profile = profile, !profile.isEmpty {
+      ChannelIO.setPage(page, profile: profile)
+    } else {
+      ChannelIO.setPage(page)
+    }
     result(true)
   }
 

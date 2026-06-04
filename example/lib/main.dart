@@ -759,7 +759,8 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   content = '''
 {
-  "page": "Custom Value"
+  "page": "Custom Value",
+  "profile": { "name": "John Doe", "email": "john@example.com" }
 }
                   ''';
 
@@ -769,8 +770,10 @@ class _MyAppState extends State<MyApp> {
                       Map args = json.decode(content);
 
                       try {
-                        final result =
-                            await ChannelTalk.setPage(page: args['page']);
+                        final result = await ChannelTalk.setPage(
+                          page: args['page'],
+                          profile: (args['profile'] as Map?)?.cast<String, dynamic>(),
+                        );
 
                         showMessageToast('Result: $result');
                       } on PlatformException catch (error) {

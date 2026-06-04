@@ -1,3 +1,6 @@
+## Unreleased
+- Added optional `profile` parameter to `setPage` API
+
 ## 4.2.0
 - Upgrade iOS's ChannelIOSdk version to 13.0.2
 - Upgrade Android's ChannelIOSdk version to 13.1.0

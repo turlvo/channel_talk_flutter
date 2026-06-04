@@ -112,7 +112,7 @@ external void updateUser(
 );
 
 @JS('ChannelIO')
-external void setPage(String command, String page);
+external void setPage(String command, String page, JSAny? profile);
 
 @JS('ChannelIO')
 external void resetPage(String command);

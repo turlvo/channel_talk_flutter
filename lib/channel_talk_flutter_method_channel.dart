@@ -184,9 +184,10 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> setPage(String page) {
+  Future<bool?> setPage(String page, [Map<String, dynamic>? profile]) {
     return methodChannel.invokeMethod('setPage', {
       'page': page,
+      if (profile != null) 'profile': profile,
     });
   }
 

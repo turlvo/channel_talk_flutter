@@ -222,8 +222,8 @@ class ChannelTalk {
     return ChannelTalkFlutterPlatform.instance.setDebugMode(flag);
   }
 
-  static Future<bool?> setPage({required page}) {
-    return ChannelTalkFlutterPlatform.instance.setPage(page);
+  static Future<bool?> setPage({required page, Map<String, dynamic>? profile}) {
+    return ChannelTalkFlutterPlatform.instance.setPage(page, profile);
   }
 
   static Future<bool?> resetPage() {
