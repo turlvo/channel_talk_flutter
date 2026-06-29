@@ -13,11 +13,14 @@ A new Flutter plugin project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'KuKu' => 'turlvo@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  # Single source of truth shared with the Swift Package Manager target
+  # (ios/channel_talk_flutter/Package.swift) so CocoaPods and SPM builds
+  # never diverge.
+  s.source_files = 'channel_talk_flutter/Sources/channel_talk_flutter/**/*.swift'
   s.dependency 'Flutter'
   s.dependency 'ChannelIOSDK', '13.0.2'
   s.platform = :ios, '12.0'
-  s.resource_bundles = {'channel_talk_flutter_privacy' => ['PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'channel_talk_flutter_privacy' => ['channel_talk_flutter/Sources/channel_talk_flutter/PrivacyInfo.xcprivacy']}
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
