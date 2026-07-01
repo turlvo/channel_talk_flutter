@@ -52,6 +52,10 @@ abstract class ChannelTalkFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('boot() has not been implemented.');
   }
 
+  Future<ChannelTalkBootStatus> bootWithStatus(Map<String, dynamic> config) {
+    throw UnimplementedError('bootWithStatus() has not been implemented.');
+  }
+
   Future<bool?> sleep() {
     throw UnimplementedError('sleep() has not been implemented.');
   }

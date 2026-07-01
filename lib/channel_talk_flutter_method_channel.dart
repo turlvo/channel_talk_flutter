@@ -58,6 +58,13 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   }
 
   @override
+  Future<ChannelTalkBootStatus> bootWithStatus(config) async {
+    final status =
+        await methodChannel.invokeMethod<String>('bootWithStatus', config);
+    return ChannelTalkBootStatus.fromNative(status);
+  }
+
+  @override
   Future<bool?> sleep() {
     return methodChannel.invokeMethod('sleep');
   }

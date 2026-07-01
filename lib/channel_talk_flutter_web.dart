@@ -81,6 +81,17 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   }
 
   @override
+  Future<ChannelTalkBootStatus> bootWithStatus(
+      Map<String, dynamic> config) async {
+    // Web ChannelIO boot does not surface a status; a completed boot maps to
+    // success.
+    final booted = await boot(config);
+    return booted == true
+        ? ChannelTalkBootStatus.success
+        : ChannelTalkBootStatus.unknown;
+  }
+
+  @override
   Future<bool?> shutdown() {
     channel_talk_service.shutdown('shutdown');
     return Future.value(true);
