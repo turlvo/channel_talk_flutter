@@ -93,6 +93,23 @@ class App extends StatelessWidget {
 
 See Channel Talk Android and iOS package documentation for more information.
 
+### Boot with status
+
+`boot()` returns `true` only on success. To tell *why* a boot failed — e.g. to
+retry a transient `networkTimeout` but give up on a permanent `accessDenied` —
+use `bootWithStatus()`, which resolves to a `ChannelTalkBootStatus` (`success`,
+`notInitialized`, `networkTimeout`, `notAvailableVersion`,
+`serviceUnderConstruction`, `requirePayment`, `accessDenied`, `unknown`). It
+takes the same arguments as `boot()` and shares the same native boot path. On
+web, a completed boot resolves to `success`.
+
+```dart
+final status = await ChannelTalk.bootWithStatus(pluginKey: 'pluginKey');
+if (status != ChannelTalkBootStatus.success) {
+  // inspect `status` and decide whether to retry
+}
+```
+
 ### iOS
 
 Update info.plist.

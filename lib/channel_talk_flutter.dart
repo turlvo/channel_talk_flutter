@@ -21,6 +21,38 @@ enum Language {
   final String value;
 }
 
+/// The outcome of [ChannelTalk.bootWithStatus], mirroring the native ChannelIO
+/// `BootStatus`.
+///
+/// [ChannelTalk.boot] collapses this to `success`; [ChannelTalk.bootWithStatus]
+/// preserves the reason so callers can tell transient failures (e.g.
+/// [networkTimeout], retryable) from permanent ones (e.g. [accessDenied]).
+enum ChannelTalkBootStatus {
+  success('success'),
+  notInitialized('notInitialized'),
+  networkTimeout('networkTimeout'),
+  notAvailableVersion('notAvailableVersion'),
+  serviceUnderConstruction('serviceUnderConstruction'),
+  requirePayment('requirePayment'),
+  accessDenied('accessDenied'),
+  unknown('unknown');
+
+  const ChannelTalkBootStatus(this.value);
+
+  final String value;
+
+  /// Maps a native status string to a [ChannelTalkBootStatus], defaulting to
+  /// [unknown] for null or any unrecognized value.
+  static ChannelTalkBootStatus fromNative(String? value) {
+    for (final status in ChannelTalkBootStatus.values) {
+      if (status.value == value) {
+        return status;
+      }
+    }
+    return ChannelTalkBootStatus.unknown;
+  }
+}
+
 class ChannelTalk {
   static void setListener(ChannelTalkDelegate delegate) {
     return ChannelTalkFlutterPlatform.instance.setListener(delegate);
@@ -29,6 +61,38 @@ class ChannelTalk {
   // Removes the callback listener if it exists
   static void removeListener() {
     return ChannelTalkFlutterPlatform.instance.removeListener();
+  }
+
+  static Map<String, dynamic> _buildBootConfig({
+    required String pluginKey,
+    String? memberId,
+    String? memberHash,
+    String? email,
+    String? name,
+    String? mobileNumber,
+    String? avatarUrl,
+    Language? language,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
+    bool? trackDefaultEvent,
+    bool? hidePopup,
+    Appearance? appearance,
+  }) {
+    return {
+      'pluginKey': pluginKey,
+      if (memberId != null) 'memberId': memberId,
+      if (memberHash != null) 'memberHash': memberHash,
+      if (email != null) 'email': email,
+      if (name != null) 'name': name,
+      if (mobileNumber != null) 'mobileNumber': mobileNumber,
+      if (avatarUrl != null) 'avatarUrl': avatarUrl,
+      if (language != null) 'language': language.value,
+      if (unsubscribeEmail != null) 'unsubscribeEmail': unsubscribeEmail,
+      if (unsubscribeTexting != null) 'unsubscribeTexting': unsubscribeTexting,
+      if (trackDefaultEvent != null) 'trackDefaultEvent': trackDefaultEvent,
+      if (hidePopup != null) 'hidePopup': hidePopup,
+      if (appearance != null) 'appearance': appearance.value,
+    };
   }
 
   static Future<bool?> boot({
@@ -46,23 +110,65 @@ class ChannelTalk {
     bool? hidePopup,
     Appearance? appearance,
   }) {
-    Map<String, dynamic> config = {
-      'pluginKey': pluginKey,
-      if (memberId != null) 'memberId': memberId,
-      if (memberHash != null) 'memberHash': memberHash,
-      if (email != null) 'email': email,
-      if (name != null) 'name': name,
-      if (mobileNumber != null) 'mobileNumber': mobileNumber,
-      if (avatarUrl != null) 'avatarUrl': avatarUrl,
-      if (language != null) 'language': language.value,
-      if (unsubscribeEmail != null) 'unsubscribeEmail': unsubscribeEmail,
-      if (unsubscribeTexting != null) 'unsubscribeTexting': unsubscribeTexting,
-      if (trackDefaultEvent != null) 'trackDefaultEvent': trackDefaultEvent,
-      if (hidePopup != null) 'hidePopup': hidePopup,
-      if (appearance != null) 'appearance': appearance.value,
-    };
+    return ChannelTalkFlutterPlatform.instance.boot(
+      _buildBootConfig(
+        pluginKey: pluginKey,
+        memberId: memberId,
+        memberHash: memberHash,
+        email: email,
+        name: name,
+        mobileNumber: mobileNumber,
+        avatarUrl: avatarUrl,
+        language: language,
+        unsubscribeEmail: unsubscribeEmail,
+        unsubscribeTexting: unsubscribeTexting,
+        trackDefaultEvent: trackDefaultEvent,
+        hidePopup: hidePopup,
+        appearance: appearance,
+      ),
+    );
+  }
 
-    return ChannelTalkFlutterPlatform.instance.boot(config);
+  /// Boots ChannelTalk like [boot], but resolves to the detailed
+  /// [ChannelTalkBootStatus] instead of collapsing it to a bool.
+  ///
+  /// [boot] returns `true` only for [ChannelTalkBootStatus.success]; use this
+  /// when you need to distinguish a transient failure (e.g.
+  /// [ChannelTalkBootStatus.networkTimeout], retryable) from a permanent one
+  /// (e.g. [ChannelTalkBootStatus.accessDenied]). On web, which does not surface
+  /// a boot status, a completed boot resolves to [ChannelTalkBootStatus.success].
+  static Future<ChannelTalkBootStatus> bootWithStatus({
+    required String pluginKey,
+    String? memberId,
+    String? memberHash,
+    String? email,
+    String? name,
+    String? mobileNumber,
+    String? avatarUrl,
+    Language? language,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
+    bool? trackDefaultEvent,
+    bool? hidePopup,
+    Appearance? appearance,
+  }) {
+    return ChannelTalkFlutterPlatform.instance.bootWithStatus(
+      _buildBootConfig(
+        pluginKey: pluginKey,
+        memberId: memberId,
+        memberHash: memberHash,
+        email: email,
+        name: name,
+        mobileNumber: mobileNumber,
+        avatarUrl: avatarUrl,
+        language: language,
+        unsubscribeEmail: unsubscribeEmail,
+        unsubscribeTexting: unsubscribeTexting,
+        trackDefaultEvent: trackDefaultEvent,
+        hidePopup: hidePopup,
+        appearance: appearance,
+      ),
+    );
   }
 
   static Future<bool?> bootForWeb({

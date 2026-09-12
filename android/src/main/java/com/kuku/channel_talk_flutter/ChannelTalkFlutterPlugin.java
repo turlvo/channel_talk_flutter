@@ -69,6 +69,8 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     if (call.method.equals("boot")) {
       boot(call, result);
+    } else if (call.method.equals("bootWithStatus")) {
+      bootWithStatus(call, result);
     } else if (call.method.equals("sleep")) {
       sleep(call, result);
     } else if (call.method.equals("shutdown")) {
@@ -161,7 +163,26 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     // Clean up references.
   }
 
+  private interface OnBootStatus {
+    void onStatus(String status);
+  }
+
   public void boot(@NonNull MethodCall call, @NonNull final Result result) {
+    performBoot(call, result, status -> {
+      if ("success".equals(status)) {
+        result.success(true);
+      } else {
+        result.error("ERROR", "Execution failed(boot)", null);
+      }
+    });
+  }
+
+  public void bootWithStatus(@NonNull MethodCall call, @NonNull final Result result) {
+    performBoot(call, result, status -> result.success(status));
+  }
+
+  private void performBoot(@NonNull MethodCall call, @NonNull final Result result,
+      @NonNull final OnBootStatus onStatus) {
     String pluginKey = call.argument("pluginKey");
     if (pluginKey == null || pluginKey.isEmpty()) {
       result.error("UNAVAILABLE", "Missing argument(pluginKey)", null);
@@ -219,12 +240,30 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       public void onComplete(BootStatus bootStatus, @Nullable User user) {
         if (bootStatus == BootStatus.SUCCESS && user != null) {
           ChannelIO.setListener(channelTalkEventHandler);
-          result.success(true);
-        } else {
-          result.error("ERROR", "Execution failed(boot)", null);
         }
+        onStatus.onStatus(bootStatusString(bootStatus, user));
       }
     });
+  }
+
+  private String bootStatusString(BootStatus status, @Nullable User user) {
+    if (status == BootStatus.SUCCESS) {
+      return user != null ? "success" : "unknown";
+    } else if (status == BootStatus.NOT_INITIALIZED) {
+      return "notInitialized";
+    } else if (status == BootStatus.NETWORK_TIMEOUT) {
+      return "networkTimeout";
+    } else if (status == BootStatus.NOT_AVAILABLE_VERSION) {
+      return "notAvailableVersion";
+    } else if (status == BootStatus.SERVICE_UNDER_CONSTRUCTION) {
+      return "serviceUnderConstruction";
+    } else if (status == BootStatus.REQUIRE_PAYMENT) {
+      return "requirePayment";
+    } else if (status == BootStatus.ACCESS_DENIED) {
+      return "accessDenied";
+    } else {
+      return "unknown";
+    }
   }
 
   public void sleep(@NonNull MethodCall call, @NonNull final Result result) {

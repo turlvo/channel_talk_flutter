@@ -1,4 +1,5 @@
 ## Unreleased
+- Added `bootWithStatus()` returning `ChannelTalkBootStatus` (the detailed boot result). `boot()` is unchanged and now delegates to the same native path.
 - Added optional `profile` parameter to `setPage` API
 
 ## 4.2.0

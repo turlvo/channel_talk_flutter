@@ -19,6 +19,8 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     switch call.method {
       case "boot":
         self.boot(call, result)
+      case "bootWithStatus":
+        self.bootWithStatus(call, result)
       case "sleep":
         self.sleep(call, result)
       case "shutdown":
@@ -76,6 +78,22 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   private func boot(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    performBoot(call, result) { statusString in
+      result(statusString == "success")
+    }
+  }
+
+  private func bootWithStatus(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    performBoot(call, result) { statusString in
+      result(statusString)
+    }
+  }
+
+  private func performBoot(
+    _ call: FlutterMethodCall,
+    _ result: @escaping FlutterResult,
+    onStatus: @escaping (String) -> Void
+  ) {
     guard let argMaps = call.arguments as? Dictionary<String, Any>,
       let pluginKey = argMaps["pluginKey"] as? String else {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
@@ -140,16 +158,36 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     )
 
     ChannelIO.boot(with: bootConfig) { (completion, user) in
-      if completion == .success, let _ = user {
-        // Success
+      if completion == .success, user != nil {
         ChannelIO.delegate = self.channelTalkEventHandler
-        result(true)
-      } else {
-        // Fail
-        result(false)
-        // result(FlutterError(code: call.method, message: self.getBootErrorMessage(status: completion), details: nil))
-
       }
+      onStatus(self.bootStatusString(completion, hasUser: user != nil))
+    }
+  }
+
+  /// Maps the native `BootStatus` to the string contract shared with the Dart
+  /// `ChannelTalkBootStatus` enum. A `.success` with no user is reported as
+  /// `unknown`, matching `boot`'s stricter success requirement.
+  private func bootStatusString(_ status: BootStatus, hasUser: Bool) -> String {
+    switch status {
+      case .success:
+        return hasUser ? "success" : "unknown"
+      case .notInitialized:
+        return "notInitialized"
+      case .networkTimeout:
+        return "networkTimeout"
+      case .notAvailableVersion:
+        return "notAvailableVersion"
+      case .serviceUnderConstruction:
+        return "serviceUnderConstruction"
+      case .requirePayment:
+        return "requirePayment"
+      case .accessDenied:
+        return "accessDenied"
+      case .unknown:
+        return "unknown"
+      default:
+        return "unknown"
     }
   }
 
