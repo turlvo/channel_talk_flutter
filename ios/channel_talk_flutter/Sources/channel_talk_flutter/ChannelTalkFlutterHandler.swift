@@ -5,11 +5,11 @@ import ChannelIOFront
 public class ChannelTalkFlutterHandler: NSObject, ChannelPluginDelegate {
     var channel : FlutterMethodChannel
     private var preventDefaultUrlClick: Bool = false
-    
+
     init (channel: FlutterMethodChannel) {
         self.channel = channel
     }
-    
+
     public func setPreventDefaultUrlClick(_ prevent: Bool) {
         self.preventDefaultUrlClick = prevent
     }

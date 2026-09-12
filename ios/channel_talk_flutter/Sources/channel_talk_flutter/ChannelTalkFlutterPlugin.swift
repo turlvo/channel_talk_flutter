@@ -9,7 +9,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "channel_talk_flutter", binaryMessenger: registrar.messenger())
     let instance = ChannelTalkFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
-    registrar.addApplicationDelegate(instance) 
+    registrar.addApplicationDelegate(instance)
 
     instance.channelTalkEventHandler = ChannelTalkFlutterHandler(channel: channel)
 
@@ -71,7 +71,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         self.hidePopup(call, result)
       case "setPreventDefaultUrlClick":
         self.setPreventDefaultUrlClick(call, result)
-      
+
       default:
         result(FlutterMethodNotImplemented)
     }
@@ -113,7 +113,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     if let avatarUrl = argMaps["avatarUrl"] as? String {
       profile.set(avatarUrl: avatarUrl)
     }
-    
+
     let buttonOption = ChannelButtonOption.init(
       position: .left,
       xMargin: 16,
@@ -138,7 +138,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         enumLanguage = LanguageOption.japanese
       default:
         enumLanguage = LanguageOption.device
-        
+
     }
 
     var enumAppearance: Appearance = getAppearance(appearance: argMaps["appearance"] as? String)
@@ -240,7 +240,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     let properties = argMaps["properties"] as? Dictionary<String, Any>
 
     ChannelIO.track(eventName: eventName, eventProperty: properties)
@@ -269,7 +269,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     }
     if let avatarUrl = argMaps["avatarUrl"] {
       profile["avatarUrl"] = avatarUrl
-    }        
+    }
     if let customAttributes = argMaps["customAttributes"] as? Dictionary<String, Any> {
         for (key, value) in customAttributes {
             profile[key] = value
@@ -287,7 +287,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         enumLanguage = LanguageOption.japanese
       default:
         enumLanguage = LanguageOption.device
-        
+
     }
     let tags = argMaps["tags"] as? [String]
     let unsubscribeEmail = argMaps["unsubscribeEmail"] as? Bool ?? false
@@ -309,7 +309,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
         result(FlutterError(code: call.method, message: error.localizedDescription, details: nil))
       }
     }
-    
+
   }
 
   private func initPushToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -318,7 +318,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     ChannelIO.initPushToken(tokenString: deviceToken)
     result(true)
   }
@@ -329,7 +329,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     let res: Bool = ChannelIO.isChannelPushNotification(content)
     result(Bool(res))
   }
@@ -340,7 +340,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     ChannelIO.receivePushNotification(content)
     result(true)
   }
@@ -351,7 +351,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     ChannelIO.storePushNotification(content)
     result(true)
   }
@@ -376,7 +376,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     ChannelIO.setDebugMode(with: flag)
     result(true)
   }
@@ -387,7 +387,7 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     let profile = argMaps["profile"] as? [String: Any]
     if let profile = profile, !profile.isEmpty {
       ChannelIO.setPage(page, profile: profile)
@@ -461,14 +461,14 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     ChannelIO.hidePopup()
     result(true)
   }
-  
+
   private func setPreventDefaultUrlClick(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
     guard let argMaps = call.arguments as? Dictionary<String, Any>,
       let prevent = argMaps["prevent"] as? Bool else {
       result(FlutterError(code: call.method, message: "Missing argument", details: nil))
       return
     }
-    
+
     channelTalkEventHandler?.setPreventDefaultUrlClick(prevent)
     result(true)
   }

@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "channel-talk-ios-framework",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/channel-io/channel-talk-ios-framework",
+      "state" : {
+        "revision" : "7e95b564070c430804493b9a55ce0bb6520b9654",
+        "version" : "13.0.2"
+      }
+    }
+  ],
+  "version" : 2
+}
