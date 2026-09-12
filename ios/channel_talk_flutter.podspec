@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'channel_talk_flutter'
-  s.version          = '4.0.0'
+  s.version          = '4.3.0'
   s.summary          = 'A Channel Talk flutter plugin project.(Unofficial)'
   s.description      = <<-DESC
 A new Flutter plugin project.
@@ -18,9 +18,13 @@ A new Flutter plugin project.
   # never diverge.
   s.source_files = 'channel_talk_flutter/Sources/channel_talk_flutter/**/*.swift'
   s.dependency 'Flutter'
-  s.dependency 'ChannelIOSDK', '13.0.2'
-  s.platform = :ios, '12.0'
-  s.resource_bundles = {'channel_talk_flutter_privacy' => ['channel_talk_flutter/Sources/channel_talk_flutter/PrivacyInfo.xcprivacy']}
+  s.dependency 'ChannelIOSDK', '13.3.0'
+  s.platform = :ios, '15.0'
+  s.resource_bundles = {
+    'channel_talk_flutter_privacy' => [
+      'channel_talk_flutter/Sources/channel_talk_flutter/PrivacyInfo.xcprivacy'
+    ]
+  }
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

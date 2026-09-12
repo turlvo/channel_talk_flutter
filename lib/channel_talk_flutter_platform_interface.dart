@@ -145,7 +145,10 @@ abstract class ChannelTalkFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('setDebugMode() has not been implemented.');
   }
 
-  Future<bool?> setPage(String page, [Map<String, dynamic>? profile]) {
+  Future<bool?> setPage({
+    String? page,
+    Map<String, dynamic>? profile,
+  }) {
     throw UnimplementedError('setPage() has not been implemented.');
   }
 

@@ -760,7 +760,9 @@ class _MyAppState extends State<MyApp> {
                   content = '''
 {
   "page": "Custom Value",
-  "profile": { "name": "John Doe", "email": "john@example.com" }
+  "profile": {
+    "orderId": "A-100"
+  }
 }
                   ''';
 
@@ -772,7 +774,8 @@ class _MyAppState extends State<MyApp> {
                       try {
                         final result = await ChannelTalk.setPage(
                           page: args['page'],
-                          profile: (args['profile'] as Map?)?.cast<String, dynamic>(),
+                          profile: (args['profile'] as Map?)
+                              ?.cast<String, dynamic>(),
                         );
 
                         showMessageToast('Result: $result');

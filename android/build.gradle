@@ -4,7 +4,7 @@ version '1.0'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -15,7 +15,13 @@ buildscript {
 rootProject.allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        maven {
+            url 'https://maven.channel.io/maven2'
+            content {
+                includeGroup 'io.channel'
+            }
+        }
     }
 }
 
@@ -35,8 +41,10 @@ android {
     }
 
     dependencies {
-        implementation 'io.channel:plugin-android:13.1.0'
+        implementation 'io.channel:plugin-android:13.5.0'
         implementation "com.google.firebase:firebase-messaging:20.1.0"
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation 'org.mockito:mockito-core:5.14.2'
     }
 
     compileOptions {

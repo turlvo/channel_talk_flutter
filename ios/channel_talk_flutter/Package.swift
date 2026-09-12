@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "channel-talk-flutter", targets: ["channel_talk_flutter"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/channel-io/channel-talk-ios-framework", exact: "13.0.2"),
+        .package(url: "https://github.com/channel-io/channel-talk-ios-framework", exact: "13.3.0"),
     ],
     targets: [
         .target(

@@ -136,7 +136,9 @@ class ChannelTalk {
   /// when you need to distinguish a transient failure (e.g.
   /// [ChannelTalkBootStatus.networkTimeout], retryable) from a permanent one
   /// (e.g. [ChannelTalkBootStatus.accessDenied]). On web, which does not surface
-  /// a boot status, a completed boot resolves to [ChannelTalkBootStatus.success].
+  /// a detailed boot status, a successful SDK callback resolves to
+  /// [ChannelTalkBootStatus.success] and an SDK error callback resolves to
+  /// [ChannelTalkBootStatus.unknown]. Invocation exceptions remain errors.
   static Future<ChannelTalkBootStatus> bootWithStatus({
     required String pluginKey,
     String? memberId,
@@ -328,8 +330,17 @@ class ChannelTalk {
     return ChannelTalkFlutterPlatform.instance.setDebugMode(flag);
   }
 
-  static Future<bool?> setPage({required page, Map<String, dynamic>? profile}) {
-    return ChannelTalkFlutterPlatform.instance.setPage(page, profile);
+  /// Sets the tracked page and profile applied when a user chat is created.
+  ///
+  /// Web requires [page]. Use [resetPage] to clear the page and chat profile.
+  static Future<bool?> setPage({
+    String? page,
+    Map<String, dynamic>? profile,
+  }) {
+    return ChannelTalkFlutterPlatform.instance.setPage(
+      page: page,
+      profile: profile,
+    );
   }
 
   static Future<bool?> resetPage() {

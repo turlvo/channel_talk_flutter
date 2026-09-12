@@ -20,6 +20,7 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   // Removes the callback listener if it exists
   @override
   void removeListener() {
+    _channelTalkDelegate = null;
     methodChannel.setMethodCallHandler(null);
   }
 
@@ -191,7 +192,10 @@ class MethodChannelChannelTalkFlutter extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> setPage(String page, [Map<String, dynamic>? profile]) {
+  Future<bool?> setPage({
+    String? page,
+    Map<String, dynamic>? profile,
+  }) {
     return methodChannel.invokeMethod('setPage', {
       'page': page,
       if (profile != null) 'profile': profile,

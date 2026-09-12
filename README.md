@@ -22,6 +22,50 @@ TO-BE
 ```
 \*******************************************************************************************************
 
+## Compatibility
+
+- Flutter 3.19 / Dart 3.3 or later is required by the Web JS interop implementation.
+- Bundled SDKs: Android 13.5.0 and iOS 13.3.0 (verified on 2026-09-12).
+- Channel Talk APIs are implemented for Android, iOS, and Web. The registered
+  macOS plugin is a placeholder and does not implement those APIs.
+- iOS 15.0 or later is required.
+- Android `minSdkVersion` 21 or later is required.
+- The Android plugin module currently builds with `compileSdkVersion 35`.
+- Android 13 (API 33) or later requires `POST_NOTIFICATIONS` permission for
+  system push notifications.
+- The Android plugin still depends on
+  `com.google.firebase:firebase-messaging:20.1.0`. If your app pins Firebase
+  BOM or messaging versions directly, verify the resolved dependency graph.
+
+## Upgrade Notes
+
+- `3.x -> 4.x`
+  - Raise the iOS deployment target to 15.0 or later before upgrading.
+- `4.1.x -> 4.2.x`
+  - Raise Android `minSdkVersion` to 21 or later before upgrading.
+  - If your project uses an older Android Gradle Plugin, verify it is
+    compatible with `compileSdkVersion 35`.
+- `4.2.x -> 4.3.0`
+  - Raise Flutter to 3.19 / Dart to 3.3 or later.
+  - `ChannelTalk.setPage(page: ...)` still works and now also accepts
+    `profile`. Web requires a non-null page; use `resetPage()` to reset it.
+  - Custom `ChannelTalkFlutterPlatform` implementations must change their
+    `setPage` override to `setPage({String? page, Map<String, dynamic>? profile})`.
+  - Web now supports `setListener`, `removeListener`, `hidePopup`, and
+    `setPreventDefaultUrlClick`.
+  - Web `boot`, `updateUser`, `addTags`, and `removeTags` now wait for the
+    SDK callback and return `false` on SDK failure. JS invocation errors complete
+    the Future with an error.
+  - Native `updateUser` preserves omitted language, tags, and marketing preferences.
+
+See [SDK compatibility audit](docs/sdk_compatibility_audit.md) for findings and validation.
+
+## 프로젝트 내부 문서
+
+- [작업 지침](AGENTS.md): 코드 탐색, 변경 규칙, 유지해야 할 플랫폼 계약.
+- [구조와 플랫폼 차이](docs/ARCHITECTURE.md): 파일 지도, 요청·이벤트 흐름, 데이터·오류 처리.
+- [테스트·빌드 가이드](docs/TESTING.md): 검증 범위와 플랫폼별 실행 방법.
+- [전체 문서 목록](docs/README.md): 폴더별 안내와 SDK 호환성 점검 기록.
 
 ## ⚡ Usage
 ```dart
@@ -101,7 +145,7 @@ use `bootWithStatus()`, which resolves to a `ChannelTalkBootStatus` (`success`,
 `notInitialized`, `networkTimeout`, `notAvailableVersion`,
 `serviceUnderConstruction`, `requirePayment`, `accessDenied`, `unknown`). It
 takes the same arguments as `boot()` and shares the same native boot path. On
-web, a completed boot resolves to `success`.
+web, the SDK callback resolves to `success` when no error is reported, otherwise `unknown`.
 
 ```dart
 final status = await ChannelTalk.bootWithStatus(pluginKey: 'pluginKey');
@@ -131,6 +175,8 @@ Update info.plist.
 ```
 
 #### Native dependencies
+
+Both integrations currently use ChannelIOSDK 13.3.0.
 
 The plugin installs `ChannelIOSDK` automatically through Swift Package Manager (SPM) or CocoaPods.
 Remove any explicit `pod 'ChannelIOSDK', ...` entry from `ios/Podfile` when upgrading.
@@ -191,12 +237,37 @@ import ChannelIOFront
 
 #### Requirements
 - minSdkVersion 21 (Channel Talk Android SDK requires API 21+ for features to work)
+- compileSdkVersion 35 is used by this plugin module
+- Android 13 (API 33) or later requires `POST_NOTIFICATIONS` permission for
+  system push notifications.
+
+The plugin adds Channel.io's official Maven repository for `io.channel` artifacts.
+If your app centrally manages repositories in `settings.gradle`, add it there too:
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url 'https://maven.channel.io/maven2'
+            content { includeGroup 'io.channel' }
+        }
+    }
+}
+```
+
+Android supports explicit Korean, Japanese, and English SDK languages.
+`Language.device` uses the device language during boot; in `updateUser` it leaves
+the current language unchanged because the Android SDK has no device-language enum.
 
 #### Push notifications in combination with FCM
 This plugin works in combination with the [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) plugin to receive Push Notifications. To set this up:
 
 * First, implement [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) and check if it works: https://pub.dev/packages/firebase_messaging#android-integration
-* Then, add the Firebase server key to Channel Talk, as described here: https://developers.channel.io/docs/android-push-notification
+* Configure Firebase credentials in Channel Talk using the current
+  [FCM integration guide](https://developers.channel.io/en/articles/Push-Notification-3bbe60d1).
+* If your app targets Android 13 or above, request notification permission before showing system pushes.
 * Add the following to your  `AndroidManifest.xml` file, so incoming messages are handled by Channel Talk:
 
 ```
@@ -214,6 +285,16 @@ just above the closing `</application>` tag.
 
 
 ### Web
+
+The SDK script must be loaded before calling this package. Await `bootForWeb`
+before calling APIs that need a booted user. `isBooted`, `sleep`, and native push
+notification APIs are not supported on Web.
+
+The Web `onChatCreated` event has no chat ID argument, so its listener payload is null.
+
+`setPage` requires a non-null `page` on Web. Use `resetPage` to reset the page
+and user chat profile. The listener APIs use the SDK's global `clearCallbacks`;
+manage Channel.io callbacks through this package when using `setListener` or `removeListener`.
 
 Insert the following script within the <body> tag of your HTML file(web/index.html):
 ```Html
@@ -274,7 +355,7 @@ void main() async {
             <td>delegate*</td>
             <td>ChannelTalkDelegate</td>
             <td>Support onShowMessenger/onHideMessenger/onChatCreated/onBadgeChanged/onFollowUpChanged/onUrlClicked/onPopupDataReceived</td>
-            <td>Mobile</td>
+            <td>Mobile, Web</td>
         </tr>
         <!-- removeListener -->
         <tr>
@@ -285,7 +366,7 @@ void main() async {
             <td></td>
             <td></td>
             <td></td>
-            <td>Mobile</td>
+            <td>Mobile, Web</td>
         </tr>
         <!-- boot -->
         <tr>
@@ -657,22 +738,17 @@ It is valid when creating a new user. The language of the user that already exis
         </tr>
         <!-- setPage -->
         <tr>
-            <td rowspan=2>setPage</td>
-            <td rowspan=2>Sets the name of the screen when the track is called.</td>
-            <td>page*</td>
-            <td>String</td>
-            <td>This is the screen name when track is called.</td>
-            <td rowspan=2>Mobile, Web</td>
-        </tr>
-        <tr>
-            <td>profile</td>
-            <td>Map?</td>
-            <td>Profile values applied to the user chat, applied when the chat is created. If a field is set to null, only that field's value is cleared.</td>
+            <td>setPage</td>
+            <td>Sets the page and user chat profile used by track and new chats.</td>
+            <td>page, profile</td>
+            <td>String?, Map&lt;String, dynamic&gt;?</td>
+            <td>page is the tracked screen name and is required on Web. profile sets user chat profile fields. Both parameters are optional on Android and iOS.</td>
+            <td>Mobile, Web</td>
         </tr>
         <!-- resetPage -->
         <tr>
             <td>resetPage</td>
-            <td>Resets the name of the screen when track is called.</td>
+            <td>Resets the tracked screen name and user chat profile.</td>
             <td></td>
             <td></td>
             <td></td>
@@ -731,7 +807,7 @@ It is valid when creating a new user. The language of the user that already exis
             <td></td>
             <td></td>
             <td></td>
-            <td>Mobile</td>
+            <td>Mobile, Web</td>
         </tr>
         <!-- setPreventDefaultUrlClick -->
         <tr>
@@ -744,7 +820,7 @@ It is valid when creating a new user. The language of the user that already exis
             <td>
                 If true, URL clicks will be delegated to the app's listener through onUrlClicked event instead of opening in the default browser. If false, URLs will open in the default browser as normal.
             </td>
-            <td>Mobile</td>
+            <td>Mobile, Web</td>
         </tr>
     </tbody>
 </table>

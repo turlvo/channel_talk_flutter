@@ -1,23 +1,49 @@
-## Unreleased
-- Added `bootWithStatus()` returning `ChannelTalkBootStatus` (the detailed boot result). `boot()` is unchanged and now delegates to the same native path.
-- Added optional `profile` parameter to `setPage` API
-- Added iOS Swift Package Manager support while retaining CocoaPods support.
-- Fixed example SPM package resolution when the checkout directory has a different name.
-- When upgrading, remove any explicit `ChannelIOSDK` pod from the app's Podfile before using SPM
-  to avoid duplicate `ChannelIOFront.framework` build errors. iOS 15.0 or later is required.
+## 4.3.0
+- Add `bootWithStatus()` returning detailed `ChannelTalkBootStatus` results
+- Add iOS Swift Package Manager support using the same source tree as CocoaPods
+- Preserve example SPM package resolution across checkout directory names
+- Remove explicit `ChannelIOSDK` pods before enabling SPM to avoid duplicate frameworks
+- Upgrade Android SDK to 13.5.0 and iOS SDK to 13.3.0
+- Resolve Android SDK artifacts from Channel.io's official Maven repository
+- Require Flutter 3.19 / Dart 3.3 for the Web JS interop implementation
+- Fix iOS `setPage` to pass a non-null profile dictionary required by the SDK
+- Preserve omitted user language, tags, and marketing preferences in native updates
+- Fix Android Activity reattachment and propagate push token registration failures
+- Wait for Web SDK callbacks in boot and user/tag updates; reject null Web pages
+- Handle the Web SDK's argument-free `onChatCreated` callback
+- Add `profile` support to `setPage` on Android, iOS, and Web
+- Implement Web `setListener`, `removeListener`, `hidePopup`, and `setPreventDefaultUrlClick`
+- Expand regression coverage for configuration, events, callbacks, and boot status
+- Compatibility: existing public `ChannelTalk.setPage(page: ...)` calls continue to work.
+  Custom platform implementations must adopt the named `setPage` parameters.
+
+## 4.2.1
+- Upgrade iOS ChannelIOSDK version to 13.1.0
+- Upgrade Android ChannelIOSDK version to 13.3.0
+- Fix Android native result handling to avoid double replies
+- Remove outdated Android `jcenter()` repository usage
+- Restore Flutter test coverage for method channel and public API wrappers
+- Compatibility: Android module now builds with `compileSdkVersion 35`
+- Compatibility: this plugin still depends on
+  `com.google.firebase:firebase-messaging:20.1.0`; apps that pin Firebase
+  BOM or messaging versions should verify dependency resolution
 
 ## 4.2.0
 - Upgrade iOS's ChannelIOSdk version to 13.0.2
 - Upgrade Android's ChannelIOSdk version to 13.1.0
 - Update Android `minSdkVersion` requirement to 21
+- Compatibility: apps using Android `minSdkVersion` below 21 must raise their
+  deployment target before upgrading
 
 ## 4.1.0
 - Added 'setPreventDefaultUrlClick' API
  
 ## 4.0.0
-- Require iOS 15 and above
+- BREAKING: require iOS 15 and above
 - Upgrade iOS's ChannelIOSdk version to 12.6.0
 - Upgrade Android's ChannelIOSdk version to 12.6.0
+- Compatibility: apps targeting iOS 14 or lower cannot upgrade without raising
+  the iOS deployment target
 
 ## 3.3.0
 - Fixed 'App not launching when tapping on Push Notification' in Android

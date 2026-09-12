@@ -70,10 +70,10 @@ import 'dart:js_interop';
 // }
 
 @JS('ChannelIO')
-@anonymous
 external void boot(
   String command,
   JSAny? bootOption,
+  JSFunction callback,
 );
 
 @JS('ChannelIO')
@@ -109,10 +109,15 @@ external void track(
 external void updateUser(
   String command,
   JSAny? userObject,
+  JSFunction callback,
 );
 
 @JS('ChannelIO')
-external void setPage(String command, String page, JSAny? profile);
+external void setPage(
+  String command,
+  JSAny? page,
+  JSAny? profile,
+);
 
 @JS('ChannelIO')
 external void resetPage(String command);
@@ -121,12 +126,14 @@ external void resetPage(String command);
 external void addTags(
   String command,
   JSAny? tags,
+  JSFunction callback,
 );
 
 @JS('ChannelIO')
 external void removeTags(
   String command,
   JSAny? tags,
+  JSFunction callback,
 );
 
 @JS('ChannelIO')
@@ -134,3 +141,30 @@ external void openWorkflow(String command, [String? workflowId]);
 
 @JS('ChannelIO')
 external void setAppearance(String command, String appearance);
+
+@JS('ChannelIO')
+external void onShowMessenger(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void onHideMessenger(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void onChatCreated(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void onBadgeChanged(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void onFollowUpChanged(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void onUrlClicked(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void onPopupDataReceived(String command, JSFunction callback);
+
+@JS('ChannelIO')
+external void clearCallbacks(String command);
+
+@JS('ChannelIO')
+external void hidePopup(String command);

@@ -3,7 +3,7 @@ package com.kuku.channel_talk_flutter;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,11 +12,9 @@ import com.zoyi.channel.plugin.android.ChannelIO;
 import com.zoyi.channel.plugin.android.open.callback.BootCallback;
 import com.zoyi.channel.plugin.android.open.config.BootConfig;
 import com.zoyi.channel.plugin.android.open.enumerate.BootStatus;
-import com.zoyi.channel.plugin.android.open.enumerate.ChannelButtonPosition;
 import com.zoyi.channel.plugin.android.open.model.Profile;
 import com.zoyi.channel.plugin.android.open.model.User;
 import com.zoyi.channel.plugin.android.open.model.UserData;
-import com.zoyi.channel.plugin.android.open.option.ChannelButtonOption;
 import com.zoyi.channel.plugin.android.open.option.Language;
 import io.channel.plugin.android.open.model.Appearance;
 
@@ -24,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -37,6 +33,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 /** ChannelTalkFlutterPlugin */
 public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
+  private static final String LOG_TAG = "ChannelTalkFlutter";
   /// The MethodChannel that will the communication between Flutter and native
   /// Android
   ///
@@ -47,10 +44,12 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   private static Context context;
   private Activity activity;
   private ChannelTalkFlutterHandler channelTalkEventHandler;
+  private boolean initializationFailed;
 
   public static void registerWith(Application application) {
   }
 
+  /** Initializes the SDK and retains failures for the first call from Dart. */
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "channel_talk_flutter");
@@ -59,14 +58,23 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     context = flutterPluginBinding.getApplicationContext();
     channelTalkEventHandler = new ChannelTalkFlutterHandler(channel);
 
+    initializationFailed = false;
     try {
       ChannelIO.initialize((Application) context);
     } catch (Exception e) {
+      initializationFailed = true;
+      Log.e(LOG_TAG, "Channel Talk initialization failed");
     }
   }
 
+  /** Routes Dart calls, reporting initialization failures before invoking the SDK. */
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
+    if (initializationFailed) {
+      result.error("INITIALIZATION_FAILED", "Channel Talk initialization failed", null);
+      return;
+    }
+
     if (call.method.equals("boot")) {
       boot(call, result);
     } else if (call.method.equals("bootWithStatus")) {
@@ -126,41 +134,35 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     }
   }
 
+  /** Stops accepting calls and releases the Activity when the engine detaches. */
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channel.setMethodCallHandler(null);
+    activity = null;
   }
 
+  /** Retains the currently attached Activity for SDK methods that display UI. */
   @Override
   public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
     activity = activityPluginBinding.getActivity();
-
-    // if (ChannelIO.hasStoredPushNotification(activity)) {
-    // Handler delayHandler = new Handler();
-    // delayHandler.postDelayed(new Runnable() {
-    // @Override
-    // public void run() {
-    // ChannelIO.openStoredPushNotification(activity);
-    // }
-    // }, 5000);
-    // }
   }
 
+  /** Releases the old Activity before Android recreates it after a configuration change. */
   @Override
   public void onDetachedFromActivityForConfigChanges() {
-    // destroyed to change configuration.
-    // This call will be followed by onReattachedToActivityForConfigChanges().
+    activity = null;
   }
 
+  /** Replaces the Activity reference after a configuration change. */
   @Override
   public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
-    // after a configuration change.
-
+    onAttachedToActivity(activityPluginBinding);
   }
 
+  /** Releases the Activity when the plugin is no longer attached to it. */
   @Override
   public void onDetachedFromActivity() {
-    // Clean up references.
+    activity = null;
   }
 
   private interface OnBootStatus {
@@ -202,11 +204,6 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     if (call.argument("avatarUrl") != null) {
       profile.setAvatarUrl(call.argument("avatarUrl"));
     }
-
-    ChannelButtonOption buttonOption = new ChannelButtonOption(
-        ChannelButtonPosition.LEFT,
-        16,
-        23);
 
     BootConfig bootConfig = BootConfig.create(pluginKey)
         .setProfile(profile);
@@ -277,26 +274,18 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   }
 
   public void showChannelButton(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
-    }
-
     ChannelIO.showChannelButton();
     result.success(true);
   }
 
   public void hideChannelButton(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
-    }
-
     ChannelIO.hideChannelButton();
     result.success(true);
   }
 
   public void showMessenger(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    if (!ensureActivity(result)) {
+      return;
     }
 
     ChannelIO.showMessenger(this.activity);
@@ -304,17 +293,13 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   }
 
   public void hideMessenger(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
-    }
-
     ChannelIO.hideMessenger();
     result.success(true);
   }
 
   public void openChat(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    if (!ensureActivity(result)) {
+      return;
     }
 
     String chatId = call.argument("chatId");
@@ -336,9 +321,10 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     result.success(true);
   }
 
+  /** Updates only supplied user fields so omitted settings keep their existing values. */
   public void updateUser(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    if (!ensureBooted(result)) {
+      return;
     }
 
     Map<String, Object> profileMap = new HashMap<>();
@@ -361,36 +347,38 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       }
     }
 
-    Language enumLanguage = Language.KOREAN;
-    if (call.argument("language") != null) {
-      enumLanguage = getLanguage(call.argument("language"));
+    UserData.Builder userDataBuilder = new UserData.Builder();
+    // Omitted fields must stay unset so a partial update preserves existing user settings.
+    if (!profileMap.isEmpty()) {
+      userDataBuilder.setProfileMap(profileMap);
     }
-
-    List<String> tags = new ArrayList<String>();
+    Language language = getLanguage(call.argument("language"));
+    if (language != null) {
+      userDataBuilder.setLanguage(language);
+    }
     if (call.argument("tags") != null) {
-      tags = call.argument("tags");
+      userDataBuilder.setTags(call.argument("tags"));
+    }
+    if (call.argument("unsubscribeEmail") != null) {
+      userDataBuilder.setUnsubscribeEmail(call.argument("unsubscribeEmail"));
+    }
+    if (call.argument("unsubscribeTexting") != null) {
+      userDataBuilder.setUnsubscribeTexting(call.argument("unsubscribeTexting"));
     }
 
-    UserData userData = new UserData.Builder()
-        .setLanguage(enumLanguage)
-        .setProfileMap(profileMap)
-        .setTags(tags)
-        .setUnsubscribeEmail(call.argument(
-            "unsubscribeEmail"))
-        .setUnsubscribeTexting(call.argument(
-            "unsubscribeTexting"))
-
-        .build();
+    UserData userData = userDataBuilder.build();
 
     ChannelIO.updateUser(userData, (e, user) -> {
-      if (e == null && user != null) {
-        result.success(true);
-      } else if (e != null) {
+      if (e != null) {
         result.error("ERROR", "Execution failed(updateUser)", null);
+        return;
       }
+
+      result.success(user != null);
     });
   }
 
+  /** Registers a push token and reports SDK failures to Dart. */
   public void initPushToken(@NonNull MethodCall call, @NonNull final Result result) {
     String deviceToken = call.argument("deviceToken");
     if (deviceToken == null || deviceToken.isEmpty()) {
@@ -401,6 +389,8 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     try {
       ChannelIO.initPushToken(deviceToken);
     } catch (Exception e) {
+      result.error("ERROR", "Execution failed(initPushToken)", null);
+      return;
     }
     result.success(true);
   }
@@ -426,11 +416,19 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   }
 
   public void hasStoredPushNotification(@NonNull MethodCall call, @NonNull final Result result) {
+    if (!ensureActivity(result)) {
+      return;
+    }
+
     Boolean res = ChannelIO.hasStoredPushNotification(this.activity);
     result.success(res);
   }
 
   public void openStoredPushNotification(@NonNull MethodCall call, @NonNull final Result result) {
+    if (!ensureActivity(result)) {
+      return;
+    }
+
     ChannelIO.openStoredPushNotification(this.activity);
     result.success(true);
   }
@@ -451,16 +449,20 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
 
   public void setPage(@NonNull MethodCall call, @NonNull final Result result) {
     String page = call.argument("page");
-    if (page == null) {
-      result.error("UNAVAILABLE", "Missing argument(page)", null);
-      return;
+    Map<?, ?> rawProfile = call.argument("profile");
+    Map<String, Object> profile = null;
+
+    if (rawProfile != null) {
+      profile = new HashMap<>();
+
+      for (Map.Entry<?, ?> entry : rawProfile.entrySet()) {
+        if (entry.getKey() instanceof String) {
+          profile.put((String) entry.getKey(), entry.getValue());
+        }
+      }
     }
-    Map<String, Object> profile = call.argument("profile");
-    if (profile != null && !profile.isEmpty()) {
-      ChannelIO.setPage(page, profile);
-    } else {
-      ChannelIO.setPage(page);
-    }
+
+    ChannelIO.setPage(page, profile);
     result.success(true);
   }
 
@@ -479,11 +481,12 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       return;
     }
     ChannelIO.addTags(tags, (e, user) -> {
-      if (user != null) {
-        result.success(true);
-      } else if (e != null) {
+      if (e != null) {
         result.error("ERROR", "Execution failed(addTags)", null);
+        return;
       }
+
+      result.success(user != null);
     });
   }
 
@@ -497,17 +500,18 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       return;
     }
     ChannelIO.removeTags(tags, (e, user) -> {
-      if (user != null) {
-        result.success(true);
-      } else if (e != null) {
+      if (e != null) {
         result.error("ERROR", "Execution failed(removeTags)", null);
+        return;
       }
+
+      result.success(user != null);
     });
   }
 
   public void openWorkflow(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    if (!ensureActivity(result)) {
+      return;
     }
 
     String workflowId = call.argument("workflowId");
@@ -517,8 +521,8 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
   }
 
   public void setAppearance(@NonNull MethodCall call, @NonNull final Result result) {
-    if (!ChannelIO.isBooted()) {
-      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+    if (!ensureBooted(result)) {
+      return;
     }
 
     ChannelIO.setAppearance(getAppearance(call.argument("appearance")));
@@ -541,7 +545,31 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     result.success(true);
   }
 
-  private Language getLanguage(String lang) {
+  private boolean ensureActivity(@NonNull Result result) {
+    if (activity == null) {
+      result.error("UNAVAILABLE", "Activity is not attached", null);
+      return false;
+    }
+
+    return true;
+  }
+
+  private boolean ensureBooted(@NonNull Result result) {
+    if (!ChannelIO.isBooted()) {
+      result.error("UNAVAILABLE", "Channel Talk is not booted", null);
+      return false;
+    }
+
+    return true;
+  }
+
+  /** Leaves device-language handling to the SDK instead of forcing Korean. */
+  @Nullable
+  private Language getLanguage(@Nullable String lang) {
+    if (lang == null) {
+      return null;
+    }
+
     switch (lang) {
       case "en":
         return Language.ENGLISH;
@@ -550,7 +578,7 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       case "ja":
         return Language.JAPANESE;
       default:
-        return Language.KOREAN;
+        return null;
     }
   }
 
