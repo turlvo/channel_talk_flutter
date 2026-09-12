@@ -112,6 +112,9 @@ if (status != ChannelTalkBootStatus.success) {
 
 ### iOS
 
+Set the app's iOS deployment target to **15.0 or later** for both Swift Package Manager
+and CocoaPods.
+
 Update info.plist.
 ```xml
 <key>NSCameraUsageDescription</key>
@@ -127,18 +130,44 @@ Update info.plist.
 <string>Accessing to photo library in order to provide better user experience</string>
 ```
 
-Add pod installation to `ios/Podfile`.
-(Because there is no latest `ChannelIOSDK` pod in Cocopod, can not add dependecy to plugin podspec properly.)
+#### Native dependencies
+
+The plugin installs `ChannelIOSDK` automatically through Swift Package Manager (SPM) or CocoaPods.
+Remove any explicit `pod 'ChannelIOSDK', ...` entry from `ios/Podfile` when upgrading.
+Keeping that entry with SPM causes a duplicate `ChannelIOFront.framework` build error.
+
+**Swift Package Manager:** Flutter 3.44 and later enable SPM by default. To enable it for your app,
+merge this setting into the existing `flutter` section of the app's `pubspec.yaml`:
+
+```yaml
+flutter:
+  config:
+    enable-swift-package-manager: true
 ```
+
+Run `flutter pub get`, then build or run the app to let Flutter integrate the Swift package.
+See the [Flutter SPM migration guide][flutter-spm] if your app has custom native integration.
+
+**CocoaPods:** Existing CocoaPods apps can continue using the plugin's podspec. With Flutter 3.44
+or later, set `enable-swift-package-manager: false` in the app configuration above to use CocoaPods.
+Keep the Flutter installation call in `ios/Podfile`; no separate `ChannelIOSDK` pod entry is needed:
+
+```ruby
+platform :ios, '15.0'
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-  # Add below line
-  pod 'ChannelIOSDK', podspec: 'https://mobile-static.channel.io/ios/13.1.0/xcframework.podspec'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 ```
+
+After changing the Podfile, run `flutter pub get` from the app directory, then `pod install`
+from `ios/`. This also applies to SPM apps that retain CocoaPods for other dependencies.
+
+[flutter-spm]:
+  https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers
 
 Add ChannelTalk initializing code to `[project]/ios/Runner/AppDelegate.swift`
 ```

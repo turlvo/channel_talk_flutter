@@ -1,6 +1,10 @@
 ## Unreleased
 - Added `bootWithStatus()` returning `ChannelTalkBootStatus` (the detailed boot result). `boot()` is unchanged and now delegates to the same native path.
 - Added optional `profile` parameter to `setPage` API
+- Added iOS Swift Package Manager support while retaining CocoaPods support.
+- Fixed example SPM package resolution when the checkout directory has a different name.
+- When upgrading, remove any explicit `ChannelIOSDK` pod from the app's Podfile before using SPM
+  to avoid duplicate `ChannelIOFront.framework` build errors. iOS 15.0 or later is required.
 
 ## 4.2.0
 - Upgrade iOS's ChannelIOSdk version to 13.0.2
