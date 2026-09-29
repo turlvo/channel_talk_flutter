@@ -14,17 +14,28 @@ public class ChannelTalkFlutterHandler: NSObject, ChannelPluginDelegate {
         self.preventDefaultUrlClick = prevent
     }
 
+    /// SDK 콜백의 스레드와 무관하게 Flutter 채널을 메인 스레드에서 호출한다.
+    /// 이미 메인 스레드라면 기존 이벤트의 동기 전달 시점을 유지한다.
+    private func sendEvent(_ method: String, arguments: Any?) {
+        if Thread.isMainThread {
+            channel.invokeMethod(method, arguments: arguments)
+        } else {
+            DispatchQueue.main.async { [channel] in
+                channel.invokeMethod(method, arguments: arguments)
+            }
+        }
+    }
 
     public func onShowMessenger() {
-        channel.invokeMethod("onShowMessenger", arguments: nil)
+        sendEvent("onShowMessenger", arguments: nil)
     }
 
     public func onHideMessenger() {
-        channel.invokeMethod("onHideMessenger", arguments: nil)
+        sendEvent("onHideMessenger", arguments: nil)
     }
 
     public func onChatCreated(chatId: String) {
-        channel.invokeMethod("onChatCreated", arguments: chatId)
+        sendEvent("onChatCreated", arguments: chatId)
     }
 
     public func onBadgeChanged(unread: Int, alert: Int) {
@@ -32,20 +43,20 @@ public class ChannelTalkFlutterHandler: NSObject, ChannelPluginDelegate {
         args["unread"] = unread
         args["alert"] = alert
 
-        channel.invokeMethod("onBadgeChanged", arguments: args)
+        sendEvent("onBadgeChanged", arguments: args)
     }
 
     public func onFollowUpChanged(data: [String : Any]) {
-        channel.invokeMethod("onFollowUpChanged", arguments:data)
+        sendEvent("onFollowUpChanged", arguments: data)
     }
 
     public func onUrlClicked(url: URL) -> Bool {
-        channel.invokeMethod("onUrlClicked", arguments: url.absoluteString)
+        sendEvent("onUrlClicked", arguments: url.absoluteString)
         return preventDefaultUrlClick
     }
 
     public func onPopupDataReceived(event: PopupData) {
-        channel.invokeMethod("onPopupDataReceived", arguments: event.toJson())
+        sendEvent("onPopupDataReceived", arguments: event.toJson())
     }
 
 }

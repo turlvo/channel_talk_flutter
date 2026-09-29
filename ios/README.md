@@ -24,6 +24,8 @@ CocoaPods와 SPM은 `channel_talk_flutter/Sources/channel_talk_flutter/`의 동�
   SDK가 성공을 보고해도 user가 없으면 `unknown`이며, 인자 오류는 `FlutterError`로 반환한다.
 - updateUser에서 생략된 언어·태그·수신 설정을 기존 값으로 유지한다.
 - SDK 콜백은 user와 error가 모두 nil인 경우도 결과를 한 번 반환해야 한다.
+- 이벤트는 Handler의 공통 전달 함수에서 메인 스레드로 전달한다. 이미 메인 스레드인
+  콜백은 즉시 전송하며 이벤트명·payload와 URL 차단의 동기 반환값은 유지한다.
 - setPage의 profile 생략은 SDK에 빈 사전으로 전달한다.
 - boot·태그 작업 실패의 bool 반환과 updateUser의 FlutterError 반환 차이가 있다.
 
@@ -33,7 +35,8 @@ CocoaPods의 Swift 버전은 5.0, SPM manifest의 Swift tools 버전은 5.9다.
 APNs·권한·Capabilities와 호스트 앱의 개인정보 설정은 이 브리지 밖에서 관리한다.
 
 [예제 Podfile](../example/ios/Podfile)과 시뮬레이터 빌드로 컴파일 호환성을 확인한다.
-예제 RunnerTests의 getPlatformVersion 검증은 현 iOS 구현과 맞지 않는 템플릿이다.
+예제 RunnerTests는 실제 Flutter codec·messenger 경계에서 이벤트의 스레드·payload·
+전달 횟수와 URL 차단 반환값을 검증한다. SDK 서버 연결 검증은 별도 integration test다.
 상세 내용은 [구조 문서](../docs/ARCHITECTURE.md), [테스트 가이드](../docs/TESTING.md)를 참고한다.
 
 [plugin]: channel_talk_flutter/Sources/channel_talk_flutter/ChannelTalkFlutterPlugin.swift

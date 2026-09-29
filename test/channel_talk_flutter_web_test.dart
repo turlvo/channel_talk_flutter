@@ -18,16 +18,28 @@ external set _channelIo(JSFunction? callback);
 /// Verifies the browser bridge without loading the remote SDK or making network requests.
 void main() {
   late ChannelTalkFlutterWeb platform;
+  late ChannelTalkFlutterPlatform previousPlatform;
   JSFunction? previousChannelIo;
   final calls = <String, List<JSAny?>>{};
   final callbacks = <String, JSFunction>{};
   final listeners = <String, JSFunction>{};
+  final defaultUrlActions = <String>[];
+
+  /// Mirrors the SDK's URL notification: callback return values do not cancel navigation.
+  void emitUrlClick(String url, {JSFunction? callback}) {
+    final listener = callback ?? listeners['onUrlClicked'];
+    listener?.callAsFunction(null, url.toJS);
+    defaultUrlActions.add(url);
+  }
 
   setUp(() {
     platform = ChannelTalkFlutterWeb();
+    previousPlatform = ChannelTalkFlutterPlatform.instance;
+    ChannelTalkFlutterPlatform.instance = platform;
     calls.clear();
     callbacks.clear();
     listeners.clear();
+    defaultUrlActions.clear();
     previousChannelIo = _channelIo;
     _channelIo = ((String command, [JSAny? first, JSAny? second]) {
       calls[command] = [first, second];
@@ -47,6 +59,7 @@ void main() {
   });
 
   tearDown(() {
+    ChannelTalkFlutterPlatform.instance = previousPlatform;
     _channelIo = previousChannelIo;
   });
 
@@ -244,6 +257,84 @@ void main() {
     expect(await result, isTrue);
   });
 
+  const customAttributes = <String, dynamic>{
+    'name': 'Custom name',
+    'plan': 'pro',
+    'email': null,
+  };
+  final publicBootOperations = <String, Future<Object?> Function()>{
+    'boot': () => ChannelTalk.boot(
+          pluginKey: 'test-plugin-key',
+          name: 'Default name',
+          email: 'test@example.com',
+          customAttributes: customAttributes,
+        ),
+    'bootForWeb': () => ChannelTalk.bootForWeb(
+          pluginKey: 'test-plugin-key',
+          name: 'Default name',
+          email: 'test@example.com',
+          customAttributes: customAttributes,
+        ),
+    'bootWithStatus': () => ChannelTalk.bootWithStatus(
+          pluginKey: 'test-plugin-key',
+          name: 'Default name',
+          email: 'test@example.com',
+          customAttributes: customAttributes,
+        ),
+  };
+
+  for (final entry in publicBootOperations.entries) {
+    test('${entry.key} 공개 API는 커스텀 프로필 우선순위와 null을 JS까지 보존한다', () async {
+      final result = entry.value();
+
+      expect(calls['boot']!.first.dartify(), {
+        'pluginKey': 'test-plugin-key',
+        'profile': {'name': 'Custom name', 'plan': 'pro', 'email': null},
+      });
+
+      callbacks['boot']!.callAsFunction(null, null);
+      expect(
+        await result,
+        entry.key == 'bootWithStatus' ? ChannelTalkBootStatus.success : true,
+      );
+    });
+  }
+
+  for (final option in ['channelButtonOption', 'bubbleOption']) {
+    test('웹 boot은 $option 옵션을 비동기 오류로 거부하고 SDK를 호출하지 않는다', () async {
+      final result = platform.boot({
+        'pluginKey': 'test-plugin-key',
+        option: {'position': 'left'},
+      });
+
+      await expectLater(result, throwsUnsupportedError);
+      expect(calls, isEmpty);
+    });
+
+    test('웹 bootWithStatus는 $option 미지원 오류를 상태값으로 바꾸지 않는다', () async {
+      final result = platform.bootWithStatus({
+        'pluginKey': 'test-plugin-key',
+        option: {'position': 'left'},
+      });
+
+      await expectLater(result, throwsUnsupportedError);
+      expect(calls, isEmpty);
+    });
+  }
+
+  test('웹 boot은 지정되지 않은 네이티브 옵션 null을 생략한다', () async {
+    final result = platform.boot({
+      'pluginKey': 'test-plugin-key',
+      'channelButtonOption': null,
+      'bubbleOption': null,
+    });
+
+    expect(calls['boot']!.first.dartify(), {'pluginKey': 'test-plugin-key'});
+
+    callbacks['boot']!.callAsFunction(null, null);
+    expect(await result, isTrue);
+  });
+
   test('updateUser는 태그만 변경할 때 금지된 빈 profile을 보내지 않는다', () async {
     final result = platform.updateUser({
       'tags': ['test-tag'],
@@ -272,6 +363,35 @@ void main() {
     });
 
     callbacks['updateUser']!.callAsFunction(null, null, null);
+    expect(await result, isTrue);
+  });
+
+  test('updateUser 공개 API는 profileOnce만 지정해도 빈 profile 없이 전달한다', () async {
+    final result = ChannelTalk.updateUser(
+      profileOnce: {'source': 'website', 'campaign': null},
+    );
+
+    expect(calls['updateUser']!.first.dartify(), {
+      'profileOnce': {'source': 'website', 'campaign': null},
+    });
+
+    callbacks['updateUser']!.callAsFunction(null, null);
+    expect(await result, isTrue);
+  });
+
+  test('updateUser 공개 API는 profileOnce와 커스텀 profile을 구분해 전달한다', () async {
+    final result = ChannelTalk.updateUser(
+      name: 'Default name',
+      customAttributes: {'name': 'Custom name', 'expiredAt': null},
+      profileOnce: {'name': 'First name', 'source': 'website'},
+    );
+
+    expect(calls['updateUser']!.first.dartify(), {
+      'profile': {'name': 'Custom name', 'expiredAt': null},
+      'profileOnce': {'name': 'First name', 'source': 'website'},
+    });
+
+    callbacks['updateUser']!.callAsFunction(null, null);
     expect(await result, isTrue);
   });
 
@@ -338,64 +458,71 @@ void main() {
     expect(receivedArguments, isNull);
   });
 
-  test('URL 리스너는 기본 동작 차단 설정과 제거를 반영한다', () async {
-    final urls = <String>[];
-    platform.setListener((event, arguments) => urls.add(arguments as String));
-    final callback = listeners['onUrlClicked']!;
-    final url = 'https://example.com'.toJS;
-
-    expect(callback.callAsFunction(null, url).dartify(), isFalse);
-    await platform.setPreventDefaultUrlClick(true);
-    expect(callback.callAsFunction(null, url).dartify(), isTrue);
-    expect(urls, ['https://example.com', 'https://example.com']);
-
-    platform.removeListener();
-    expect(callback.callAsFunction(null, url).dartify(), isFalse);
-    expect(urls, hasLength(2));
+  test('웹 URL 차단은 비동기 미지원 오류이고 false는 SDK 호출 없는 기본 동작이다', () async {
+    await expectLater(
+      ChannelTalk.setPreventDefaultUrlClick(prevent: true),
+      throwsUnsupportedError,
+    );
+    expect(await ChannelTalk.setPreventDefaultUrlClick(prevent: false), isTrue);
+    expect(calls, isEmpty);
   });
 
-  test('교체된 URL 콜백은 이벤트를 전달하거나 기본 동작을 차단하지 않는다', () async {
+  test('URL 리스너는 기본 이동을 유지하고 제거 이후 이벤트를 전달하지 않는다', () {
+    final urls = <String>[];
+    ChannelTalk.setListener((event, arguments) {
+      urls.add(arguments as String);
+      return true;
+    });
+    final callback = listeners['onUrlClicked']!;
+    const url = 'https://example.com';
+
+    emitUrlClick(url);
+    expect(urls, [url]);
+    expect(defaultUrlActions, [url]);
+
+    ChannelTalk.removeListener();
+    emitUrlClick(url, callback: callback);
+    expect(urls, [url]);
+    expect(defaultUrlActions, [url, url]);
+  });
+
+  test('교체된 URL 콜백은 이벤트를 전달하지 않고 기본 이동은 유지된다', () {
     final previousUrls = <String>[];
     final activeUrls = <String>[];
     platform.setListener(
         (event, arguments) => previousUrls.add(arguments as String));
-    await platform.setPreventDefaultUrlClick(true);
     final previousCallback = listeners['onUrlClicked']!;
 
     platform
         .setListener((event, arguments) => activeUrls.add(arguments as String));
     final activeCallback = listeners['onUrlClicked']!;
-    final url = 'https://example.com/replaced-listener'.toJS;
+    const url = 'https://example.com/replaced-listener';
 
-    expect(previousCallback.callAsFunction(null, url).dartify(), isFalse);
+    emitUrlClick(url, callback: previousCallback);
     expect(previousUrls, isEmpty);
     expect(activeUrls, isEmpty);
 
-    expect(activeCallback.callAsFunction(null, url).dartify(), isTrue);
+    emitUrlClick(url, callback: activeCallback);
     expect(previousUrls, isEmpty);
-    expect(activeUrls, ['https://example.com/replaced-listener']);
+    expect(activeUrls, [url]);
+    expect(defaultUrlActions, [url, url]);
   });
 
-  test('리스너 제거 후 재등록하면 URL 차단이 기본값으로 돌아간다', () async {
+  test('리스너 제거 후 재등록하면 새 URL 리스너만 이벤트를 받는다', () {
     final events = <ChannelTalkEvent>[];
     platform.setListener((event, arguments) => events.add(event));
-    await platform.setPreventDefaultUrlClick(true);
     final removedCallback = listeners['onUrlClicked']!;
 
     platform.removeListener();
     platform.setListener((event, arguments) => events.add(event));
     final activeCallback = listeners['onUrlClicked']!;
-    final url = 'https://example.com/new-listener'.toJS;
+    const url = 'https://example.com/new-listener';
 
-    expect(removedCallback.callAsFunction(null, url).dartify(), isFalse);
+    emitUrlClick(url, callback: removedCallback);
     expect(events, isEmpty);
-    expect(activeCallback.callAsFunction(null, url).dartify(), isFalse);
+    emitUrlClick(url, callback: activeCallback);
     expect(events, [ChannelTalkEvent.onUrlClicked]);
-
-    await platform.setPreventDefaultUrlClick(true);
-    expect(activeCallback.callAsFunction(null, url).dartify(), isTrue);
-    expect(
-        events, [ChannelTalkEvent.onUrlClicked, ChannelTalkEvent.onUrlClicked]);
+    expect(defaultUrlActions, [url, url]);
   });
 
   test('setPage는 페이지와 채팅 프로필을 전달한다', () async {

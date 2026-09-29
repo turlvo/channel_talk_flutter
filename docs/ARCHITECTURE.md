@@ -24,6 +24,7 @@ channel_talk_flutter/
 ├── .flutter-version                  개발용 Flutter 버전 표기
 ├── lib/
 │   ├── channel_talk_flutter.dart      ChannelTalk 정적 API, 언어·테마·boot 상태 enum
+│   ├── channel_talk_options.dart      모바일 버튼·팝업 옵션과 enum
 │   ├── channel_talk_flutter_platform_interface.dart
 │   │                                 플랫폼 계약, delegate, 이벤트 enum
 │   ├── channel_talk_flutter_method_channel.dart
@@ -39,7 +40,9 @@ channel_talk_flutter/
 │       │   ├── ChannelTalkFlutterHandler.java
 │       │   └── PushInterceptService.java
 │       └── test/java/com/kuku/channel_talk_flutter/
-│           └── ChannelTalkFlutterPluginTest.java
+│           ├── ChannelTalkFlutterPluginTest.java
+│           ├── ChannelTalkFlutterOptionsTest.java
+│           └── ChannelTalkFlutterHandlerTest.java
 ├── ios/
 │   ├── channel_talk_flutter.podspec   CocoaPods 의존성·공유 소스·privacy 번들
 │   └── channel_talk_flutter/
@@ -47,16 +50,18 @@ channel_talk_flutter/
 │       └── Sources/channel_talk_flutter/
 │           ├── ChannelTalkFlutterPlugin.swift
 │           ├── ChannelTalkFlutterHandler.swift
+│           ├── channel_talk_options.swift
 │           └── PrivacyInfo.xcprivacy
 ├── macos/                            getPlatformVersion 템플릿
 ├── test/                             Dart VM·Chrome 브라우저 테스트
 ├── example/
-│   ├── lib/main.dart                 JSON 입력·API 버튼·결과 표시
+│   ├── lib/main.dart                 JSON 입력·API 버튼·결과·팝업 timestamp 표시
+│   ├── lib/sample_boot.dart          JSON 부팅 옵션을 공개 API 타입으로 변환
 │   ├── android/                      Android 빌드 호스트
 │   ├── ios/                          iOS 초기화·빌드 호스트
 │   ├── macos/                        macOS 템플릿 호스트
 │   ├── web/index.html                Channel.io 스크립트 로더
-│   └── test/widget_test.dart          이전 템플릿 테스트
+│   └── test/                         샘플 입력·API 호출·옵션 변환 테스트
 └── docs/                             구조·테스트·SDK 점검 기록
 ```
 
@@ -95,8 +100,10 @@ setter는 `PlatformInterface.verifyToken`으로 구현의 토큰을 검증한다
 테스트는 `MockPlatformInterfaceMixin`을 사용한 가짜 구현으로 교체하고 원상 복구한다.
 
 `ChannelTalk`는 공개 인자를 Map으로 변환하거나 플랫폼 구현에 위임한다.
-별도의 모델 계층은 없으며 `Language.value`는 `en`, `ko`, `ja`, `device`,
+`Language.value`는 `en`, `ko`, `ja`, `device`,
 `Appearance.value`는 `system`, `light`, `dark`다.
+`ChannelButtonOption`·`BubbleOption`과 배치·아이콘 enum은 `channel_talk_options.dart`에
+선언하고 메인 API 파일에서 export한다. 옵션의 `toMap()`은 네이티브 계약 문자열을 만든다.
 `ChannelTalkBootStatus`도 공개 API 파일에 선언되며 `bootWithStatus`의 상세 결과를 나타낸다.
 이벤트 enum과 delegate typedef는 플랫폼 인터페이스 파일에 선언되어 있다.
 메인 API 파일이 이 타입들을 export하지 않으므로 명시적으로 참조하려면 해당 파일도 import한다.
@@ -142,10 +149,15 @@ EventChannel이나 Pigeon 생성 코드는 없다.
 | 토큰 등록·푸시 판별·수신 | 구현 | 구현 | 미구현 |
 | `storePushNotification` | `UNAVAILABLE` 오류 | 구현 | 미구현 |
 | 저장 푸시 조회·열기 | Activity 필요 | 구현 | 미구현 |
-| 리스너 등록·해제, URL 차단 설정 | 구현 | 구현 | 구현 |
+| 리스너 등록·해제 | 구현 | 구현 | 구현 |
+| URL 기본 동작 차단 설정 | 구현 | 구현 | true는 UnsupportedError, false는 no-op |
+| boot의 customAttributes, updateUser의 profileOnce | 구현 | 구현 | 구현 |
+| boot의 channelButtonOption·bubbleOption | 구현 | 구현 | UnsupportedError |
 | `onPushNotificationClicked` 이벤트 | 구현 | 미구현 | 미구현 |
 
-웹 미구현 기능은 플랫폼 인터페이스의 기본 메서드에 도달해 `UnimplementedError`를 발생시킨다.
+웹에 구현이 없는 메서드는 플랫폼 인터페이스에서 `UnimplementedError`를 발생시킨다.
+별도로 웹 `boot`·`bootWithStatus`에 모바일 배치 옵션을 주거나 URL 차단을 활성화하면
+SDK를 호출하기 전에 Future가 `UnsupportedError`로 완료된다.
 macOS는 모든 Channel Talk 기능이 미구현이다. 네이티브의 `getPlatformVersion`만 존재하며
 이를 호출하는 공개 `ChannelTalk` API도 없다. Windows·Linux 플랫폼 등록은 없다.
 
@@ -192,11 +204,27 @@ Android 초기화 실패·필수 인자 오류와 iOS 필수 인자 오류는 �
 - iOS boot: `Profile` → `BootConfig`; update: `UpdateUserParamBuilder.with(profile:)`.
 - Web: `{profile: {...}}`를 만들고 `jsify()`로 변환한다.
 
-`updateUser`의 `customAttributes`는 profile에 합쳐진다. 동일한 키가 있으면
+모든 부팅 API와 `updateUser`의 `customAttributes`는 profile에 합쳐진다. 동일한 키가 있으면
 customAttributes 값이 기본 프로필 값을 덮어쓴다. 이 중첩 Map의 null 값은 별도로 제거하지 않는다.
+부팅의 기본 필드와 커스텀 속성은 같은 속성 저장 경로로 넣는다. 전용 이름·이메일 필드가
+커스텀 속성과 별도로 남아 직렬화 때 다시 덮어쓰는 일을 방지하기 위해 Android는
+`Profile.setProperty`, iOS는 `Profile.set(propertyKey:value:)`를 사용한다. iOS의 NSNull도 유지한다.
 언어·태그·수신 설정은 호출자가 제공한 경우에만 SDK 업데이트에 포함한다.
 `tags: []`는 생략과 다르며 기존 태그를 비우려는 요청으로 전달된다.
-Web 구현에는 `profileOnce` 전달 코드가 있지만 공개 `ChannelTalk.updateUser`에는 인자가 없다.
+`updateUser.profileOnce`는 아직 값이 없는 프로필 속성을 설정하는 별도 Map이다.
+Android는 `setProfileOnceMap`, iOS는 `with(profileOnce:)`, Web은 `profileOnce`로 전달한다.
+일반 profile에 합치지 않으며, 생략·빈 Map·Map 안의 null을 구분해 SDK에 전달한다.
+서버의 최종 프로필 처리와 성공 조건은 SDK에 맡긴다.
+
+### 모바일 배치 옵션
+
+`boot`·`bootWithStatus`에서만 `channelButtonOption`·`bubbleOption`을 공개한다.
+버튼 아이콘은 두 SDK가 공통 제공하는 18개이며 위치는 left/right, 팝업 위치는 top/bottom이다.
+옵션을 명시하면 버튼은 channel 아이콘, right, xMargin/yMargin 20을 기본값으로 사용한다.
+이는 새 Dart 옵션의 기본값이다. 옵션 자체를 생략하면 플랫폼의 기존 배치를 유지한다.
+팝업 yMargin 생략은 SDK 기본 계산을 유지하고, 명시한 0은 그대로 전달한다.
+여백 단위는 Android dp, iOS pt다. NaN·무한대는 Dart 직렬화에서 `ArgumentError`로 거부하고,
+네이티브도 숫자 타입·Float 범위·enum·맵 형식을 검증해 잘못된 인자를 오류로 반환한다.
 
 `ChannelTalk.addTags`는 목록이 10개를 넘으면 플랫폼 호출 전에 `false`를 반환한다.
 문자열 타입·빈 항목·중복 등을 공통 API에서 모두 검증하는 구조는 아니다.
@@ -209,7 +237,7 @@ Web 구현에는 `profileOnce` 전달 코드가 있지만 공개 `ChannelTalk.up
 - iOS는 지정하지 않았거나 알려지지 않은 언어를 `.device`로 처리한다.
   update에서는 언어 자체를 생략한 경우 Builder를 호출하지 않는다.
 - iOS boot는 `hidePopup`, `trackDefaultEvent` 생략 시 `false`를 넣는다.
-  버튼 위치는 왼쪽, xMargin 16, yMargin 23으로 네이티브에 고정되어 있다.
+  버튼 옵션을 생략하면 기존 왼쪽, xMargin 16, yMargin 23을 유지한다.
 - 테마 기본값은 네이티브 변환에서 system이며 공개 enum 외 값을 받는 정식 API는 없다.
 
 ### setPage의 변환
@@ -281,10 +309,12 @@ boot 성공 시 `ChannelIO.delegate`에 이벤트 Handler를 설정한다.
 | `onBadgeChanged` | `{unread, alert}` | `{unread, alert}` |
 | `onFollowUpChanged` | 네이티브 프로필 Map | JS 값을 dartify한 값 |
 | `onUrlClicked` | URL 문자열 | JS URL을 dartify한 값 |
-| `onPopupDataReceived` | Android는 4개 필드 Map, iOS는 `event.toJson()` | dartify한 SDK 데이터 |
+| `onPopupDataReceived` | Android는 5개 필드 Map, iOS는 `event.toJson()` | dartify한 SDK 데이터 |
 | `onPushNotificationClicked` | Android만 chatId | 없음 |
 
-Android 팝업 Map 필드는 `chatId`, `avatarUrl`, `name`, `message`다.
+Android 팝업 Map 필드는 `chatId`, `avatarUrl`, `name`, `message`, `timestamp`다.
+timestamp는 SDK의 long 값을 손실 없이 전달하며, message의 null을 허용한다.
+플랫폼 간 timestamp 단위를 브리지에서 정규화하지 않는다.
 iOS 팝업 payload는 브리지에서 동일 필드로 재구성하지 않고 SDK 직렬화 결과를 전달한다.
 모바일에 알려지지 않은 이벤트명이 들어오면 `_handleMethod`가 예외를 던진다.
 
@@ -292,11 +322,16 @@ iOS 팝업 payload는 브리지에서 동일 필드로 재구성하지 않고 SD
 네이티브 SDK 리스너 해제나 URL 차단 설정 초기화 메서드를 호출하지 않는다.
 `shutdown` 역시 Dart 코드에서 `removeListener`를 자동 호출하지 않는다.
 
+iOS Handler는 모든 이벤트를 공통 `sendEvent`로 전달한다. SDK가 백그라운드 스레드에서
+콜백을 호출하면 메인 큐로 넘긴 뒤 Flutter 채널을 호출하며, 이미 메인 스레드이면 즉시 전달한다.
+이벤트명·payload와 `onUrlClicked`의 동기 차단 반환값은 유지한다.
+
 웹은 등록·해제마다 `_listenerGeneration`을 증가시키고 이전 세대 이벤트를 무시한다.
 두 동작 모두 SDK 전역 `clearCallbacks`를 호출하므로 패키지 밖에서 등록한 콜백도 영향을 받는다.
-해제 시 URL 차단 플래그도 false로 초기화한다.
-URL 콜백은 delegate에 알린 뒤 저장된 차단 플래그를 동기 반환한다.
-모바일 Handler도 같은 원리로 동작하므로 Dart delegate의 반환값이 차단 여부를 결정하지 않는다.
+Web URL 콜백은 이벤트만 전달한다. SDK의 void 콜백은 반환값으로 기본 URL 동작을 막지 못한다.
+따라서 `setPreventDefaultUrlClick(true)`는 비동기 `UnsupportedError`이며 false는 성공 no-op이다.
+모바일 Handler는 별도로 저장한 차단 플래그를 동기 반환한다.
+어느 플랫폼에서도 Dart delegate의 반환값이 차단 여부를 결정하지 않는다.
 
 ## 8. 푸시 연동 경계
 
@@ -322,7 +357,7 @@ iOS 푸시 메서드는 호스트가 전달한 content를 SDK에 넘기는 래�
 
 | 대상 | 현재 값 | 기준 파일 |
 | --- | --- | --- |
-| 패키지 | 4.3.0 | 루트 `pubspec.yaml` |
+| 패키지 | 4.3.0-rc.1 | 루트 `pubspec.yaml` |
 | 최소 Dart / Flutter | 3.3.0 / 3.19.0 | 루트 `pubspec.yaml` |
 | 개발 Flutter 표기 | 3.19.6 | 루트·예제 `.flutter-version` |
 | Android Channel.io / Firebase Messaging | 13.5.0 / 20.1.0 | `android/build.gradle` |
@@ -331,7 +366,7 @@ iOS 푸시 메서드는 호스트가 전달한 content를 SDK에 넘기는 래�
 | 예제 Android AGP / wrapper | 8.1.0 / 8.10.2 | `example/android/` Gradle 설정 |
 | 예제 Kotlin / Java target | 1.8.10 / 1.8 | 예제 build.gradle / app build.gradle |
 | iOS ChannelIOSDK / 최소 iOS | 13.3.0 / 15.0 | iOS podspec·Package.swift 모두 동일 |
-| iOS pod 버전 / Swift | 4.3.0 / 5.0 | iOS podspec |
+| iOS pod 버전 / Swift | 4.3.0-rc.1 / 5.0 | iOS podspec |
 | iOS SPM Swift tools | 5.9 | `ios/channel_talk_flutter/Package.swift` |
 | macOS pod 버전 / 최소 OS | 0.0.1 / 10.11 | macOS 템플릿 podspec |
 
@@ -359,7 +394,19 @@ privacy manifest를 사용하므로 의존성 변경 시 두 선언을 함께 �
 | 푸시 변경 | 서비스, 호스트 등록·권한, Dart 푸시 API, 실제 수신·클릭 검증 |
 
 남아 있는 주의점은 macOS 미구현, 플랫폼별 실패 계약 차이, 전역 리스너 소유권,
-예제의 큰 Widget 파일과 오래된 템플릿 테스트다.
+예제의 큰 Widget 파일과 iOS·macOS의 오래된 템플릿 테스트다.
+
+## 11. 샘플 앱의 SDK 옵션 실행
+
+2026-09-15에 샘플의 부팅·사용자 갱신 입력을 새 공개 API에 맞췄다.
+`boot`·`bootWithStatus`·`bootForWeb` 버튼은 JSON 입력을 `sample_boot.dart`에 전달한다.
+이 변환은 공개 `ChannelTalk` API를 사용하므로 SDK Map을 직접 보내서 타입 검증을 우회하지 않는다.
+정수·소수 여백을 모두 허용하며 생략한 옵션과 여백 0, 커스텀 속성의 null을 보존한다.
+Web의 기본 예제에서는 모바일 배치 옵션을 제외한다.
+
+`updateUser`는 profileOnce를 별도로 전달하고 생략한 언어를 강제로 지정하지 않는다.
+등록한 팝업 이벤트의 timestamp는 화면에 원본 값으로 표시하며 메시지 본문은 출력하지 않는다.
+위젯 dispose에서는 리스너도 해제한다. 사용 순서는 [예제 안내](../example/README.md)에 있다.
 루트 README의 일부 예시도 이전 Flutter 스타일이며 API 표의 `openWorkflow.message`는
 현재 공개 시그니처에 없다. 계약 판단은 [공개 소스](../lib/channel_talk_flutter.dart)를 우선한다.
 실제 계정의 상담 생성·로그인 전환·첨부·푸시 수신은 자동 브리지 테스트와 구분한다.

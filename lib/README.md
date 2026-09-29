@@ -6,6 +6,7 @@
 | 파일 | 역할 |
 | --- | --- |
 | [공개 API](channel_talk_flutter.dart) | ChannelTalk 정적 API, 언어·테마·boot 상태 enum, 설정 Map |
+| [모바일 옵션](channel_talk_options.dart) | 버튼 아이콘·위치·여백, 팝업 위치·선택 여백 |
 | [플랫폼 인터페이스](channel_talk_flutter_platform_interface.dart) | instance, 계약, delegate·이벤트 |
 | [MethodChannel](channel_talk_flutter_method_channel.dart) | 네이티브 요청과 수신 이벤트 매핑 |
 | [웹 구현](channel_talk_flutter_web.dart) | JS 값 변환, 완료 콜백, 리스너 수명주기 |
@@ -27,6 +28,11 @@
 알 수 없는 문자열이나 null은 `unknown`이며 네이티브 성공 콜백에도 user가 없으면 `unknown`이다.
 웹은 SDK 콜백을 기다려 성공이면 `success`, 오류이면 `unknown`을 반환하고 호출 예외는 전달한다.
 iOS 연결 코드는 [공유 Swift 소스][ios]에 있으며 CocoaPods와 SPM이 함께 사용한다.
+
+부팅 API는 `customAttributes`를, `updateUser`는 `profileOnce`를 제공한다.
+`boot`·`bootWithStatus`의 모바일 옵션 타입은 메인 API에서 export한다.
+모바일 옵션을 Web에 주거나 Web URL 차단을 활성화하면 `UnsupportedError`로 완료된다.
+Web의 URL 이벤트는 관찰용이며 콜백 반환값으로 SDK의 기본 동작을 막을 수 없다.
 
 모바일과 웹은 [각 테스트](../test/README.md)로 검증한다.
 일반 Dart VM 테스트만 실행하면 웹 JS interop은 검증되지 않는다.

@@ -66,8 +66,20 @@ void main() {
     ),
     'onPopupDataReceived': (
       event: ChannelTalkEvent.onPopupDataReceived,
-      arguments: {'chatId': 'test-chat', 'avatarUrl': null, 'message': 'Test'},
-      expected: {'chatId': 'test-chat', 'avatarUrl': null, 'message': 'Test'},
+      arguments: {
+        'chatId': 'test-chat',
+        'avatarUrl': null,
+        'name': '테스트 팝업',
+        'message': null,
+        'timestamp': 1726001234567,
+      },
+      expected: {
+        'chatId': 'test-chat',
+        'avatarUrl': null,
+        'name': '테스트 팝업',
+        'message': null,
+        'timestamp': 1726001234567,
+      },
     ),
     'onPushNotificationClicked': (
       event: ChannelTalkEvent.onPushNotificationClicked,

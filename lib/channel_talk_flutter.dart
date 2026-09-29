@@ -1,4 +1,7 @@
 import 'channel_talk_flutter_platform_interface.dart';
+import 'channel_talk_options.dart';
+
+export 'channel_talk_options.dart';
 
 enum Appearance {
   system('system'),
@@ -63,6 +66,7 @@ class ChannelTalk {
     return ChannelTalkFlutterPlatform.instance.removeListener();
   }
 
+  /// 두 부팅 API가 같은 옵션 생략 규칙과 네이티브 설정 형식을 사용하게 한다.
   static Map<String, dynamic> _buildBootConfig({
     required String pluginKey,
     String? memberId,
@@ -77,6 +81,9 @@ class ChannelTalk {
     bool? trackDefaultEvent,
     bool? hidePopup,
     Appearance? appearance,
+    Map<String, dynamic>? customAttributes,
+    ChannelButtonOption? channelButtonOption,
+    BubbleOption? bubbleOption,
   }) {
     return {
       'pluginKey': pluginKey,
@@ -92,9 +99,17 @@ class ChannelTalk {
       if (trackDefaultEvent != null) 'trackDefaultEvent': trackDefaultEvent,
       if (hidePopup != null) 'hidePopup': hidePopup,
       if (appearance != null) 'appearance': appearance.value,
+      if (customAttributes != null) 'customAttributes': customAttributes,
+      if (channelButtonOption != null)
+        'channelButtonOption': channelButtonOption.toMap(),
+      if (bubbleOption != null) 'bubbleOption': bubbleOption.toMap(),
     };
   }
 
+  /// SDK를 초기화하며 [customAttributes]를 기본 사용자 프로필에 합친다.
+  ///
+  /// 중복 키는 커스텀 속성 값이 우선한다. 버튼·팝업 옵션은 모바일 전용이며
+  /// Web에 전달하면 [UnsupportedError]가 발생한다.
   static Future<bool?> boot({
     required String pluginKey,
     String? memberId,
@@ -109,6 +124,9 @@ class ChannelTalk {
     bool? trackDefaultEvent,
     bool? hidePopup,
     Appearance? appearance,
+    Map<String, dynamic>? customAttributes,
+    ChannelButtonOption? channelButtonOption,
+    BubbleOption? bubbleOption,
   }) {
     return ChannelTalkFlutterPlatform.instance.boot(
       _buildBootConfig(
@@ -125,6 +143,9 @@ class ChannelTalk {
         trackDefaultEvent: trackDefaultEvent,
         hidePopup: hidePopup,
         appearance: appearance,
+        customAttributes: customAttributes,
+        channelButtonOption: channelButtonOption,
+        bubbleOption: bubbleOption,
       ),
     );
   }
@@ -139,6 +160,7 @@ class ChannelTalk {
   /// a detailed boot status, a successful SDK callback resolves to
   /// [ChannelTalkBootStatus.success] and an SDK error callback resolves to
   /// [ChannelTalkBootStatus.unknown]. Invocation exceptions remain errors.
+  /// [customAttributes]·[channelButtonOption]·[bubbleOption]은 [boot]와 같은 규칙을 따른다.
   static Future<ChannelTalkBootStatus> bootWithStatus({
     required String pluginKey,
     String? memberId,
@@ -153,6 +175,9 @@ class ChannelTalk {
     bool? trackDefaultEvent,
     bool? hidePopup,
     Appearance? appearance,
+    Map<String, dynamic>? customAttributes,
+    ChannelButtonOption? channelButtonOption,
+    BubbleOption? bubbleOption,
   }) {
     return ChannelTalkFlutterPlatform.instance.bootWithStatus(
       _buildBootConfig(
@@ -169,10 +194,16 @@ class ChannelTalk {
         trackDefaultEvent: trackDefaultEvent,
         hidePopup: hidePopup,
         appearance: appearance,
+        customAttributes: customAttributes,
+        channelButtonOption: channelButtonOption,
+        bubbleOption: bubbleOption,
       ),
     );
   }
 
+  /// 웹 전용 옵션과 커스텀 사용자 속성을 포함해 SDK를 초기화한다.
+  ///
+  /// [customAttributes]의 중복 키가 기본 프로필보다 우선한다.
   static Future<bool?> bootForWeb({
     required String pluginKey,
     String? memberId,
@@ -191,6 +222,7 @@ class ChannelTalk {
     String? memberHash,
     bool? hidePopup,
     Appearance? appearance,
+    Map<String, dynamic>? customAttributes,
   }) {
     Map<String, dynamic> config = {
       'pluginKey': pluginKey,
@@ -212,6 +244,7 @@ class ChannelTalk {
       if (memberHash != null) 'memberHash': memberHash,
       if (hidePopup != null) 'hidePopup': hidePopup,
       if (appearance != null) 'appearance': appearance.value,
+      if (customAttributes != null) 'customAttributes': customAttributes,
     };
 
     return ChannelTalkFlutterPlatform.instance.boot(config);
@@ -261,16 +294,22 @@ class ChannelTalk {
     );
   }
 
-  static Future<bool?> updateUser(
-      {String? name,
-      String? email,
-      String? mobileNumber,
-      String? avatarUrl,
-      bool? unsubscribeEmail,
-      bool? unsubscribeTexting,
-      List<String>? tags,
-      Language? language,
-      Map<String, dynamic>? customAttributes}) {
+  /// 지정한 사용자 정보만 수정하고 [profileOnce]는 값이 없는 필드만 채운다.
+  ///
+  /// [customAttributes]는 기본 프로필에 합쳐지며 [profileOnce]와 별도로 전달된다.
+  /// 선택 인자 생략은 기존 값을 지우지 않는다.
+  static Future<bool?> updateUser({
+    String? name,
+    String? email,
+    String? mobileNumber,
+    String? avatarUrl,
+    bool? unsubscribeEmail,
+    bool? unsubscribeTexting,
+    List<String>? tags,
+    Language? language,
+    Map<String, dynamic>? customAttributes,
+    Map<String, dynamic>? profileOnce,
+  }) {
     return ChannelTalkFlutterPlatform.instance.updateUser(
       {
         if (name != null) 'name': name,
@@ -283,6 +322,7 @@ class ChannelTalk {
         if (tags != null) 'tags': tags,
         if (language != null) 'language': language.value,
         if (customAttributes != null) 'customAttributes': customAttributes,
+        if (profileOnce != null) 'profileOnce': profileOnce,
       },
     );
   }
@@ -380,6 +420,10 @@ class ChannelTalk {
     return ChannelTalkFlutterPlatform.instance.hidePopup();
   }
 
+  /// 모바일 SDK의 URL 기본 이동을 별도 설정으로 제어한다.
+  ///
+  /// Web은 차단을 지원하지 않아 true 요청은 [UnsupportedError]로 완료된다.
+  /// Web에서 false는 기본 이동을 유지하며 true를 반환한다.
   static Future<bool?> setPreventDefaultUrlClick({
     required bool prevent,
   }) {

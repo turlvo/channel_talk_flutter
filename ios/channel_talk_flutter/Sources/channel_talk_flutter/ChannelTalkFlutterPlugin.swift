@@ -100,25 +100,13 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       return
     }
 
-    let profile = Profile()
-    if let email = argMaps["email"] as? String {
-      profile.set(email: email)
+    let options: ChannelTalkBootOptions
+    do {
+      options = try ChannelTalkBootOptions(arguments: argMaps)
+    } catch {
+      result(FlutterError(code: call.method, message: "Invalid argument", details: nil))
+      return
     }
-    if let name = argMaps["name"] as? String {
-      profile.set(name: name)
-    }
-    if let mobileNumber = argMaps["mobileNumber"] as? String {
-      profile.set(mobileNumber: mobileNumber)
-    }
-    if let avatarUrl = argMaps["avatarUrl"] as? String {
-      profile.set(avatarUrl: avatarUrl)
-    }
-
-    let buttonOption = ChannelButtonOption.init(
-      position: .left,
-      xMargin: 16,
-      yMargin: 23
-    )
 
     let memberHash = argMaps["memberHash"] as? String
     let memberId = argMaps["memberId"] as? String
@@ -147,8 +135,9 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       pluginKey: pluginKey,
       memberId: memberId,
       memberHash: memberHash,
-      profile: profile,
-      channelButtonOption: buttonOption,
+      profile: options.profile,
+      channelButtonOption: options.channelButtonOption,
+      bubbleOption: options.bubbleOption,
       hidePopup: hidePopup ?? false,
       trackDefaultEvent: trackDefaultEvent ?? false,
       language: enumLanguage,
@@ -257,6 +246,14 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
       return
     }
 
+    let profileOnce: [String: Any]?
+    do {
+      profileOnce = try ChannelTalkBootOptions.optionalMap(argMaps["profileOnce"])
+    } catch {
+      result(FlutterError(code: call.method, message: "Invalid argument", details: nil))
+      return
+    }
+
     var profile: [String:Any] = [:]
     if let name = argMaps["name"] {
         profile["name"] = name
@@ -280,6 +277,9 @@ public class ChannelTalkFlutterPlugin: NSObject, FlutterPlugin {
     let builder = UpdateUserParamBuilder()
     if !profile.isEmpty {
       _ = builder.with(profile: profile)
+    }
+    if let profileOnce = profileOnce {
+      _ = builder.with(profileOnce: profileOnce)
     }
     if let language = argMaps["language"] as? String {
       let enumLanguage: LanguageOption

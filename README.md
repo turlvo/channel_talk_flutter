@@ -2,7 +2,21 @@
 
 
 # channel_talk_flutter
-Flutter wrapper for Channel Talk Android and iOS projects.(Unofficial)<br><br>
+Channel Talk Android·iOS·Web SDK를 연결하는 비공식 Flutter 플러그인입니다.<br><br>
+
+## RC 버전 설치
+
+`4.3.0-rc.1`은 SDK 호환성 변경을 실제 앱에서 확인하기 위한 사전 배포 버전입니다.
+테스트할 앱의 `pubspec.yaml`에서 버전을 명시하세요.
+
+```yaml
+dependencies:
+  channel_talk_flutter: 4.3.0-rc.1
+```
+
+설정 후 `flutter pub get`을 실행합니다. 필요한 환경 변경은 **Upgrade Notes**,
+검증된 기능과 남은 범위는 **현재 SDK 대응 범위**를 확인하세요.
+
 \*******************************************************************************************************
 <br> [ANDROID] <br>
 Please should change the bottom part when change version from v2.x.x to above of v3.0.0.
@@ -25,7 +39,7 @@ TO-BE
 ## Compatibility
 
 - Flutter 3.19 / Dart 3.3 or later is required by the Web JS interop implementation.
-- Bundled SDKs: Android 13.5.0 and iOS 13.3.0 (verified on 2026-09-12).
+- Bundled SDKs: Android 13.5.0 and iOS 13.3.0 (실제 SDK 연결 확인: 2026-09-29).
 - Channel Talk APIs are implemented for Android, iOS, and Web. The registered
   macOS plugin is a placeholder and does not implement those APIs.
 - iOS 15.0 or later is required.
@@ -36,6 +50,44 @@ TO-BE
 - The Android plugin still depends on
   `com.google.firebase:firebase-messaging:20.1.0`. If your app pins Firebase
   BOM or messaging versions directly, verify the resolved dependency graph.
+
+### 현재 SDK 대응 범위
+
+현재 패키지는 위 SDK 버전의 기존 공개 API 호환성 유지에 초점을 맞춥니다.
+각 SDK의 모든 기능을 Flutter API로 제공하는 것은 아닙니다. Web은 호스트가 로드한
+Channel.io JavaScript SDK를 사용하며, 모바일과 지원 범위가 다릅니다.
+
+iOS의 `onChatCreated` 등 SDK 이벤트는 메인 스레드에서 Flutter로 전달하도록 수정했습니다.
+이미 메인 스레드에서 발생한 이벤트는 즉시 전달하며, 이벤트명·데이터와 URL 차단 반환값을
+유지합니다. 이 수정에서 기존 `boot`·`updateUser` 등의 반환형·오류 처리나
+`receivePushNotification`·`shutdown`의 응답 완료 시점은 변경하지 않았습니다.
+이전 버전에서 올릴 때 필요한 변경은 아래 **Upgrade Notes**를 확인하세요.
+
+다음 6개 확장은 현재 추가하지 않습니다. 기존 사용 방식은 유지하며,
+해당 기능이 필요한 앱은 아래 제한을 확인해야 합니다.
+
+| 확장 항목 | 현재 제공 범위와 제한 |
+| --- | --- |
+| 사용자 객체·상세 오류 반환 | bool 응답·`bootWithStatus` 상태 enum 유지. 사용자 객체·상세 오류를 함께 반환하는 API 없음. |
+| 전체 프로필·Web 태그 초기화 | 전용 API 없음. 개별 필드 null 전달과 다르며 Web의 `tags: []` 초기화는 보장하지 않음. |
+| Android 푸시 클릭 기본 동작 차단 | 클릭 이벤트는 제공하지만 차단 설정은 없습니다. SDK 기본 동작을 허용합니다. |
+| Web 추가 언어 코드 | 기존 `Language` enum을 유지하며 Web 전용 추가 언어 코드는 노출하지 않습니다. |
+| iOS 기본 테마 위임·푸시 완료 대기 | system/light/dark 유지. SDK 기본 테마 위임·푸시 처리 완료 대기 API 없음. |
+| 네이티브 리스너 완전 해제 | 모바일 `removeListener()`는 Dart 콜백만 해제. SDK 네이티브 리스너 제거 기능 없음. |
+
+### 검증 결과와 남은 범위
+
+2026-09-29에 Android 에뮬레이터, iOS 시뮬레이터, Web에서 실제 SDK를 연결해 확인했습니다.
+자동 회귀 266개가 통과했고, 후속 iOS 이벤트 수정에서는 네이티브 회귀 5개와 관련 Dart 검사
+68개가 통과했습니다. 수정 후 실제 iOS 상담 생성도 3회 모두 이벤트가 한 번씩 도착했고
+기존 플랫폼 채널 스레드 오류가 발생하지 않았습니다.
+
+실제 푸시 수신·클릭, 정상 워크플로, 팝업·URL 차단 효과, 프로필·태그·track의 서버 반영은
+미검증 범위가 남아 있습니다. API의 true 반환만으로 서버 작업 완료까지 보장하지 않습니다.
+
+- [전체 API 검증 결과](docs/full_api_qa_2026_09_29.md): 플랫폼별 확인·부분 검증·미지원 항목.
+- [iOS 이벤트 수정 결과](docs/ios_event_thread_fix_2026_09_29.md): 수정 후 재검증과 Web 미지원 이유.
+- [테스트·빌드 가이드](docs/TESTING.md): 재현 명령과 자동 테스트 범위.
 
 ## Upgrade Notes
 
@@ -51,12 +103,16 @@ TO-BE
     `profile`. Web requires a non-null page; use `resetPage()` to reset it.
   - Custom `ChannelTalkFlutterPlatform` implementations must change their
     `setPage` override to `setPage({String? page, Map<String, dynamic>? profile})`.
-  - Web now supports `setListener`, `removeListener`, `hidePopup`, and
-    `setPreventDefaultUrlClick`.
+  - Web now supports `setListener`, `removeListener`, and `hidePopup`.
+  - Web의 URL 클릭 콜백은 관찰용입니다. `setPreventDefaultUrlClick(true)`는
+    비동기 `UnsupportedError`이며, `false`는 기본 동작을 유지하고 성공합니다.
   - Web `boot`, `updateUser`, `addTags`, and `removeTags` now wait for the
     SDK callback and return `false` on SDK failure. JS invocation errors complete
     the Future with an error.
   - Native `updateUser` preserves omitted language, tags, and marketing preferences.
+  - `boot`와 `bootWithStatus`에 `customAttributes`, `channelButtonOption`,
+    `bubbleOption`을 추가했습니다. 배치 옵션을 생략하면 기존 플랫폼별 배치를 유지합니다.
+  - `bootForWeb`도 `customAttributes`를 지원하며, `updateUser`에 `profileOnce`를 추가했습니다.
 
 See [SDK compatibility audit](docs/sdk_compatibility_audit.md) for findings and validation.
 
@@ -151,6 +207,58 @@ web, the SDK callback resolves to `success` when no error is reported, otherwise
 final status = await ChannelTalk.bootWithStatus(pluginKey: 'pluginKey');
 if (status != ChannelTalkBootStatus.success) {
   // inspect `status` and decide whether to retry
+}
+```
+
+### 프로필과 모바일 배치 옵션
+
+`boot`, `bootWithStatus`, `bootForWeb`의 `customAttributes`는 `name`, `email` 등 기본
+프로필 뒤에 병합됩니다. 같은 키가 있으면 `customAttributes` 값이 우선하며, 프로필 안의
+명시적인 `null`도 SDK로 전달됩니다. `updateUser`의 `profileOnce`는 일반 프로필과 별도로
+전달되어 아직 값이 없는 필드만 채웁니다. 인자를 생략하면 해당 값을 변경하지 않습니다.
+
+`channelButtonOption`과 `bubbleOption`은 Android/iOS의 `boot`와 `bootWithStatus`에서만
+지원합니다. Web에서 두 옵션을 전달하면 SDK 호출 없이 비동기 `UnsupportedError`가 발생합니다.
+`bootForWeb`은 이 두 옵션을 노출하지 않습니다.
+
+| 옵션 | 필드와 기본값 |
+| --- | --- |
+| `ChannelButtonOption` | `icon`: `channel`, `position`: `right`, `xMargin`: 20, `yMargin`: 20 |
+| `BubbleOption` | `position`: `top`, `yMargin`: 생략 시 기기별 SDK 기본 여백 유지 |
+
+버튼 위치는 `ChannelButtonPosition.left`/`right`, 팝업 위치는 `BubblePosition.top`/`bottom`입니다.
+여백 단위는 Android dp, iOS pt이며, `BubbleOption.yMargin: 0`은 생략과 다릅니다.
+**옵션 객체 자체를 생략하면 기존 배치를 유지합니다.** 특히 iOS의 기존 버튼 배치는 왼쪽,
+가로 여백 16, 세로 여백 23입니다. `const ChannelButtonOption()`을 명시하면 양 플랫폼 모두
+`channel` 아이콘, 오른쪽, 가로·세로 여백 20을 적용합니다.
+
+`ChannelButtonIcon`은 18개 아이콘을 제공합니다: `channel`, `chatBubbleFilled`,
+`chatProgressFilled`, `chatQuestionFilled`, `chatLightningFilled`, `chatBubbleAltFilled`,
+`smsFilled`, `commentFilled`, `sendForwardFilled`, `helpFilled`, `chatProgress`, `chatQuestion`,
+`chatBubbleAlt`, `sms`, `comment`, `sendForward`, `communication`, `headset`.
+
+다음은 Android/iOS에서 커스텀 프로필과 버튼·팝업 배치를 설정하는 예제입니다.
+
+```dart
+final status = await ChannelTalk.bootWithStatus(
+  pluginKey: 'pluginKey',
+  name: '기본 이름',
+  customAttributes: {
+    'name': '우선 적용할 이름',
+    'plan': 'pro',
+    'expiredAt': null,
+  },
+  channelButtonOption: const ChannelButtonOption(
+    icon: ChannelButtonIcon.headset,
+    position: ChannelButtonPosition.right,
+    xMargin: 20,
+    yMargin: 24,
+  ),
+  bubbleOption: const BubbleOption(position: BubblePosition.bottom),
+);
+
+if (status == ChannelTalkBootStatus.success) {
+  await ChannelTalk.updateUser(profileOnce: {'signupSource': 'app'});
 }
 ```
 
@@ -261,6 +369,10 @@ Android supports explicit Korean, Japanese, and English SDK languages.
 `Language.device` uses the device language during boot; in `updateUser` it leaves
 the current language unchanged because the Android SDK has no device-language enum.
 
+Android의 `onPopupDataReceived` 데이터에는 `timestamp`가 포함됩니다. 이 값은 SDK가 전달한
+원본 시간 값이며 패키지가 단위를 정규화하지 않습니다. 플랫폼 공통 밀리초·초 값으로 가정하지
+말고, 시간을 변환할 때 해당 플랫폼 SDK의 계약을 확인하세요.
+
 #### Push notifications in combination with FCM
 This plugin works in combination with the [`firebase_messaging`](https://pub.dev/packages/firebase_messaging) plugin to receive Push Notifications. To set this up:
 
@@ -287,10 +399,35 @@ just above the closing `</application>` tag.
 ### Web
 
 The SDK script must be loaded before calling this package. Await `bootForWeb`
-before calling APIs that need a booted user. `isBooted`, `sleep`, and native push
-notification APIs are not supported on Web.
+before calling APIs that need a booted user.
+
+Web에서는 다음 9개 메서드에 대응하는 공식 JavaScript SDK API가 없어
+현재 `UnimplementedError`가 발생합니다. 테스트 실패나 plugin key 권한 문제와 구분합니다.
+
+| API | Web에서 지원하지 않는 이유 |
+| --- | --- |
+| `sleep` | 모바일의 푸시·track만 유지하는 휴면 모드에 대응하는 Web 명령이 없습니다. |
+| `isBooted` | Web SDK에 부팅 상태 조회 API가 없습니다. 부팅 결과는 await한 결과로 확인합니다. |
+| `setDebugMode` | Web SDK에 같은 디버그 로그 설정 API가 없습니다. |
+| `initPushToken` | 모바일 FCM/APNs 토큰 등록용이며 Web SDK에는 대응 명령이 없습니다. |
+| `isChannelPushNotification` | 모바일 호스트가 받은 푸시 payload 판별용입니다. |
+| `receivePushNotification` | 모바일 호스트의 푸시 수신을 SDK에 전달하는 API입니다. |
+| `storePushNotification` | 모바일에서 수신한 푸시를 SDK에 보관하는 API입니다. |
+| `hasStoredPushNotification` | 모바일 SDK에 저장된 푸시를 조회하는 API입니다. |
+| `openStoredPushNotification` | 모바일에 저장된 푸시로 상담을 여는 API입니다. |
+
+공개 범위는 [공식 Web API 문서](https://developers.channel.io/en/articles/0b119290)와
+[공식 loader 소스](https://github.com/channel-io/channel-web-sdk-loader/blob/main/src/index.ts)를
+기준으로 확인했습니다. 브라우저 자체의 Web Push 구현 가능성과는 별개입니다.
+`shutdown`은 모든 SDK 동작을 종료하므로 `sleep`의 동일한 대체 동작은 아닙니다.
+로컬 변수로 마지막 boot 결과를 보관하는 것도 SDK의 현재 상태를 직접 조회하는 것과 다릅니다.
 
 The Web `onChatCreated` event has no chat ID argument, so its listener payload is null.
+
+Web의 `onUrlClicked`는 URL을 알려주는 이벤트입니다. SDK는 콜백 반환값으로 기본 이동을
+취소하지 않으므로 `setPreventDefaultUrlClick(true)`는 비동기 `UnsupportedError`를 반환합니다.
+`setPreventDefaultUrlClick(false)`는 SDK 호출 없이 `true`로 완료되어 기본 동작을 유지합니다.
+자세한 콜백 계약은 [공식 Web SDK의 `UrlClickedCallback` 정의](https://github.com/channel-io/channel-web-sdk-loader/blob/main/src/index.ts)를 참고하세요.
 
 `setPage` requires a non-null `page` on Web. Use `resetPage` to reset the page
 and user chat profile. The listener APIs use the SDK's global `clearCallbacks`;
@@ -370,12 +507,12 @@ void main() async {
         </tr>
         <!-- boot -->
         <tr>
-            <td rowspan=13>boot</td>
-            <td rowspan=13>Load the information necessary to use the SDK.</td>
+            <td rowspan=16>boot</td>
+            <td rowspan=16>Load the information necessary to use the SDK.</td>
             <td>pluginKey*</td>
             <td>String</td>
             <td>Plugin key of Channel.</td>
-            <td rowspan=13>Mobile, Web</td>
+            <td rowspan=16>Mobile, Web<br>배치 옵션은 Android/iOS 전용</td>
         </tr>
         <tr>
             <td>memberId</td>
@@ -438,14 +575,38 @@ It is valid when creating a new user. The language of the user that already exis
             <td>Appearance?</td>
             <td>Sets the appearance of SDK.</td>
         </tr>
+        <tr>
+            <td>customAttributes</td>
+            <td>Map&lt;String, dynamic&gt;?</td>
+            <td>기본 프로필 뒤에 병합합니다. 중복 키는 이 값이 우선하며 null도 전달합니다.</td>
+        </tr>
+        <tr>
+            <td>channelButtonOption</td>
+            <td>ChannelButtonOption?</td>
+            <td>Android/iOS 버튼 아이콘과 위치·여백입니다. 생략 시 기존 배치를 유지합니다. Web은 비동기 UnsupportedError입니다.</td>
+        </tr>
+        <tr>
+            <td>bubbleOption</td>
+            <td>BubbleOption?</td>
+            <td>Android/iOS 팝업 위치·여백입니다. yMargin 생략 시 SDK 기본값을 유지합니다. Web은 비동기 UnsupportedError입니다.</td>
+        </tr>
+        <!-- bootWithStatus -->
+        <tr>
+            <td>bootWithStatus</td>
+            <td>부팅 결과를 ChannelTalkBootStatus로 반환합니다.</td>
+            <td>boot와 동일</td>
+            <td>boot와 동일</td>
+            <td>customAttributes와 두 모바일 배치 옵션을 포함합니다. Web SDK 콜백 결과는 success 또는 unknown이며 호출 예외는 Future 오류입니다.</td>
+            <td>Mobile, Web<br>배치 옵션은 Android/iOS 전용</td>
+        </tr>
         <!-- bootForWeb -->
         <tr>
-            <td rowspan=17>bootForWeb</td>
-            <td rowspan=17>Load the information necessary to use the SDK.</td>
+            <td rowspan=18>bootForWeb</td>
+            <td rowspan=18>Load the information necessary to use the SDK.</td>
             <td>pluginKey*</td>
             <td>String</td>
             <td>Plugin key of Channel.</td>
-            <td rowspan=17>Web</td>
+            <td rowspan=18>Web</td>
         </tr>
         <tr>
             <td>memberId</td>
@@ -532,6 +693,11 @@ The default value is 10000000.</td>
             <td>Determines whether to track the UTM source and referrer.
 The default value is true.</td>
         </tr>
+        <tr>
+            <td>customAttributes</td>
+            <td>Map&lt;String, dynamic&gt;?</td>
+            <td>기본 프로필 뒤에 병합합니다. 중복 키는 이 값이 우선하며 null도 전달합니다.</td>
+        </tr>
         <!-- sleep -->
         <tr>
             <td>sleep</td>
@@ -616,12 +782,12 @@ The default value is true.</td>
         </tr>
         <!-- updateUser -->
         <tr>
-            <td rowspan=9>updateUser</td>
-            <td rowspan=9>TraModifies user information.</td>
+            <td rowspan=10>updateUser</td>
+            <td rowspan=10>Modifies user information.</td>
             <td>name</td>
             <td>String?</td>
             <td>A name of a user.</td>
-            <td rowspan=9>Mobile, Web</td>
+            <td rowspan=10>Mobile, Web</td>
         </tr>
         <tr>
             <td>email</td>
@@ -661,8 +827,13 @@ It is valid when creating a new user. The language of the user that already exis
         </tr>
         <tr>
             <td>customAttributes</td>
-            <td>Map < String, dynamic >?</td>
-            <td>A user's CustomAttributes</td>
+            <td>Map&lt;String, dynamic&gt;?</td>
+            <td>기본 프로필 뒤에 병합합니다. 중복 키는 이 값이 우선하며 null도 전달합니다.</td>
+        </tr>
+        <tr>
+            <td>profileOnce</td>
+            <td>Map&lt;String, dynamic&gt;?</td>
+            <td>아직 값이 없는 프로필 필드만 채웁니다. customAttributes와 별도로 전달되며 생략 시 전송하지 않습니다.</td>
         </tr>
         <!-- initPushToken -->
         <tr>
@@ -779,17 +950,12 @@ It is valid when creating a new user. The language of the user that already exis
         </tr>
         <!-- openWorkflow -->
         <tr>
-            <td rowspan=2>openWorkflow</td>
-            <td rowspan=2>Opens a user chat and starts the specified workflow.</td>
+            <td>openWorkflow</td>
+            <td>Opens a user chat and starts the specified workflow.</td>
             <td>workflowId</td>
             <td>String?</td>
             <td>The ID of workflow to start with. An error page will be shown if such workflow does not exist.</td>
-            <td rowspan=2>Mobile, Web</td>
-        </tr>
-        <tr>
-            <td>message</td>
-            <td>String?</td>
-            <td>This message will be displayed in the input field after completing the support bot operation.</td>
+            <td>Mobile, Web</td>
         </tr>
         <!-- setAppearance -->
         <tr>
@@ -813,14 +979,14 @@ It is valid when creating a new user. The language of the user that already exis
         <tr>
             <td>setPreventDefaultUrlClick</td>
             <td>
-                Overrides Channel Talk’s default URL click behavior. When enabled, clicks are passed to the app’s onUrlClicked listener instead of opening in the browser.
+                Android/iOS에서 기본 URL 이동을 차단하고 onUrlClicked 이벤트로 앱이 처리하도록 설정합니다.
             </td>
             <td>prevent*</td>
             <td>bool</td>
             <td>
-                If true, URL clicks will be delegated to the app's listener through onUrlClicked event instead of opening in the default browser. If false, URLs will open in the default browser as normal.
+                Web의 true는 비동기 UnsupportedError입니다. false는 SDK 호출 없이 true로 완료되며 기본 이동을 유지합니다. Web onUrlClicked는 URL 관찰만 지원합니다.
             </td>
-            <td>Mobile, Web</td>
+            <td>Android, iOS<br>Web은 false만 허용</td>
         </tr>
     </tbody>
 </table>

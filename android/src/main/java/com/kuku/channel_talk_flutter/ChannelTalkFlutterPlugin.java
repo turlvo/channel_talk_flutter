@@ -12,11 +12,16 @@ import com.zoyi.channel.plugin.android.ChannelIO;
 import com.zoyi.channel.plugin.android.open.callback.BootCallback;
 import com.zoyi.channel.plugin.android.open.config.BootConfig;
 import com.zoyi.channel.plugin.android.open.enumerate.BootStatus;
+import com.zoyi.channel.plugin.android.open.enumerate.ChannelButtonPosition;
 import com.zoyi.channel.plugin.android.open.model.Profile;
 import com.zoyi.channel.plugin.android.open.model.User;
 import com.zoyi.channel.plugin.android.open.model.UserData;
+import com.zoyi.channel.plugin.android.open.option.ChannelButtonOption;
 import com.zoyi.channel.plugin.android.open.option.Language;
+import io.channel.plugin.android.enumerate.BubblePosition;
+import io.channel.plugin.android.open.enumerate.ChannelButtonIcon;
 import io.channel.plugin.android.open.model.Appearance;
+import io.channel.plugin.android.open.option.BubbleOption;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +39,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 /** ChannelTalkFlutterPlugin */
 public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
   private static final String LOG_TAG = "ChannelTalkFlutter";
+  private static final float DEFAULT_BUTTON_MARGIN = 20.0f;
   /// The MethodChannel that will the communication between Flutter and native
   /// Android
   ///
@@ -191,22 +197,22 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
       return;
     }
 
-    Profile profile = Profile.create();
-    if (call.argument("email") != null) {
-      profile.setEmail(call.argument("email"));
-    }
-    if (call.argument("name") != null) {
-      profile.setName(call.argument("name"));
-    }
-    if (call.argument("mobileNumber") != null) {
-      profile.setMobileNumber(call.argument("mobileNumber"));
-    }
-    if (call.argument("avatarUrl") != null) {
-      profile.setAvatarUrl(call.argument("avatarUrl"));
+    BootConfig bootConfig;
+    try {
+      bootConfig = BootConfig.create(pluginKey).setProfile(createBootProfile(call));
+      Map<String, Object> buttonOption = readStringMap(call.argument("channelButtonOption"));
+      if (buttonOption != null) {
+        bootConfig.setChannelButtonOption(createChannelButtonOption(buttonOption));
+      }
+      Map<String, Object> bubbleOption = readStringMap(call.argument("bubbleOption"));
+      if (bubbleOption != null) {
+        bootConfig.setBubbleOption(createBubbleOption(bubbleOption));
+      }
+    } catch (IllegalArgumentException e) {
+      result.error("INVALID_ARGUMENT", "Invalid boot options", null);
+      return;
     }
 
-    BootConfig bootConfig = BootConfig.create(pluginKey)
-        .setProfile(profile);
     if (call.argument("memberHash") != null) {
       bootConfig.setMemberHash(call.argument("memberHash"));
     }
@@ -241,6 +247,140 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
         onStatus.onStatus(bootStatusString(bootStatus, user));
       }
     });
+  }
+
+  /** 기본 프로필과 사용자 지정 값을 같은 SDK 맵에 넣어 사용자 지정 값의 우선순위를 유지한다. */
+  private Profile createBootProfile(@NonNull MethodCall call) {
+    Profile profile = Profile.create();
+    for (String field : new String[] {"email", "name", "mobileNumber", "avatarUrl"}) {
+      if (call.argument(field) != null) {
+        profile.setProperty(field, call.argument(field));
+      }
+    }
+    Map<String, Object> customAttributes = readStringMap(call.argument("customAttributes"));
+    if (customAttributes != null) {
+      for (Map.Entry<String, Object> entry : customAttributes.entrySet()) {
+        profile.setProperty(entry.getKey(), entry.getValue());
+      }
+    }
+    return profile;
+  }
+
+  /** 옵션을 제공한 경우에만 Dart 계약의 기본값과 명시한 위치를 적용한다. */
+  private ChannelButtonOption createChannelButtonOption(Map<String, Object> options) {
+    validateOptionKeys(options, "icon", "position", "xMargin", "yMargin");
+    String iconName = readStringOption(options, "icon", "channel");
+    ChannelButtonIcon icon = null;
+    for (ChannelButtonIcon candidate : ChannelButtonIcon.values()) {
+      String nativeName = candidate.name();
+      String dartName = Character.toLowerCase(nativeName.charAt(0)) + nativeName.substring(1);
+      if (dartName.equals(iconName)) {
+        icon = candidate;
+        break;
+      }
+    }
+    if (icon == null) {
+      throw new IllegalArgumentException();
+    }
+    String positionName = readStringOption(options, "position", "right");
+    ChannelButtonPosition position;
+    if ("left".equals(positionName)) {
+      position = ChannelButtonPosition.LEFT;
+    } else if ("right".equals(positionName)) {
+      position = ChannelButtonPosition.RIGHT;
+    } else {
+      throw new IllegalArgumentException();
+    }
+    return new ChannelButtonOption(
+        icon,
+        position,
+        readMarginOption(options, "xMargin", DEFAULT_BUTTON_MARGIN),
+        readMarginOption(options, "yMargin", DEFAULT_BUTTON_MARGIN));
+  }
+
+  /** 생략한 말풍선 여백은 null로 전달해 SDK 기본 동작을 유지한다. */
+  private BubbleOption createBubbleOption(Map<String, Object> options) {
+    validateOptionKeys(options, "position", "yMargin");
+    String positionName = readStringOption(options, "position", "top");
+    BubblePosition position;
+    if ("top".equals(positionName)) {
+      position = BubblePosition.TOP;
+    } else if ("bottom".equals(positionName)) {
+      position = BubblePosition.BOTTOM;
+    } else {
+      throw new IllegalArgumentException();
+    }
+    return new BubbleOption(position, readMarginOption(options, "yMargin", null));
+  }
+
+  /** 플랫폼 채널의 맵 타입을 확인하며 null 프로필 값을 그대로 보존한다. */
+  @Nullable
+  private Map<String, Object> readStringMap(@Nullable Object value) {
+    if (value == null) {
+      return null;
+    }
+    if (!(value instanceof Map)) {
+      throw new IllegalArgumentException();
+    }
+    Map<String, Object> values = new HashMap<>();
+    for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+      if (!(entry.getKey() instanceof String)) {
+        throw new IllegalArgumentException();
+      }
+      values.put((String) entry.getKey(), entry.getValue());
+    }
+    return values;
+  }
+
+  /** 잘못 쓴 옵션 이름을 기본값으로 조용히 대체하지 않도록 검증한다. */
+  private void validateOptionKeys(Map<String, Object> options, String... allowedKeys) {
+    for (String key : options.keySet()) {
+      boolean allowed = false;
+      for (String allowedKey : allowedKeys) {
+        if (allowedKey.equals(key)) {
+          allowed = true;
+          break;
+        }
+      }
+      if (!allowed) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  /** 생략한 문자열 옵션에는 기본값을 사용하고 다른 타입은 거부한다. */
+  private String readStringOption(
+      Map<String, Object> options,
+      String key,
+      String defaultValue) {
+    Object value = options.get(key);
+    if (value == null) {
+      return defaultValue;
+    }
+    if (!(value instanceof String)) {
+      throw new IllegalArgumentException();
+    }
+    return (String) value;
+  }
+
+  /** int와 double 채널 값을 모두 SDK float로 변환하고 유효하지 않은 수는 거부한다. */
+  @Nullable
+  private Float readMarginOption(
+      Map<String, Object> options,
+      String key,
+      @Nullable Float defaultValue) {
+    Object value = options.get(key);
+    if (value == null) {
+      return defaultValue;
+    }
+    if (!(value instanceof Number)) {
+      throw new IllegalArgumentException();
+    }
+    float margin = ((Number) value).floatValue();
+    if (Float.isNaN(margin) || Float.isInfinite(margin)) {
+      throw new IllegalArgumentException();
+    }
+    return margin;
   }
 
   private String bootStatusString(BootStatus status, @Nullable User user) {
@@ -351,6 +491,15 @@ public class ChannelTalkFlutterPlugin implements FlutterPlugin, MethodCallHandle
     // Omitted fields must stay unset so a partial update preserves existing user settings.
     if (!profileMap.isEmpty()) {
       userDataBuilder.setProfileMap(profileMap);
+    }
+    try {
+      Map<String, Object> profileOnce = readStringMap(call.argument("profileOnce"));
+      if (profileOnce != null) {
+        userDataBuilder.setProfileOnceMap(profileOnce);
+      }
+    } catch (IllegalArgumentException e) {
+      result.error("INVALID_ARGUMENT", "Invalid profileOnce", null);
+      return;
     }
     Language language = getLanguage(call.argument("language"));
     if (language != null) {

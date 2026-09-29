@@ -59,6 +59,7 @@ class ChannelTalkFlutterHandler implements ChannelPluginListener {
         return preventDefaultUrlClick;
     }
 
+    /** 기존 팝업 필드와 SDK 타임스탬프를 손실 없이 Dart 이벤트로 전달한다. */
     @Override
     public void onPopupDataReceived(PopupData event) {
         Map<String, Object> args = new HashMap<>();
@@ -66,6 +67,7 @@ class ChannelTalkFlutterHandler implements ChannelPluginListener {
         args.put("avatarUrl", event.getAvatarUrl());
         args.put("name", event.getName());
         args.put("message", event.getMessage());
+        args.put("timestamp", event.getTimestamp());
         channel.invokeMethod("onPopupDataReceived", args);
     }
 

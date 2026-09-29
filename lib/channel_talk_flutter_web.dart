@@ -18,7 +18,6 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   ChannelTalkFlutterWeb();
 
   ChannelTalkDelegate? _channelTalkDelegate;
-  bool _preventDefaultUrlClick = false;
   int _listenerGeneration = 0;
 
   /// Completes only when the SDK reports that the requested operation finished.
@@ -52,20 +51,6 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
     }
 
     callback(event, arguments);
-  }
-
-  bool _handleUrlClicked(int generation, JSAny? url) {
-    if (generation != _listenerGeneration) {
-      return false;
-    }
-
-    final ChannelTalkDelegate? callback = _channelTalkDelegate;
-    if (callback == null) {
-      return false;
-    }
-
-    callback(ChannelTalkEvent.onUrlClicked, _toDartValue(url));
-    return _preventDefaultUrlClick;
   }
 
   static void registerWith(Registrar registrar) {
@@ -127,7 +112,11 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
     channel_talk_service.onUrlClicked(
       'onUrlClicked',
       ((JSAny? url) {
-        return _handleUrlClicked(generation, url);
+        _dispatchEvent(
+          generation,
+          ChannelTalkEvent.onUrlClicked,
+          _toDartValue(url),
+        );
       }).toJS,
     );
     channel_talk_service.onPopupDataReceived(
@@ -146,18 +135,23 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   void removeListener() {
     _listenerGeneration += 1;
     _channelTalkDelegate = null;
-    _preventDefaultUrlClick = false;
     channel_talk_service.clearCallbacks('clearCallbacks');
   }
 
   @override
-  Future<bool?> boot(Map<String, dynamic> config) {
+  Future<bool?> boot(Map<String, dynamic> config) async {
+    for (final option in ['channelButtonOption', 'bubbleOption']) {
+      if (config[option] != null) {
+        throw UnsupportedError('$option is only supported on Android and iOS.');
+      }
+    }
     final profile = <String, dynamic>{
       if (config['email'] != null) 'email': config['email'],
       if (config['mobileNumber'] != null)
         'mobileNumber': config['mobileNumber'],
       if (config['name'] != null) 'name': config['name'],
       if (config['avatarUrl'] != null) 'avatarUrl': config['avatarUrl'],
+      if (config['customAttributes'] != null) ...config['customAttributes'],
     };
     final Map<String, dynamic> bootOption = {
       'pluginKey': config['pluginKey'],
@@ -351,8 +345,12 @@ class ChannelTalkFlutterWeb extends ChannelTalkFlutterPlatform {
   }
 
   @override
-  Future<bool?> setPreventDefaultUrlClick(bool prevent) {
-    _preventDefaultUrlClick = prevent;
-    return Future.value(true);
+  Future<bool?> setPreventDefaultUrlClick(bool prevent) async {
+    if (prevent) {
+      throw UnsupportedError(
+        'Preventing default URL clicks is only supported on Android and iOS.',
+      );
+    }
+    return true;
   }
 }

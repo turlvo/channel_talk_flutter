@@ -1,5 +1,21 @@
-## 4.3.0
+## 4.3.0-rc.1
+
+- 4.3.0 정식 배포 전 실제 앱 호환성을 확인하기 위한 RC입니다.
+  Flutter 3.19 / Dart 3.3 이상이 필요하며, 커스텀 플랫폼의 `setPage` 재정의와
+  Web 콜백 대기·실패 처리는 README의 Upgrade Notes를 확인하세요.
+
 - Add `bootWithStatus()` returning detailed `ChannelTalkBootStatus` results
+- `boot`, `bootWithStatus`, `bootForWeb`에 `customAttributes`를 추가했습니다.
+  기본 프로필 뒤에 병합하며 중복 키는 커스텀 값이 우선하고 명시적인 null을 보존합니다.
+- 모바일 `boot`와 `bootWithStatus`에 `ChannelButtonOption`과 `BubbleOption`을 추가했습니다.
+  버튼은 18개 아이콘, 좌우 위치와 여백을 지원하고 팝업은 상하 위치와 선택적 여백을 지원합니다.
+  옵션을 생략하면 기존 배치를 유지합니다. 버튼 옵션을 명시하면 기본값은 channel/right/20/20이고,
+  팝업 yMargin을 생략하면 기기별 SDK 기본값을 유지합니다. Web은 비동기 UnsupportedError입니다.
+- `updateUser`에 기존 값이 없는 프로필 필드만 채우는 `profileOnce`를 추가했습니다.
+- Android `onPopupDataReceived`에 SDK 원본 `timestamp`를 추가했습니다. 단위는 정규화하지 않습니다.
+- iOS SDK가 백그라운드에서 호출하는 `onChatCreated` 등 이벤트를 메인 스레드로 전달합니다.
+  이벤트명·payload·URL 차단 반환값과 이미 메인 스레드에서 전달되던 이벤트의 즉시 호출은 유지합니다.
+- 샘플 앱에 상세 부팅·새 옵션 JSON 입력·profileOnce 전달·팝업 timestamp 표시를 추가했습니다.
 - Add iOS Swift Package Manager support using the same source tree as CocoaPods
 - Preserve example SPM package resolution across checkout directory names
 - Remove explicit `ChannelIOSDK` pods before enabling SPM to avoid duplicate frameworks
@@ -12,7 +28,10 @@
 - Wait for Web SDK callbacks in boot and user/tag updates; reject null Web pages
 - Handle the Web SDK's argument-free `onChatCreated` callback
 - Add `profile` support to `setPage` on Android, iOS, and Web
-- Implement Web `setListener`, `removeListener`, `hidePopup`, and `setPreventDefaultUrlClick`
+- Implement Web `setListener`, `removeListener`, and `hidePopup`
+- Web URL 콜백이 기본 이동을 차단한다고 잘못 표현하던 동작을 수정했습니다.
+  `onUrlClicked`는 관찰용 void 이벤트이며 `setPreventDefaultUrlClick(true)`는 비동기
+  UnsupportedError입니다. false는 SDK 호출 없이 성공하며 기본 동작을 유지합니다.
 - Expand regression coverage for configuration, events, callbacks, and boot status
 - Compatibility: existing public `ChannelTalk.setPage(page: ...)` calls continue to work.
   Custom platform implementations must adopt the named `setPage` parameters.

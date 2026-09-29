@@ -2,12 +2,15 @@
 
 import 'dart:convert';
 
-import 'package:channel_talk_flutter/channel_talk_flutter_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
+
 import 'package:channel_talk_flutter/channel_talk_flutter.dart';
+import 'package:channel_talk_flutter/channel_talk_flutter_platform_interface.dart';
 import 'package:toast/toast.dart';
+
+import 'sample_boot.dart';
 
 void main() {
   runApp(const MaterialApp(home: MyApp()));
@@ -22,6 +25,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String content = '';
+  String popupTimestamp = '수신 대기';
   TextEditingController contentInputController = TextEditingController();
 
   @override
@@ -31,6 +35,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
+    ChannelTalk.removeListener();
     contentInputController.dispose();
     super.dispose();
   }
@@ -68,7 +73,11 @@ class _MyAppState extends State<MyApp> {
           print('ON_URL_CLICKED\nurl: $arguments');
           break;
         case ChannelTalkEvent.onPopupDataReceived:
-          print('ON_POPUP_DATA_RECEIVED\nevent: $arguments');
+          if (!mounted) return;
+          final timestamp = arguments is Map ? arguments['timestamp'] : null;
+          setState(() {
+            popupTimestamp = timestamp?.toString() ?? 'SDK에서 제공하지 않음';
+          });
           break;
         case ChannelTalkEvent.onPushNotificationClicked:
           print('ON_PUSH_NOTIFICATION_CLICKED\nevent: $arguments');
@@ -81,6 +90,49 @@ class _MyAppState extends State<MyApp> {
 
   void unregisterListener() {
     ChannelTalk.removeListener();
+  }
+
+  /// 공통 입력 예제로 두 부팅 결과 형식과 웹 전용 옵션을 함께 확인한다.
+  void showBootDialog({bool withStatus = false, bool forWeb = false}) {
+    final method =
+        forWeb ? 'bootForWeb' : (withStatus ? 'bootWithStatus' : 'boot');
+    content = const JsonEncoder.withIndent('  ').convert({
+      'pluginKey': 'pluginKey',
+      'language': 'ko',
+      'appearance': 'dark',
+      'customAttributes': {'samplePlan': 'pro', 'obsoleteField': null},
+      if (forWeb) 'hideChannelButtonOnBoot': false,
+      if (!kIsWeb && !forWeb) ...{
+        'channelButtonOption': {
+          'icon': 'headset',
+          'position': 'right',
+          'xMargin': 20,
+          'yMargin': 24,
+        },
+        'bubbleOption': {'position': 'bottom'},
+      },
+    });
+    showInputDialog('$method payload', () async {
+      try {
+        final args = Map<String, dynamic>.from(json.decode(content) as Map);
+        final result = await runSampleBoot(
+          args,
+          withStatus: withStatus,
+          forWeb: forWeb,
+        );
+        if (!mounted) return;
+        final value = result is ChannelTalkBootStatus ? result.value : result;
+        showMessageToast('Result: $value');
+      } on FormatException catch (error) {
+        showMessageToast('입력 형식 오류: ${error.message}');
+      } on UnsupportedError {
+        showMessageToast('이 옵션은 Android/iOS에서만 지원합니다.');
+      } on PlatformException catch (error) {
+        showMessageToast('SDK 오류: ${error.code}');
+      } catch (error) {
+        showMessageToast('요청 실패: ${error.runtimeType}');
+      }
+    });
   }
 
   void showInputDialog(title, onClick) {
@@ -244,112 +296,23 @@ class _MyAppState extends State<MyApp> {
           child: ListView(
             children: <Widget>[
               const SizedBox(height: 20),
+              const Text('SDK 옵션 실행 예제'),
+              const Text(kIsWeb
+                  ? 'Web에서는 커스텀 프로필을 지원합니다. 버튼·팝업 배치는 모바일 전용입니다.'
+                  : 'JSON에서 커스텀 프로필, 버튼 아이콘·여백, 팝업 위치를 변경할 수 있습니다.'),
               ElevatedButton(
-                onPressed: () async {
-                  content = '''
-{
-        "pluginKey": "pluginKey",
-        "memberId": "memberId",
-        "memberHash": "memberHash",
-        "email": "email",
-        "name": "name",
-        "mobileNumber": "0101231234",
-        "avatarUrl": "avatarUrl",
-        "unsubscribeEmail": false,
-        "unsubscribeTexting": false,
-        "trackDefaultEvent": false,
-        "hidePopup": false
-}
-                            ''';
-                  showInputDialog(
-                    'boot payload',
-                    () async {
-                      try {
-                        Map args = json.decode(content);
-                        final result = await ChannelTalk.boot(
-                          pluginKey: args['pluginKey'],
-                          memberId: args['memberId'],
-                          memberHash: args['memberHash'],
-                          email: args['email'],
-                          name: args['name'],
-                          mobileNumber: args['mobileNumber'],
-                          avatarUrl: args['avatarUrl'],
-                          unsubscribeEmail: args['unsubscribeEmail'],
-                          unsubscribeTexting: args['unsubscribeTexting'],
-                          trackDefaultEvent: args['trackDefaultEvent'],
-                          hidePopup: args['hidePopup'],
-                          language: Language.korean,
-                          appearance: Appearance.dark,
-                        );
-
-                        showMessageToast('Result: $result');
-                      } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
-                      } catch (err) {
-                        showMessageToast(err.toString());
-                      }
-                    },
-                  );
-                },
+                onPressed: () => showBootDialog(),
                 child: const Text('boot'),
               ),
               ElevatedButton(
-                onPressed: () async {
-                  content = '''
-{
-        "pluginKey": "pluginKey",
-        "memberId": "memberId",
-        "memberHash": "memberHash",
-        "name" : "name",
-        "email" : "email",
-        "mobileNumber": "0101231234",
-        "zIndex": 10000000,
-        "trackDefaultEvent": false,
-        "trackUtmSource": false,
-        "unsubscribeEmail": false,
-        "unsubscribeTexting": false,
-        "hidePopup": false
-}
-                            ''';
-                  showInputDialog(
-                    'boot payload for Web',
-                    () async {
-                      try {
-                        Map args = json.decode(content);
-
-                        final result = await ChannelTalk.bootForWeb(
-                          pluginKey: args['pluginKey'],
-                          memberId: args['memberId'],
-                          memberHash: args['memberHash'],
-                          email: args['email'],
-                          name: args['name'],
-                          mobileNumber: args['mobileNumber'],
-                          avatarUrl: args['avatarUrl'],
-                          customLauncherSelector:
-                              args['customLauncherSelector'],
-                          zIndex: args['zIndex'],
-                          trackDefaultEvent: args['trackDefaultEvent'],
-                          trackUtmSource: args['trackUtmSource'],
-                          unsubscribeEmail: args['unsubscribeEmail'],
-                          unsubscribeTexting: args['unsubscribeTexting'],
-                          hidePopup: args['hidePopup'],
-                          appearance: Appearance.light,
-                          language: Language.japanese,
-                        );
-
-                        showMessageToast('Result: $result');
-                      } on PlatformException catch (error) {
-                        showMessageToast('PlatformException: ${error.message}');
-                        print(error);
-                      } catch (err) {
-                        print(err);
-                        showMessageToast(err.toString());
-                      }
-                    },
-                  );
-                },
+                onPressed: () => showBootDialog(withStatus: true),
+                child: const Text('bootWithStatus'),
+              ),
+              ElevatedButton(
+                onPressed: () => showBootDialog(forWeb: true),
                 child: const Text('bootForWeb'),
               ),
+              Text('최근 팝업 timestamp: $popupTimestamp'),
               ElevatedButton(
                 onPressed: () async {
                   try {
@@ -542,7 +505,8 @@ class _MyAppState extends State<MyApp> {
     "unsubscribeEmail": false,
     "unsubscribeTexting": false,
     "tags": ["a", "b", "c"],
-    "customAttributes": {"custom1": "aaaa","custom2": "bbbb" }
+    "customAttributes": {"custom1": "aaaa","custom2": "bbbb" },
+    "profileOnce": {"signupSource": "sample-app", "firstVisit": true}
 }
                             ''';
                   showInputDialog(
@@ -560,8 +524,14 @@ class _MyAppState extends State<MyApp> {
                           tags: args['tags'] != null
                               ? List<String>.from(args['tags'])
                               : null,
-                          language: Language.korean,
+                          language: args['language'] == null
+                              ? null
+                              : Language.values.firstWhere(
+                                  (language) =>
+                                      language.value == args['language'],
+                                ),
                           customAttributes: args['customAttributes'],
+                          profileOnce: args['profileOnce'],
                         );
 
                         showMessageToast('Result: $result');
